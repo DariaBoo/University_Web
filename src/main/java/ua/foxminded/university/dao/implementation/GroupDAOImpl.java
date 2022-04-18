@@ -22,7 +22,7 @@ public class GroupDAOImpl implements GroupDAO {
     }
 
     @Override
-    public void deleteGroup(int groupID) {
+    public void removeGroup(int groupID) {
         // TODO Auto-generated method stub
 
     }
