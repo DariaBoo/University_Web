@@ -9,6 +9,47 @@ public class Teacher extends User {
         super(id, firstName, lastName, password, courses);
         this.position = position;
     }
+    public static TeacherBuidler builder() {
+        return new TeacherBuidler();
+    }
+    public static class TeacherBuidler {
+        private int id;
+        private String firstName;
+        private String lastName;
+        private int password;
+        private List<Course> courses;
+        private String position;
+        
+        public TeacherBuidler setTeacherID(int teacherID) {
+            return this;
+        }
+        public TeacherBuidler setFirstName(String firstName) {
+            return this;
+        }
+        public TeacherBuidler setLastName(String lastName) {
+            return this;
+        }
+        public TeacherBuidler setPassword(int password) {
+            return this;
+        }
+        public TeacherBuidler setCourses(List<String> courses) {
+            return this;
+        }       
+        public TeacherBuidler setPosition(String position) {
+            return this;
+        }
+        public Teacher buildWith(Object object) {
+            return construct(object).build();
+        }
+
+        private TeacherBuidler construct(Object object) {
+            return this;
+        }
+
+        public Teacher build() {
+            return new Teacher(id, firstName, lastName, password, position, courses);
+        }
+    }
 
     public String getPosition() {
         return position;
@@ -17,7 +58,7 @@ public class Teacher extends User {
     public void setPosition(String position) {
         this.position = position;
     }
-
+    
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -42,5 +83,4 @@ public class Teacher extends User {
             return false;
         return true;
     }
-
 }

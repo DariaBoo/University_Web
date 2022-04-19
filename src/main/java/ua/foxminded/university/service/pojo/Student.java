@@ -12,7 +12,52 @@ public class Student extends User {
         this.idCard = idCard;
         this.groupID = groupID;
     }
+    public static StudentBuidler builder() {
+        return new StudentBuidler();
+    }
+    public static class StudentBuidler {
+        private int id;
+        private String firstName;
+        private String lastName;
+        private int password;
+        private List<Course> courses;
+        private int idCard;
+        private int groupID;
+        
+        public StudentBuidler setStudentID(int studentID) {
+            return this;
+        }
+        public StudentBuidler setFirstName(String firstName) {
+            return this;
+        }
+        public StudentBuidler setLastName(String lastName) {
+            return this;
+        }
+        public StudentBuidler setPassword(int password) {
+            return this;
+        }
+        public StudentBuidler setCourses(List<String> courses) {
+            return this;
+        }
+        public StudentBuidler setIdCard(int idCard) {
+            return this;
+        }
+        public StudentBuidler setGroupID(int groupID) {
+            return this;
+        }
+        public Student buildWith(Object object) {
+            return construct(object).build();
+        }
 
+        private StudentBuidler construct(Object object) {
+            return this;
+        }
+
+        public Student build() {
+            return new Student(id, firstName, lastName, password, courses, idCard, groupID);
+        }
+    }
+    
     public int getIdCard() {
         return idCard;
     }
