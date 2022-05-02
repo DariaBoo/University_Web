@@ -6,55 +6,64 @@ public class Student extends User {
     private int idCard;
     private int groupID;
 
-    public Student(int id, String firstName, String lastName, int password, List<Course> courses, int idCard,
+    public Student(int id, String firstName, String lastName, int password, List<Lesson> lessons, int idCard,
             int groupID) {
-        super(id, firstName, lastName, password, courses);
+        super(id, firstName, lastName, password, lessons);
         this.idCard = idCard;
         this.groupID = groupID;
     }
-    public static StudentBuidler builder() {
-        return new StudentBuidler();
+    
+    public static StudentBuilder builder() {
+        return new StudentBuilder();
     }
-    public static class StudentBuidler {
+    
+    public static class StudentBuilder {
         private int id;
         private String firstName;
         private String lastName;
         private int password;
-        private List<Course> courses;
+        private List<Lesson> lessons;
         private int idCard;
         private int groupID;
         
-        public StudentBuidler setStudentID(int studentID) {
+        public StudentBuilder setID(int studentID) {
+            id = studentID;
             return this;
         }
-        public StudentBuidler setFirstName(String firstName) {
+        public StudentBuilder setFirstName(String firstName) {
+            this.firstName = firstName;
             return this;
         }
-        public StudentBuidler setLastName(String lastName) {
+        public StudentBuilder setLastName(String lastName) {
+            this.lastName = lastName;
             return this;
         }
-        public StudentBuidler setPassword(int password) {
+        public StudentBuilder setPassword(int password) {
+            this.password = password;
             return this;
         }
-        public StudentBuidler setCourses(List<String> courses) {
+        public StudentBuilder setLessons(List<Lesson> lessons) {
+            this.lessons = lessons;
             return this;
         }
-        public StudentBuidler setIdCard(int idCard) {
+        public StudentBuilder setIdCard(int idCard) {
+            this.idCard = idCard;
             return this;
         }
-        public StudentBuidler setGroupID(int groupID) {
+        public StudentBuilder setGroupID(int groupID) {
+            this.groupID = groupID;
             return this;
         }
         public Student buildWith(Object object) {
             return construct(object).build();
         }
 
-        private StudentBuidler construct(Object object) {
+        private StudentBuilder construct(Object object) {
             return this;
         }
 
         public Student build() {
-            return new Student(id, firstName, lastName, password, courses, idCard, groupID);
+            return new Student(id, firstName, lastName, password, lessons, idCard, groupID);
         }
     }
     
@@ -62,16 +71,8 @@ public class Student extends User {
         return idCard;
     }
 
-    public void setIdCard(int idCard) {
-        this.idCard = idCard;
-    }
-
-    public int getGroupID() {
+   public int getGroupID() {
         return groupID;
-    }
-
-    public void setGroupID(int groupID) {
-        this.groupID = groupID;
     }
 
     @Override

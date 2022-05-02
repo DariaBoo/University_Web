@@ -3,49 +3,76 @@ package ua.foxminded.university.service.pojo;
 import java.util.List;
 
 public class Group {
-    private int groupID;
-    private String name;
+    private int id;
+    private String name;// check if max 5 symbols, should contain 2 letters - 2 numbers(pattern) and
+                        // parse to string
+    private int departmentID;// check is department exist in table departments
     private List<Student> students;
-    private int capacity;
 
-    public int getGroupID() {
-        return groupID;
+    public Group(int id, String name, int departmentID, List<Student> students) {
+        this.id = id;
+        this.name = name;
+        this.departmentID = departmentID;
+        this.students = students;
     }
 
-    public void setGroupID(int groupID) {
-        this.groupID = groupID;
+    public static GroupBuilder builder() {
+        return new GroupBuilder();
+    }
+
+    public static class GroupBuilder {
+        private int id;
+        private String name;
+        private int departmentID;
+        private List<Student> students;
+
+        public GroupBuilder setID(int id) {
+            this.id = id;
+            return this;
+        }
+
+        public GroupBuilder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public GroupBuilder setDepartmentID(int departmentID) {
+            this.departmentID = departmentID;
+            return this;
+        }
+
+        public GroupBuilder setStudents(List<Student> students) {
+            this.students = students;
+            return this;
+        }
+
+        public Group build() {
+            return new Group(id, name, departmentID, students);
+        }
+    }
+
+    public int getID() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public int getDepartmentID() {
+        return departmentID;
     }
 
     public List<Student> getStudents() {
         return students;
     }
 
-    public void setStudents(List<Student> students) {
-        this.students = students;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + capacity;
-        result = prime * result + groupID;
+        result = prime * result + departmentID;
+        result = prime * result + id;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((students == null) ? 0 : students.hashCode());
         return result;
@@ -60,9 +87,9 @@ public class Group {
         if (getClass() != obj.getClass())
             return false;
         Group other = (Group) obj;
-        if (capacity != other.capacity)
+        if (departmentID != other.departmentID)
             return false;
-        if (groupID != other.groupID)
+        if (id != other.id)
             return false;
         if (name == null) {
             if (other.name != null)

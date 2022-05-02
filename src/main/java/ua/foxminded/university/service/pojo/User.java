@@ -7,14 +7,18 @@ public class User {
     private String firstName;
     private String lastName;
     private int password;
-    private List<Course> courses;
+    private List<Lesson> lessons;
 
-    public User(int id, String firstName, String lastName, int password, List<Course> courses) {
+    public User(int id, String firstName, String lastName, int password, List<Lesson> lessons) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
-        this.courses = courses;
+        this.lessons = lessons;
+    }
+
+    public User() {
+
     }
 
     public int getId() {
@@ -43,6 +47,13 @@ public class User {
 
     public void setPassword(int password) {
         this.password = password;
+    }
+    public List<Lesson> getLessons() {
+        return lessons;
+    }
+
+    public void setLessons(List<Lesson> lessons) {
+        this.lessons = lessons;
     }
 
     @Override
@@ -81,13 +92,4 @@ public class User {
             return false;
         return true;
     }
-
-    public List<Course> getCourses() {
-        return courses;
-    }
-
-    public void setCourses(List<Course> courses) {
-        this.courses = courses;
-    }
-
 }

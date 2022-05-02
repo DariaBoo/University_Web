@@ -1,20 +1,16 @@
 package ua.foxminded.university.service.pojo;
 
-import java.time.LocalDate;
-
 public class DayTimetable {
-    private LocalDate date;
-    private String lessonTimePeriod;
-    private int groupID;
+    private Day day;
+    private Group group;
     private int roomNumber;
     private Teacher teacher;
-    private String lesson;
+    private Lesson lesson;
 
-    private DayTimetable(LocalDate date, String lessonTimePeriod, int groupID, int roomNumber, Teacher teacher,
-            String lesson) {
-        this.date = date;
-        this.lessonTimePeriod = lessonTimePeriod;
-        this.groupID = groupID;
+    private DayTimetable(Day day, Group group, int roomNumber, Teacher teacher,
+            Lesson lesson) {
+        this.day = day;
+        this.group = group;
         this.roomNumber = roomNumber;
         this.teacher = teacher;
         this.lesson = lesson;
@@ -25,25 +21,19 @@ public class DayTimetable {
     }
 
     public static class TimetableBuilder {
-        private LocalDate date;
-        private String lessonTimePeriod;
-        private int groupID;
+        private Day day;
+        private Group group;
         private int roomNumber;
         private Teacher teacher;
-        private String lesson;
+        private Lesson lesson;
 
-        public TimetableBuilder setDate(LocalDate date) {
-            this.date = date;
+        public TimetableBuilder setDay(Day day) {
+            this.day = day;
             return this;
         }
-
-        public TimetableBuilder setLessonTimePeriod(String lessonTimePeriod) {
-            this.lessonTimePeriod = lessonTimePeriod;
-            return this;
-        }
-
-        public TimetableBuilder setGroupID(int groupID) {
-            this.groupID = groupID;
+       
+        public TimetableBuilder setGroup(Group group) {
+            this.group = group;
             return this;
         }
 
@@ -57,7 +47,7 @@ public class DayTimetable {
             return this;
         }
 
-        public TimetableBuilder setLesson(String lesson) {
+        public TimetableBuilder setLesson(Lesson lesson) {
             this.lesson = lesson;
             return this;
         }
@@ -71,20 +61,16 @@ public class DayTimetable {
         }
 
         public DayTimetable build() {
-            return new DayTimetable(date, lessonTimePeriod, groupID, roomNumber, teacher, lesson);
+            return new DayTimetable(day, group, roomNumber, teacher, lesson);
         }
     }
 
-    public LocalDate getDate() {
-        return date;
+    public Day getDay() {
+        return day;
     }
 
-    public String getLessonTimePeriod() {
-        return lessonTimePeriod;
-    }
-
-    public int getGroupID() {
-        return groupID;
+    public Group getGroup() {
+        return group;
     }
 
     public int getRoomNumber() {
@@ -95,7 +81,7 @@ public class DayTimetable {
         return teacher;
     }
 
-    public String getLesson() {
+    public Lesson getLesson() {
         return lesson;
     }
 
@@ -103,10 +89,9 @@ public class DayTimetable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((date == null) ? 0 : date.hashCode());
-        result = prime * result + groupID;
+        result = prime * result + ((day == null) ? 0 : day.hashCode());
+        result = prime * result + ((group == null) ? 0 : group.hashCode());
         result = prime * result + ((lesson == null) ? 0 : lesson.hashCode());
-        result = prime * result + ((lessonTimePeriod == null) ? 0 : lessonTimePeriod.hashCode());
         result = prime * result + roomNumber;
         result = prime * result + ((teacher == null) ? 0 : teacher.hashCode());
         return result;
@@ -121,22 +106,20 @@ public class DayTimetable {
         if (getClass() != obj.getClass())
             return false;
         DayTimetable other = (DayTimetable) obj;
-        if (date == null) {
-            if (other.date != null)
+        if (day == null) {
+            if (other.day != null)
                 return false;
-        } else if (!date.equals(other.date))
+        } else if (!day.equals(other.day))
             return false;
-        if (groupID != other.groupID)
+        if (group == null) {
+            if (other.group != null)
+                return false;
+        } else if (!group.equals(other.group))
             return false;
         if (lesson == null) {
             if (other.lesson != null)
                 return false;
         } else if (!lesson.equals(other.lesson))
-            return false;
-        if (lessonTimePeriod == null) {
-            if (other.lessonTimePeriod != null)
-                return false;
-        } else if (!lessonTimePeriod.equals(other.lessonTimePeriod))
             return false;
         if (roomNumber != other.roomNumber)
             return false;
@@ -148,4 +131,5 @@ public class DayTimetable {
         return true;
     }
 
+    
 }
