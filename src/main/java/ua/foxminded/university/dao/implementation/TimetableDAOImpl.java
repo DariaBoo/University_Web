@@ -136,13 +136,13 @@ public class TimetableDAOImpl implements TimetableDAO {
                 .map(date -> getDayTimetable(date, user)).collect(Collectors.toList());
     }
 
-    public int selectSuitableRoom(int groupID, Day day) {// private
+    private int selectSuitableRoom(int groupID, Day day) {
         log.info("Select available room  for date {} and time {}", day.getDateOne(), day.getLessonTimePeriod());
         return jdbcTemplate.queryForObject(SELECT_SUITABLE_ROOM,
                 new Object[] { groupID, day.getDateOne(), day.getLessonTimePeriod() }, Integer.class);
     }
 
-    public int selectAvailableTeacher(int lessonID, Day day) {// private
+    private int selectAvailableTeacher(int lessonID, Day day) {
         log.info("Select available teacher for date {} and time {}", day.getDateOne(), day.getLessonTimePeriod());
         try {
             return jdbcTemplate.queryForObject(SELECT_AVAILABLE_TEACHER, new Object[] { day.getDateOne(),
