@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -26,7 +26,7 @@ class TeacherDAOImplTest {
     private AnnotationConfigApplicationContext context;
     private Day day;
 
-    @BeforeAll
+    @BeforeEach
     void init() {
         context = new AnnotationConfigApplicationContext(SpringConfigTest.class);
         teacherDAOImpl = context.getBean("teacherDAOImpl", TeacherDAOImpl.class);
@@ -34,23 +34,23 @@ class TeacherDAOImplTest {
     }
 
     @Test
-    void addTeacher_shouldReturnNegativeNumber_whenInputExistedTeacher() throws SQLException {
-        assertEquals(-1, teacherDAOImpl
+    void addTeacher_shouldReturnZero_whenInputExistedTeacher() throws SQLException {
+        assertEquals(0, teacherDAOImpl
                 .addTeacher(new Teacher.TeacherBuidler().setFirstName("Albus").setLastName("Dumbledore").build()));
     }
 
     @Test
     void addTeacher_shouldReturnAddedStudentID_whenInputNewTeacher() throws SQLException {
-        assertEquals(11, teacherDAOImpl.addTeacher(new Teacher.TeacherBuidler().setFirstName("Lord")
+        assertEquals(1, teacherDAOImpl.addTeacher(new Teacher.TeacherBuidler().setFirstName("Lord")
                 .setLastName("Voldemort").setPosition("professor of evil").setPassword(555).build()));
         teacherDAOImpl.deleteTeacher(11);
     }
 
     @Test
     void deleteTeacher_shouldReturnCountOfDeletedRows_whenInputID() throws SQLException {
-        int id = teacherDAOImpl.addTeacher(new Teacher.TeacherBuidler().setFirstName("Lord").setLastName("Voldemort")
+        teacherDAOImpl.addTeacher(new Teacher.TeacherBuidler().setFirstName("Lord").setLastName("Voldemort")
                 .setPosition("professor of evil").setPassword(555).build());
-        assertEquals(1, teacherDAOImpl.deleteTeacher(id));
+        assertEquals(1, teacherDAOImpl.deleteTeacher(11));
     }
 
     @ParameterizedTest(name = "When input not existed teacher id or negative number will return zero.")
@@ -67,14 +67,13 @@ class TeacherDAOImplTest {
 
     @Test
     void assignLessonToTeacher_shouldReturnCountOfAddedRows_whenInputExistedLessonIDAndTeacherIDAndRowExists() {
-        teacherDAOImpl.assignLessonToTeacher(1, 3);
-        assertEquals(-1, teacherDAOImpl.assignLessonToTeacher(1, 3));
+        teacherDAOImpl.assignLessonToTeacher(100, 3);
+        assertEquals(0, teacherDAOImpl.assignLessonToTeacher(100, 3));
     }
 
     @ParameterizedTest(name = "{index}. When input already existed or incorrect lesson id {0} and not existed or incorrect teacher id {1} will return negative number {2}.")
-    @CsvSource({ "1, 1, -1", "1, 100, -1", "100, 1, -1", "100, 100, -1" })
-    void assignLessonToTeacher_shouldReturnNegativeNumber_whenInputIncorrectData(int lessonID, int teacherID,
-            int result) {
+    @CsvSource({ "1, 1, 0", "1, 100, 0", "100, 1, 0", "100, 100, 0" })
+    void assignLessonToTeacher_shouldReturnZero_whenInputIncorrectData(int lessonID, int teacherID, int result) {
         assertEquals(result, teacherDAOImpl.assignLessonToTeacher(lessonID, teacherID));
     }
 
@@ -85,9 +84,9 @@ class TeacherDAOImplTest {
     }
 
     @ParameterizedTest(name = "{index}. When input not existed or incorrect lesson id {0} and not existed or incorrect teacher id {1} will return negative number {2}.")
-    @CsvSource({ "1, 3, -1", "1, 100, -1", "100, 1, -1", "100, 100, -1" })
-    void deleteLessonFromTeacher_shouldReturnNegativeNumber_whenInputNotExistedLessonIDInTheTeacher(int lessonID,
-            int teacherID, int result) {
+    @CsvSource({ "1, 3, 0", "1, 100, 0", "100, 1, 0", "100, 100, 0" })
+    void deleteLessonFromTeacher_shouldReturnZero_whenInputNotExistedLessonIDatTheTeacher(int lessonID, int teacherID,
+            int result) {
         assertEquals(result, teacherDAOImpl.deleteLessonFromTeacher(lessonID, teacherID));
     }
 
@@ -97,8 +96,8 @@ class TeacherDAOImplTest {
     }
 
     @Test
-    void changePosition_shouldReturnNegativeNumber_whenInputNotExistedTeacherID() {
-        assertEquals(-1, teacherDAOImpl.changePosition(12, "lecturer"));
+    void changePosition_shouldReturnZero_whenInputNotExistedTeacherID() {
+        assertEquals(0, teacherDAOImpl.changePosition(12, "lecturer"));
     }
 
     @Test
@@ -107,8 +106,8 @@ class TeacherDAOImplTest {
     }
 
     @Test
-    void setTeacherAbsent_shouldReturnNegativeNumber_whenInputNotExistedTeacher() {
-        assertEquals(-1, teacherDAOImpl.setTeahcerAbsent(12, day));
+    void setTeacherAbsent_shouldReturnZero_whenInputNotExistedTeacher() {
+        assertEquals(0, teacherDAOImpl.setTeahcerAbsent(12, day));
     }
 
     @Test
@@ -121,16 +120,4 @@ class TeacherDAOImplTest {
     void deleteTeacherAbsent_shouldReturnZero_whenInputInCorrectTeacherID() {
         assertEquals(0, teacherDAOImpl.deleteTeahcerAbsent(100, day));
     }
-
-    @Test
-    void isExists_shourtReturnTrue_whenInputExistedTeacherID() {
-        assertTrue(teacherDAOImpl.isTeacherExists(1));
-    }
-
-    @ParameterizedTest(name = "When input not existed teacher id or negative number or zero will return false.")
-    @ValueSource(ints = { 100, -1, 0 })
-    void isExists_shourtReturnFalse_whenInputNotExistedTeacherID(int teacherID) {
-        assertFalse(teacherDAOImpl.isTeacherExists(teacherID));
-    }
-
 }

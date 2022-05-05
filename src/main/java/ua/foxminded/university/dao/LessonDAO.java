@@ -26,12 +26,4 @@ public interface LessonDAO {
      * @return count of deleted rows otherwise zero
      */
     int deleteLesson(int lessonID);
-
-    /**
-     * Check is this lesson exists in the timetable.lessons
-     * 
-     * @param lessonID
-     * @return true is exists otherwise false
-     */
-    boolean isLessonExists(int lessonID);
 }

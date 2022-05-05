@@ -17,7 +17,7 @@ public interface StudentDAO {
      * @return count of added rows otherwise -1
      * @throws SQLException
      */
-    int addStudent(Student student) throws SQLException;
+    int addStudent(Student student);
 
     /**
      * Deletes student from the timetable.students

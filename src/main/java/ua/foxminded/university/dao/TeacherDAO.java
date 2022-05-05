@@ -73,12 +73,4 @@ public interface TeacherDAO {
      * @return count of deleted rows otherwise zero
      */
     int deleteTeahcerAbsent(int teacherID, Day day);
-
-    /**
-     * Checks if teacher is exists in the timetable.teachers
-     * 
-     * @param teacherID existed teacher id
-     * @return true is teacher exists otherwise false
-     */
-    boolean isTeacherExists(int teacherID);
 }

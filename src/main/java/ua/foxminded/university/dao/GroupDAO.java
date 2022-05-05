@@ -45,20 +45,20 @@ public interface GroupDAO {
      */
     int deleteLessonFromGroup(int groupID, int lessonID);
 
-    /**
-     * Check is group exists in the database
-     * 
-     * @param groupID
-     * @return true is group exists in the table timetable.groups otherwise false
-     */
-    boolean isGroupExists(int groupID);
-
-    /**
-     * Check is group has lesson
-     * 
-     * @param groupID  groupID existed group id
-     * @param lessonID lessonID existed lesson id
-     * @return true is group has lesson otherwise false
-     */
-    boolean isGroupHasLesson(int groupID, int lessonID);
+//    /**
+//     * Check is group exists in the database
+//     * 
+//     * @param groupID
+//     * @return true is group exists in the table timetable.groups otherwise false
+//     */
+//    boolean isGroupExists(int groupID);
+//
+//    /**
+//     * Check is group has lesson
+//     * 
+//     * @param groupID  groupID existed group id
+//     * @param lessonID lessonID existed lesson id
+//     * @return true is group has lesson otherwise false
+//     */
+//    boolean isGroupHasLesson(int groupID, int lessonID);
 }

@@ -30,14 +30,14 @@ class LessonDAOImplTest {
 
     @Test
     void addLesson_shouldReturnAddedLessonID_whenInputNewLesson() throws SQLException {
-        assertEquals(6, lessonDAOImpl
+        assertEquals(1, lessonDAOImpl
                 .addLesson(new Lesson.LessonBuilder().setName("Quidditch").setDescription("sport").build()));
-        lessonDAOImpl.deleteLesson(6);
+        lessonDAOImpl.deleteLesson(1);
     }
 
     @Test
     void addLesson_shouldReturnNegativeNumber_whenInputExistedLesson() throws SQLException {
-        assertEquals(-1, lessonDAOImpl.addLesson(new Lesson.LessonBuilder().setName("Alchemy").build()));
+        assertEquals(0, lessonDAOImpl.addLesson(new Lesson.LessonBuilder().setName("Alchemy").build()));
     }
 
     @Test
@@ -52,14 +52,4 @@ class LessonDAOImplTest {
         assertEquals(0, lessonDAOImpl.deleteLesson(lessonID));
     }
 
-    @Test
-    void isExists_shourtReturnTrue_whenInputExistedLessonID() {
-        assertTrue(lessonDAOImpl.isLessonExists(1));
-    }
-
-    @ParameterizedTest(name = "{index}. When input not existed lesson id or negative number or zero will return false.")
-    @ValueSource(ints = { 100, -1, 0 })
-    void isExists_shourtReturnFalse_whenInputNotExistedLessonID(int lessonID) {
-        assertFalse(lessonDAOImpl.isLessonExists(lessonID));
-    }
 }

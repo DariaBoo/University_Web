@@ -273,3 +273,7 @@ insert into timetable.groups_lessons (group_id, lesson_id) values (6, 5);
 INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id) VALUES ('2022-04-20', '08:00 - 09:20', 4, 2);
 INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-01', '08:00 - 09:20', 1, 1, 1, 201);
 INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-02', '08:00 - 09:20', 1, 1, 1, 201);
+
+
+
+

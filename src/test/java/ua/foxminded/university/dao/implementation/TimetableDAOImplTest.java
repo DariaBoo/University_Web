@@ -53,41 +53,41 @@ class TimetableDAOImplTest {
     @Test
     void scheduleTimetable_shouldReturnCountOfAddedRows_whenInputCorrectData() {
         lesson = new Lesson.LessonBuilder().setID(5).build();
-        group = new Group.GroupBuilder().setID(6).build();
+        group = new Group.GroupBuilder().setID(1).build();
         dayTimetable = new DayTimetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
 
         assertEquals(1, timetable.scheduleTimetable(dayTimetable));
     }
 
-    @ParameterizedTest(name = "{index}. Input data: lessonID {0}, groupID {1}.")
-    @CsvSource({ "100, 1", "1, 100", "2, 1", })
-    void scheduleTimetable_shouldReturnNegativeNumber_whenInputInCorrectData(int lessonID, int groupID) {
+    @ParameterizedTest(name = "{index}. Input data: lessonID {0}, groupID {1}, result {2}.")
+    @CsvSource({ "100, 1, 0", "1, 100, 0", "3, 1, 0" })
+    void scheduleTimetable_shouldReturnZero_whenInputInCorrectData(int lessonID, int groupID, int result) {
         lesson = new Lesson.LessonBuilder().setID(lessonID).build();
         group = new Group.GroupBuilder().setID(groupID).build();
         dayTimetable = new DayTimetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
 
-        assertEquals(-1, timetable.scheduleTimetable(dayTimetable));
+        assertEquals(result, timetable.scheduleTimetable(dayTimetable));
     }
 
     @Test
-    void scheduleTimetable_shouldReturnNegativeNumber_whenInputScheduledLessonAndGroup() {
+    void scheduleTimetable_shouldReturnZero_whenInputScheduledLessonAndGroup() {
         lesson = new Lesson.LessonBuilder().setID(1).build();
         group = new Group.GroupBuilder().setID(1).build();
         dayTimetable = new DayTimetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
 
-        assertEquals(-1, timetable.scheduleTimetable(dayTimetable));
+        assertEquals(0, timetable.scheduleTimetable(dayTimetable));
     }
 
     @Test
-    void scheduleTimetable_shouldReturnNegativeNumber_whenTeachersAbsent() {
+    void scheduleTimetable_shouldReturnZero_whenTeachersAbsent() {
         day.setDateTwo(LocalDate.of(2023, 04, 02));
         lesson = new Lesson.LessonBuilder().setID(1).build();
-        group = new Group.GroupBuilder().setID(2).build();
+        group = new Group.GroupBuilder().setID(1).build();
         dayTimetable = new DayTimetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
         teacherDAOImpl.setTeahcerAbsent(1, day);
         teacherDAOImpl.setTeahcerAbsent(2, day);
 
-        assertEquals(-1, timetable.scheduleTimetable(dayTimetable));
+        assertEquals(0, timetable.scheduleTimetable(dayTimetable));
     }
 
     @Test
@@ -110,8 +110,6 @@ class TimetableDAOImplTest {
                 .setRoomNumber(201).build();
 
         user = new Teacher.TeacherBuidler().setID(1).build();
-        System.out.println(expectedTimetable.getDay());
-        System.out.println(timetable.getDayTimetable(LocalDate.of(2023, 04, 01), user).get().getDay());
         assertEquals(Optional.of(expectedTimetable), timetable.getDayTimetable(LocalDate.of(2023, 04, 01), user));
     }
 
@@ -167,5 +165,27 @@ class TimetableDAOImplTest {
         result.add(Optional.empty());
         result.add(Optional.empty());
         assertEquals(result, timetable.getMonthTimetable(day, user));
+    }
+
+    @Test
+    void selectSuitableRoom() {
+        assertEquals(204, timetable.selectSuitableRoom(1, day));
+    }
+
+    @Test
+    void selectSuitableRoom2() {
+        assertEquals(101, timetable.selectSuitableRoom(100, day));
+    }
+
+    @Test
+    void selectAvailableTeacher() {
+        assertEquals(2, timetable.selectAvailableTeacher(1, day));
+    }
+
+    @Test
+    void selectAvailableTeacher2() {
+        day.setDateOne(LocalDate.of(2022, 04, 01));
+        day.setLessonTimePeriod(LessonTimePeriod.lesson1.getTimePeriod());
+        assertEquals(0, timetable.selectAvailableTeacher(100, day));
     }
 }

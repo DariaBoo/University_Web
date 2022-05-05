@@ -4,9 +4,8 @@ import java.util.List;
 
 public class Group {
     private int id;
-    private String name;// check if max 5 symbols, should contain 2 letters - 2 numbers(pattern) and
-                        // parse to string
-    private int departmentID;// check is department exist in table departments
+    private String name;
+    private int departmentID;
     private List<Student> students;
 
     public Group(int id, String name, int departmentID, List<Student> students) {

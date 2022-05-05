@@ -23,12 +23,9 @@
         <ibatis.core.version>3.0</ibatis.core.version>
         <logback.core.version>1.2.11</logback.core.version>
         <slf4j.api.version>1.7.32</slf4j.api.version>
-        <logback.classic.version>1.2.11</logback.classic.version>
-        <HikariCP.version>3.4.5</HikariCP.version>
+        <logback.classic.version>1.2.11</logback.classic.version>        
         <h2.version>2.1.210</h2.version>
         <org.springframework.version>5.2.21.RELEASE</org.springframework.version>
-        <mokito.version>2.23.0</mokito.version>
-        <mokito.core.version>2.21.0</mokito.core.version>
     </properties>
 
     <dependencies>
@@ -71,12 +68,7 @@
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.api.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>${HikariCP.version}</version>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -100,26 +92,13 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>5.2.21.RELEASE</version>
+            <version>${org.springframework.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-beans -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>5.2.21.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <version>${mokito.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${mokito.core.version}</version>
-            <scope>test</scope>
+            <version>${org.springframework.version}</version>
         </dependency>
     </dependencies>
 

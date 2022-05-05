@@ -2,8 +2,6 @@ package ua.foxminded.university.dao.implementation;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.sql.SQLException;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -30,25 +28,25 @@ class StudentDAOImplTest {
     }
 
     @Test
-    void addStudent_shouldReturnNegativeNumber_whenInputExistedStudent() throws SQLException {
-        assertEquals(-1, studentDAOImpl
+    void addStudent_shouldReturnZero_whenInputExistedStudent() {
+        assertEquals(0, studentDAOImpl
                 .addStudent(new Student.StudentBuilder().setFirstName("Harry").setLastName("Potter").build()));
     }
 
     @Test
-    void addStudent_shouldReturnNegativeNumber_whenInputNewStudentWithWrongGroupID() throws SQLException {
-        assertEquals(-1, studentDAOImpl.addStudent(
+    void addStudent_shouldReturnZero_whenInputNewStudentWithWrongGroupID() {
+        assertEquals(0, studentDAOImpl.addStudent(
                 new Student.StudentBuilder().setFirstName("Aaaaa").setLastName("Bbbbb").setGroupID(11).build()));
     }
 
     @Test
-    void addStudent_shouldReturnAddedStudentID_whenInputNewStudent() throws SQLException {
-        assertEquals(109, studentDAOImpl.addStudent(
+    void addStudent_shouldReturnCountOfAddedRows_whenInputNewStudent() {
+        assertEquals(1, studentDAOImpl.addStudent(
                 new Student.StudentBuilder().setFirstName("Aaaaa").setLastName("Bbbbb").setGroupID(2).build()));
     }
 
     @Test
-    void deleteStudent_shouldReturnCountOfDeletedRows_whenInputID() throws SQLException {
+    void deleteStudent_shouldReturnCountOfDeletedRows_whenInputID()  {
         int id = studentDAOImpl.addStudent(
                 new Student.StudentBuilder().setFirstName("Aaaaa").setLastName("Bbbbb").setGroupID(2).build());
         assertEquals(1, studentDAOImpl.deleteStudent(id));
@@ -65,9 +63,9 @@ class StudentDAOImplTest {
         assertEquals(1, studentDAOImpl.changeGroup(4, 1));
     }
 
-    @ParameterizedTest(name = "{index}. When input not existed or incorrect lessonID {0} and not existed or incorrect groupID {1} will return negative number {2}.")
-    @CsvSource({ "1, 100, -1", "100, 1, -1", "100, 100, -1" })
-    void changeGroup_shouldReturnNegativeNumber_whenInputNotExistedGroupID() {
-        assertEquals(-1, studentDAOImpl.changeGroup(8, 1));
+    @ParameterizedTest(name = "{index}. When input not existed or incorrect studentID {0} and not existed or incorrect groupID {1} will return zero {2}.")
+    @CsvSource({ "1, 100, 0", "200, 1, 0", "100, 100, 0" })
+    void changeGroup_shouldReturnZero_whenInputNotExistedGroupID(int studentID, int groupID, int result) {
+        assertEquals(result, studentDAOImpl.changeGroup(studentID, groupID));
     }
 }

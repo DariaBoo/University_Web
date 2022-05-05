@@ -104,6 +104,5 @@ public class Lesson {
         } else if (!teachers.equals(other.teachers))
             return false;
         return true;
-    }
-    
+    }   
 }
