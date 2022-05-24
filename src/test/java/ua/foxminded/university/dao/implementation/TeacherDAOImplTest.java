@@ -4,27 +4,32 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.stereotype.Component;
 
 import ua.foxminded.university.config.SpringConfigTest;
 import ua.foxminded.university.service.pojo.Day;
 import ua.foxminded.university.service.pojo.Teacher;
 
-@Component
-@TestInstance(Lifecycle.PER_CLASS)
 class TeacherDAOImplTest {
     private TeacherDAOImpl teacherDAOImpl;
     private AnnotationConfigApplicationContext context;
     private Day day;
+    private Teacher teacher;
+    private List<Teacher> teachers = new ArrayList<Teacher>();
+    private final int maxFirstNameSize = 30;
+    private final int maxLastNameSize = 30;
+    private final int maxPositionSize = 30;
+    private final int maxPasswordSize = 10;
 
     @BeforeEach
     void init() {
@@ -42,14 +47,14 @@ class TeacherDAOImplTest {
     @Test
     void addTeacher_shouldReturnAddedStudentID_whenInputNewTeacher() throws SQLException {
         assertEquals(1, teacherDAOImpl.addTeacher(new Teacher.TeacherBuidler().setFirstName("Lord")
-                .setLastName("Voldemort").setPosition("professor of evil").setPassword(555).build()));
+                .setLastName("Voldemort").setPosition("professor of evil").setPassword("555").build()));
         teacherDAOImpl.deleteTeacher(11);
     }
 
     @Test
     void deleteTeacher_shouldReturnCountOfDeletedRows_whenInputID() throws SQLException {
         teacherDAOImpl.addTeacher(new Teacher.TeacherBuidler().setFirstName("Lord").setLastName("Voldemort")
-                .setPosition("professor of evil").setPassword(555).build());
+                .setPosition("professor of evil").setPassword("555").build());
         assertEquals(1, teacherDAOImpl.deleteTeacher(11));
     }
 
@@ -120,4 +125,115 @@ class TeacherDAOImplTest {
     void deleteTeacherAbsent_shouldReturnZero_whenInputInCorrectTeacherID() {
         assertEquals(0, teacherDAOImpl.deleteTeahcerAbsent(100, day));
     }
+
+    @Test
+    void findByID_shouldReturnTeacher_whenInputExistedTeacherID() {
+        teacher = new Teacher.TeacherBuidler().setID(1).setFirstName("Albus").setLastName("Dumbledore")
+                .setPosition("professor").setDepartmentID(1).build();
+        assertEquals(Optional.of(teacher), teacherDAOImpl.findByID(1));
+    }
+
+    @Test
+    void findByID_shouldReturnOptionalEmpty_whenInputNotExistedTeacherID() {
+        assertEquals(Optional.empty(), teacherDAOImpl.findByID(100));
+    }
+
+    @Test
+    void findAllTeachers_shouldReturnCountOfTeachers_whenCallTheMethod() {
+        assertEquals(10, teacherDAOImpl.findAllTeachers().get().stream().count());
+    }
+
+    @Test
+    void findAllTeachers_shouldReturnFirstThreeTeachers_whenCallTheMethod() {
+        teachers.clear();
+        teachers.add(new Teacher.TeacherBuidler().setID(1).setFirstName("Albus").setLastName("Dumbledore")
+                .setPosition("professor").setDepartmentID(1).build());
+        teachers.add(new Teacher.TeacherBuidler().setID(2).setFirstName("Minerva").setLastName("McGonagall")
+                .setPosition("lecturer").setDepartmentID(1).build());
+        teachers.add(new Teacher.TeacherBuidler().setID(3).setFirstName("Severus").setLastName("Snape")
+                .setPosition("professor").setDepartmentID(1).build());
+        assertEquals(teachers, teacherDAOImpl.findAllTeachers().get().stream().limit(3).collect(Collectors.toList()));
+    }
+
+    @Test
+    void findTeachersByDepartment_shouldReturnCountOfTeachers_whenInputExistedDepartmentID() {
+        assertEquals(5, teacherDAOImpl.findTeachersByDepartment(1).get().stream().count());
+    }
+
+    @Test
+    void findTeachersByDepartment_shouldReturnOptionalEmptyList_whenInputNotExistedDepartmentID() {
+        assertEquals(Optional.of(new ArrayList<Teacher>()), teacherDAOImpl.findTeachersByDepartment(10));
+    }
+
+    @Test
+    void findTeachersByDepartment_shouldReturnOptionalEmptyList_whenInputNegativeNumber() {
+        assertEquals(Optional.of(new ArrayList<Teacher>()), teacherDAOImpl.findTeachersByDepartment(-1));
+    }
+
+    @Test
+    void findTeachersByDepartment_shouldReturnListOfTeachers_whenInputExistedDepartmentID() {
+        teachers.clear();
+        teachers.add(new Teacher.TeacherBuidler().setID(1).setFirstName("Albus").setLastName("Dumbledore")
+                .setPosition("professor").setDepartmentID(1).build());
+        teachers.add(new Teacher.TeacherBuidler().setID(2).setFirstName("Minerva").setLastName("McGonagall")
+                .setPosition("lecturer").setDepartmentID(1).build());
+        assertEquals(teachers,
+                teacherDAOImpl.findTeachersByDepartment(1).get().stream().limit(2).collect(Collectors.toList()));
+    }
+
+    @Test
+    void changePassword_shouldReturnOne_whenInputExistedTeacherID() {
+        assertEquals(1, teacherDAOImpl.changePassword(1, "5555"));
+    }
+
+    @Test
+    void changePassword_shouldReturnZero_whenInputNotExistedTeacherID() {
+        assertEquals(0, teacherDAOImpl.changePassword(100, "5555"));
+    }
+
+    @Test
+    void changePassword_shouldReturnZero_whenInputNegativeNumber() {
+        assertEquals(0, teacherDAOImpl.changePassword(-1, "5555"));
+    }
+
+    @Test
+    void updateTeacher_shouldReturnOne_whenInputExistedTeacherID() {
+        teacher = new Teacher.TeacherBuidler().setID(1).setFirstName("Lord").setLastName("Voldemort").build();
+        assertEquals(1, teacherDAOImpl.updateTeacher(teacher));
+    }
+    
+    @Test
+    void updateTeacher_shouldReturnOne_whenInputExistedTeacherIDAndNullName() {
+        teacher = new Teacher.TeacherBuidler().setID(1).setLastName("Voldemort").build();
+        assertEquals(1, teacherDAOImpl.updateTeacher(teacher));
+    }
+    
+    @Test
+    void updateTeacher_shouldReturnOne_whenInputExistedTeacherIDAndNullSurname() {
+        teacher = new Teacher.TeacherBuidler().setID(1).setFirstName("Lord").build();
+        assertEquals(1, teacherDAOImpl.updateTeacher(teacher));
+    }
+    
+    @Test
+    void updateTeacher_shouldReturnOne_whenInputNotExistedTeacherID() {
+        teacher = new Teacher.TeacherBuidler().setID(100).setFirstName("Lord").setLastName("Voldemort").build();
+        assertEquals(0, teacherDAOImpl.updateTeacher(teacher));
+    }
+    
+    @Test
+    void getFirstNameMaxSize_shouldReturnColumnSize() {
+        assertEquals(maxFirstNameSize, teacherDAOImpl.getFirstNameMaxSize());       
+    }   
+    @Test
+    void getLastNameMaxSize_shouldReturnColumnSize() {
+        assertEquals(maxLastNameSize, teacherDAOImpl.getLastNameMaxSize());       
+    } 
+    @Test
+    void getPositionMaxSize_shouldReturnColumnSize() {
+        assertEquals(maxPositionSize, teacherDAOImpl.getPositionMaxSize());       
+    } 
+    @Test
+    void getPasswordMaxSize_shouldReturnColumnSize() {
+        assertEquals(maxPasswordSize, teacherDAOImpl.getPasswordMaxSize());       
+    } 
 }

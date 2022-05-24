@@ -332,3 +332,9 @@ insert into timetable.groups_lessons (group_id, lesson_id) values (10, 2);
 insert into timetable.groups_lessons (group_id, lesson_id) values (10, 3);
 insert into timetable.groups_lessons (group_id, lesson_id) values (10, 10);
 
+INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-01-01', 'NEW YEAR');
+INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-01-06', 'THREE KINGS DAY');
+INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-04-17', 'EASTER DAY');
+INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-05-01', 'LABOUR DAY');
+INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-11-01', 'ALL SAINTS DAY');
+INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-12-25', 'CHRISTMAS DAY');

@@ -12,9 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import ua.foxminded.university.dao.TimetableDAO;
+import ua.foxminded.university.dao.implementation.mapper.DayTimetableMapper;
 import ua.foxminded.university.service.pojo.Day;
 import ua.foxminded.university.service.pojo.DayTimetable;
 import ua.foxminded.university.service.pojo.Student;
@@ -27,7 +28,7 @@ import ua.foxminded.university.service.pojo.User;
  *
  *
  */
-@Component("timetable")
+@Repository("timetable")
 public class TimetableDAOImpl implements TimetableDAO {
     private final JdbcTemplate jdbcTemplate;
     private final String SET_TIMETABLE = "INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) SELECT ?, ?, ?, ?, ?, ? \n"
@@ -60,8 +61,6 @@ public class TimetableDAOImpl implements TimetableDAO {
      * Returns instance of the class
      * 
      * @param jdbcTemplate
-     * @param groupDAOImpl
-     * @param lessonDAOImpl
      */
     @Autowired
     public TimetableDAOImpl(JdbcTemplate jdbcTemplate) {
@@ -108,14 +107,14 @@ public class TimetableDAOImpl implements TimetableDAO {
     @Override
     public Optional<DayTimetable> getDayTimetable(LocalDate date, User user) {
         Optional<DayTimetable> timetable = Optional.empty();
-        log.info("Check inputed user class {} if instanceof Teacher", user.getClass().getName());
+        log.trace("Check inputed user class {} if instanceof Teacher", user.getClass().getName());
         if (user instanceof Teacher) {
             timetable = Optional.ofNullable(jdbcTemplate
                     .query(GET_TEACHER_DAY_TIMETABLE, new Object[] { date, user.getId() }, new DayTimetableMapper())
                     .stream().findAny().orElse(null));
             log.debug("Took timetable for the teacher {} and date {} from the timetable.timetable", user.getId(), date);
         } else if (user instanceof Student) {
-            log.info("Check inputed user class {} if instanceof Student", user.getClass().getName());
+            log.trace("Check inputed user class {} if instanceof Student", user.getClass().getName());
             timetable = Optional.ofNullable(jdbcTemplate
                     .query(GET_STUDENT_DAY_TIMETABLE, new Object[] { date, user.getId() }, new DayTimetableMapper())
                     .stream().findAny().orElse(null));
@@ -137,13 +136,13 @@ public class TimetableDAOImpl implements TimetableDAO {
     }
 
     private int selectSuitableRoom(int groupID, Day day) {
-        log.info("Select available room  for date {} and time {}", day.getDateOne(), day.getLessonTimePeriod());
+        log.trace("Select available room  for date {} and time {}", day.getDateOne(), day.getLessonTimePeriod());
         return jdbcTemplate.queryForObject(SELECT_SUITABLE_ROOM,
                 new Object[] { groupID, day.getDateOne(), day.getLessonTimePeriod() }, Integer.class);
     }
 
     private int selectAvailableTeacher(int lessonID, Day day) {
-        log.info("Select available teacher for date {} and time {}", day.getDateOne(), day.getLessonTimePeriod());
+        log.trace("Select available teacher for date {} and time {}", day.getDateOne(), day.getLessonTimePeriod());
         try {
             return jdbcTemplate.queryForObject(SELECT_AVAILABLE_TEACHER, new Object[] { day.getDateOne(),
                     day.getDateOne(), day.getDateOne(), day.getLessonTimePeriod(), lessonID }, Integer.class);
@@ -151,4 +150,5 @@ public class TimetableDAOImpl implements TimetableDAO {
             return 0;
         }
     }
+
 }

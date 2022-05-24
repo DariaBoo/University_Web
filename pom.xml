@@ -23,7 +23,7 @@
         <ibatis.core.version>3.0</ibatis.core.version>
         <logback.core.version>1.2.11</logback.core.version>
         <slf4j.api.version>1.7.32</slf4j.api.version>
-        <logback.classic.version>1.2.11</logback.classic.version>        
+        <logback.classic.version>1.2.11</logback.classic.version>
         <h2.version>2.1.210</h2.version>
         <org.springframework.version>5.2.21.RELEASE</org.springframework.version>
     </properties>
@@ -68,7 +68,7 @@
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.api.version}</version>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -98,6 +98,18 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
             <version>${org.springframework.version}</version>
         </dependency>
     </dependencies>

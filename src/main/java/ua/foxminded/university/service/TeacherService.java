@@ -1,25 +1,25 @@
-package ua.foxminded.university.dao;
+package ua.foxminded.university.service;
 
 import java.util.List;
 import java.util.Optional;
 
+import ua.foxminded.university.service.exception.ServiceException;
 import ua.foxminded.university.service.pojo.Day;
 import ua.foxminded.university.service.pojo.Teacher;
 
 /**
  * @version 1.0
  * @author Bogush Daria
- *
- *
  */
-public interface TeacherDAO {
+public interface TeacherService {
     /**
      * The method adds new teacher to the timetable.teachers
      * 
      * @param teacher
      * @return count of added rows otherwise -1
+     * @throws ServiceException 
      */
-    int addTeacher(Teacher teacher);
+    int addTeacher(Teacher teacher) throws ServiceException;
 
     /**
      * Deletes teacher from the timetable.teachers
@@ -53,8 +53,9 @@ public interface TeacherDAO {
      * @param teacherID existed teacher id
      * @param position
      * @return count of updated rows otherwise -1
+     * @throws ServiceException 
      */
-    int changePosition(int teacherID, String position);
+    int changePosition(int teacherID, String position) throws ServiceException;
 
     /**
      * The method set date start and date end of teacher's absent
@@ -63,7 +64,7 @@ public interface TeacherDAO {
      * @param day
      * @return count of updated rows otherwise -1
      */
-    int setTeahcerAbsent(int teacherID, Day day);
+    int setTeacherAbsent(int teacherID, Day day);
 
     /**
      * Deletes teacher absent from the timetable.teacherabsent
@@ -72,7 +73,7 @@ public interface TeacherDAO {
      * @param day
      * @return count of deleted rows otherwise zero
      */
-    int deleteTeahcerAbsent(int teacherID, Day day);
+    int deleteTeacherAbsent(int teacherID, Day day);
     
     /**
      * The method finds a teacher by id from the timetable.teachers
@@ -99,37 +100,15 @@ public interface TeacherDAO {
      * @param teacherID
      * @param newPassword
      * @return count of updated rows otherwise 0
+     * @throws ServiceException 
      */
-    int changePassword(int teacherID, String newPassword);
+    int changePassword(int teacherID, String newPassword) throws ServiceException;
     
     /**
      * The method lets update teacher's first name and last name and returns count of updated rows otherwise zero
      * @param teacher
      * @return count of updated rows otherwise zero
+     * @throws ServiceException 
      */
-    int updateTeacher(Teacher teacher);
-    
-    /**
-     * Returns a size of column 'first_name' from the timetable.teachers
-     * @return column's size
-     */
-    int getFirstNameMaxSize();
-    
-    /**
-     * Returns a size of column 'last_name' from the timetable.teachers
-     * @return column's size
-     */
-    int getLastNameMaxSize();
-    
-    /**
-     * Returns a size of column 'position' from the timetable.teachers
-     * @return column's size
-     */
-    int getPositionMaxSize();
-    
-    /**
-     * Returns a size of column 'password' from the timetable.teachers
-     * @return column's size
-     */
-    int getPasswordMaxSize();
+    int updateTeacher(Teacher teacher) throws ServiceException;
 }

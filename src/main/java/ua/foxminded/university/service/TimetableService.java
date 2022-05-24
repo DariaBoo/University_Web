@@ -1,12 +1,14 @@
-package ua.foxminded.university.dao;
+package ua.foxminded.university.service;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import ua.foxminded.university.service.exception.ServiceException;
 import ua.foxminded.university.service.pojo.Day;
 import ua.foxminded.university.service.pojo.DayTimetable;
 import ua.foxminded.university.service.pojo.User;
+
 
 /**
  * @version 1.0
@@ -14,16 +16,16 @@ import ua.foxminded.university.service.pojo.User;
  *
  *
  */
-public interface TimetableDAO {
-
+public interface TimetableService {
     /**
      * The method schedules lesson, group, teacher and room for the day and lesson
      * time period
      * 
      * @param timetable includes lesson id, group id, date and lesson time period
      * @return count of added rows otherwise -1
+     * @throws ServiceException 
      */
-    int scheduleTimetable(DayTimetable timetable);
+    int scheduleTimetable(DayTimetable timetable) throws ServiceException;
 
     /**
      * Deletes scheduled timetable by timetable id
@@ -52,4 +54,5 @@ public interface TimetableDAO {
      *         List of Optional.empty
      */
     List<Optional<DayTimetable>> getMonthTimetable(Day day, User user);
+
 }

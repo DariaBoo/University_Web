@@ -8,6 +8,9 @@ public class Lesson {
     private String description;
     private List<Teacher> teachers;
 
+    public Lesson() {
+        
+    }
     public Lesson(int id, String name, String description, List<Teacher> teachers) {
         this.id = id;
         this.name = name;
@@ -66,6 +69,21 @@ public class Lesson {
         return teachers;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setTeachers(List<Teacher> teachers) {
+        this.teachers = teachers;
+    }
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -76,7 +94,6 @@ public class Lesson {
         result = prime * result + ((teachers == null) ? 0 : teachers.hashCode());
         return result;
     }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -104,5 +121,5 @@ public class Lesson {
         } else if (!teachers.equals(other.teachers))
             return false;
         return true;
-    }   
+    }       
 }

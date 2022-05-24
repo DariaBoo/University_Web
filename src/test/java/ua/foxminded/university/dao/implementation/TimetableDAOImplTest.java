@@ -10,26 +10,21 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.stereotype.Component;
 
 import ua.foxminded.university.config.SpringConfigTest;
-import ua.foxminded.university.service.LessonTimePeriod;
 import ua.foxminded.university.service.pojo.Day;
 import ua.foxminded.university.service.pojo.DayTimetable;
 import ua.foxminded.university.service.pojo.Group;
 import ua.foxminded.university.service.pojo.Lesson;
+import ua.foxminded.university.service.pojo.LessonTimePeriod;
 import ua.foxminded.university.service.pojo.Student;
 import ua.foxminded.university.service.pojo.Teacher;
 import ua.foxminded.university.service.pojo.User;
 
-@Component
-@TestInstance(Lifecycle.PER_CLASS)
 class TimetableDAOImplTest {
     private TimetableDAOImpl timetable;
     private TeacherDAOImpl teacherDAOImpl;
@@ -165,27 +160,5 @@ class TimetableDAOImplTest {
         result.add(Optional.empty());
         result.add(Optional.empty());
         assertEquals(result, timetable.getMonthTimetable(day, user));
-    }
-
-    @Test
-    void selectSuitableRoom() {
-        assertEquals(204, timetable.selectSuitableRoom(1, day));
-    }
-
-    @Test
-    void selectSuitableRoom2() {
-        assertEquals(101, timetable.selectSuitableRoom(100, day));
-    }
-
-    @Test
-    void selectAvailableTeacher() {
-        assertEquals(2, timetable.selectAvailableTeacher(1, day));
-    }
-
-    @Test
-    void selectAvailableTeacher2() {
-        day.setDateOne(LocalDate.of(2022, 04, 01));
-        day.setLessonTimePeriod(LessonTimePeriod.lesson1.getTimePeriod());
-        assertEquals(0, timetable.selectAvailableTeacher(100, day));
     }
 }

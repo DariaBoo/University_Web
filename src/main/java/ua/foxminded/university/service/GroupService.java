@@ -1,23 +1,25 @@
-package ua.foxminded.university.dao;
+package ua.foxminded.university.service;
 
 import java.util.List;
 import java.util.Optional;
 
-import ua.foxminded.university.service.pojo.*;
+import ua.foxminded.university.service.exception.ServiceException;
+import ua.foxminded.university.service.pojo.Group;
 
 /**
  * @version 1.0
  * @author Bogush Daria
+ *
  */
-public interface GroupDAO {
-
+public interface GroupService {
     /**
      * The method returns count of added rows or -1 if nothing was added.
      * 
      * @param group
-     * @return
+     * @return 1 or 0
+     * @throws ServiceException 
      */
-    int addGroup(Group group);
+    int addGroup(Group group) throws ServiceException;
 
     /**
      * The method deletes group from the database by group id
@@ -61,12 +63,7 @@ public interface GroupDAO {
      * The method updated existed group and returns count of updated rows
      * @param group
      * @return count of updated rows or 0 if nothing was updated
+     * @throws ServiceException 
      */
-    int updateGroup(Group group);
-    
-    /**
-     * Returns a size of column 'group_name' from the timetable.groups
-     * @return column's size
-     */
-    int getGroupNameMaxSize();
+    int updateGroup(Group group) throws ServiceException;
 }
