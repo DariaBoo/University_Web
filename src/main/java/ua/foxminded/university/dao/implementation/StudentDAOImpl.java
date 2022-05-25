@@ -29,7 +29,7 @@ public class StudentDAOImpl implements StudentDAO {
     private final String CHANGE_GROUP = "UPDATE timetable.students SET group_id = ? WHERE student_id = ? "
             + "AND EXISTS (SELECT group_id FROM timetable.groups WHERE group_id = ?) "
             + "AND EXISTS (SELECT student_id FROM timetable.students WHERE student_id = ?)";
-    private final String UPDATE_STUDENT = "UPDATE timetable.students SET first_name = ?, last_name = ? WHERE student_id = ?;";
+    private final String UPDATE_STUDENT = "UPDATE timetable.students SET first_name = ?, last_name = ? WHERE student_id = ? AND EXISTS (SELECT student_id FROM timetable.students);";
     private final String FIND_STUDENT_BY_ID = "SELECT * FROM timetable.students WHERE student_id = ?;";
     private final String FIND_ALL_STUDENTS = "SELECT * FROM timetable.students WHERE isActive = true ORDER BY student_id;";
     private final String FIND_STUDENTS_BY_GROUP = "SELECT * FROM timetable.students WHERE group_id = ? AND isActive = true ORDER BY student_id;";

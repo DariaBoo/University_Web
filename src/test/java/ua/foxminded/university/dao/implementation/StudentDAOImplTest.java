@@ -166,7 +166,7 @@ class StudentDAOImplTest {
     }
     @Test
     void updateStudent_shouldReturnOne_whenInputNotExistedStudentID() {
-        student = new Student.StudentBuilder().setID(1000).setFirstName("Marry").build();
+        student = new Student.StudentBuilder().setID(200).setFirstName("Marry").build();
         assertEquals(0, studentDAOImpl.updateStudent(student));
     }    
     @Test

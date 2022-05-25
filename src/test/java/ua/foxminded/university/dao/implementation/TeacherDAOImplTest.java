@@ -216,7 +216,7 @@ class TeacherDAOImplTest {
     
     @Test
     void updateTeacher_shouldReturnOne_whenInputNotExistedTeacherID() {
-        teacher = new Teacher.TeacherBuidler().setID(100).setFirstName("Lord").setLastName("Voldemort").build();
+        teacher = new Teacher.TeacherBuidler().setID(12).setFirstName("Lord").build();
         assertEquals(0, teacherDAOImpl.updateTeacher(teacher));
     }
     

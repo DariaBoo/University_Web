@@ -291,3 +291,5 @@ INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-11-01', 'ALL SAINTS
 INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-12-25', 'CHRISTMAS DAY');
 
 
+UPDATE timetable.students SET first_name = 'Marry', last_name = 'Potter' WHERE student_id = 1000 AND EXISTS (SELECT student_id FROM timetable.students);
+

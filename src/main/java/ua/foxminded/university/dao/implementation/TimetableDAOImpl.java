@@ -31,11 +31,11 @@ import ua.foxminded.university.service.pojo.User;
 @Repository("timetable")
 public class TimetableDAOImpl implements TimetableDAO {
     private final JdbcTemplate jdbcTemplate;
-    private final String SET_TIMETABLE = "INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) SELECT ?, ?, ?, ?, ?, ? \n"
+    private final String SCHEDULE_TIMETABLE = "INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) SELECT ?, ?, ?, ?, ?, ? \n"
             + "WHERE NOT EXISTS (SELECT lesson_id, group_id FROM timetable.timetable WHERE date = ? AND time_period = ? AND lesson_id = ? AND group_id = ?) \n"
             + "AND EXISTS (SELECT group_id, lesson_id FROM timetable.groups_lessons WHERE group_id = ? AND lesson_id = ?) \n"
-            + "AND EXISTS (SELECT lesson_id FROM timetable.lessons WHERE lesson_id = ?) \n"
-            + "AND EXISTS (SELECT group_id FROM timetable.groups WHERE group_id = ?)";
+            + "AND EXISTS (SELECT lesson_id FROM timetable.lessons) \n"
+            + "AND EXISTS (SELECT group_id FROM timetable.groups)";
     private final String SELECT_SUITABLE_ROOM = "SELECT room_id FROM timetable.rooms WHERE capacity >= (SELECT COUNT(*) FROM timetable.students WHERE group_id = ?) \n"
             + "AND NOT EXISTS (SELECT room_id FROM timetable.timetable WHERE date = ? AND time_period = ? AND room_id = timetable.rooms.room_id) ORDER BY room_id LIMIT 1";
     private final String SELECT_AVAILABLE_TEACHER = "SELECT lt.teacher_id  FROM timetable.lessons_teachers lt "
@@ -85,9 +85,8 @@ public class TimetableDAOImpl implements TimetableDAO {
         int roomID = selectSuitableRoom(groupID, day);
         log.info("Took room id {} from the method selectAvailableRoom", roomID);
         if (teacherID > 0 && roomID > 0) {
-            result = jdbcTemplate.update(SET_TIMETABLE, day.getDateOne(), day.getLessonTimePeriod(), lessonID, groupID,
-                    teacherID, roomID, day.getDateOne(), day.getLessonTimePeriod(), lessonID, groupID, lessonID,
-                    groupID, groupID, lessonID);
+            result = jdbcTemplate.update(SCHEDULE_TIMETABLE, day.getDateOne(), day.getLessonTimePeriod(), lessonID, groupID,
+                    teacherID, roomID, day.getDateOne(), day.getLessonTimePeriod(), lessonID, groupID, groupID, lessonID);
         }
         return result;
     }

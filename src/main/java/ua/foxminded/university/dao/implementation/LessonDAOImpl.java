@@ -29,8 +29,7 @@ public class LessonDAOImpl implements LessonDAO {
     private final String FIND_ALL_LESSONS = "SELECT * FROM timetable.lessons WHERE isActive = true ORDER BY lesson_id;";
     private final String SELECT_LESSON_NAME = "SELECT lesson_name FROM timetable.lessons WHERE lesson_id = ?;";
     private final String SELECT_LESSON_DESCRIPTION = "SELECT description FROM timetable.lessons WHERE lesson_id = ?;";
-    private final String SELECT_LESSONS_COUNT = "SELECT COUNT(*) FROM timetable.lessons;";
-    private final String UPDATE_LESSON = "UPDATE timetable.lessons SET lesson_name = ?, description = ? WHERE lesson_id = ?;";
+    private final String UPDATE_LESSON = "UPDATE timetable.lessons SET lesson_name = ?, description = ? WHERE lesson_id = ? AND NOT EXISTS (SELECT lesson_name FROM timetable.lessons WHERE lesson_name = ?) AND EXISTS (SELECT lesson_id FROM timetable.lessons);";
     private final String LESSON_NAME_MAX_SIZE = "SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE UPPER (table_schema) = UPPER ('timetable') AND UPPER (table_name) = UPPER ('lessons') AND UPPER (column_name) = UPPER ('lesson_name');";
     private final String DESCRIPTION_MAX_SIZE = "SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE UPPER (table_schema) = UPPER ('timetable') AND UPPER (table_name) = UPPER ('lessons') AND UPPER (column_name) = UPPER ('description');";
     private static final Logger log = LoggerFactory.getLogger(LessonDAOImpl.class.getName());
@@ -69,7 +68,7 @@ public class LessonDAOImpl implements LessonDAO {
     @Override
     public Optional<Lesson> findByID(int lessonID) {
         log.debug("Find lesson by id {} from the timetable.lessons", lessonID);
-        return jdbcTemplate.query(FIND_BY_ID, new Object[] {lessonID}, new LessonMapper()).stream().findFirst();
+        return jdbcTemplate.query(FIND_BY_ID, new Object[] { lessonID }, new LessonMapper()).stream().findFirst();
     }
 
     /**
@@ -85,19 +84,23 @@ public class LessonDAOImpl implements LessonDAO {
      * {@inheritDoc}
      */
     @Override
-    public int updateLesson(Lesson lesson) { //TODO sql to check input lesson id
+    public int updateLesson(Lesson lesson) {
         log.trace("Update lesson name and description");
-        int countOfLessons = jdbcTemplate.queryForObject(SELECT_LESSONS_COUNT, Integer.class);
         int result = 0;
-        log.trace("Check if lesson id - {} is not out of bound", lesson.getId());
-        if(lesson.getId() <= countOfLessons) {
-            String lessonName = lesson.getName() == null ? jdbcTemplate.queryForObject(SELECT_LESSON_NAME, new Object[] {lesson.getId()}, String.class) : lesson.getName();
-            log.debug("Took lesson's name {} from the lesson, if equals null took previous value from the timetable.lessons", lessonName);
-            String description = lesson.getDescription() == null ? jdbcTemplate.queryForObject(SELECT_LESSON_DESCRIPTION, new Object[] {lesson.getId()}, String.class) : lesson.getDescription();
-            log.debug("Took lesson's description {} from the lesson, if equals null took previous value from the timetable.lessons", description);
-           result = jdbcTemplate.update(UPDATE_LESSON, lessonName, description, lesson.getId());
-           log.debug("Took a result {}, if the result equals 1 lesson was updated, if 0 - not updated", result);
-        }
+        String lessonName = lesson.getName() == null
+                ? jdbcTemplate.queryForObject(SELECT_LESSON_NAME, new Object[] { lesson.getId() }, String.class)
+                : lesson.getName();
+        log.debug(
+                "Took lesson's name {} from the lesson, if equals null took previous value from the timetable.lessons",
+                lessonName);
+        String description = lesson.getDescription() == null
+                ? jdbcTemplate.queryForObject(SELECT_LESSON_DESCRIPTION, new Object[] { lesson.getId() }, String.class)
+                : lesson.getDescription();
+        log.debug(
+                "Took lesson's description {} from the lesson, if equals null took previous value from the timetable.lessons",
+                description);
+        result = jdbcTemplate.update(UPDATE_LESSON, lessonName, description, lesson.getId(), lesson.getName());
+        log.debug("Took a result {}, if the result equals 1 lesson was updated, if 0 - not updated", result);
         return result;
     }
 
@@ -118,5 +121,5 @@ public class LessonDAOImpl implements LessonDAO {
         log.trace("Get max size of column description");
         return jdbcTemplate.queryForObject(DESCRIPTION_MAX_SIZE, Integer.class);
     }
-    
+
 }

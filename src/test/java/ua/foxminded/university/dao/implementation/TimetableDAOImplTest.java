@@ -74,7 +74,7 @@ class TimetableDAOImplTest {
     }
 
     @Test
-    void scheduleTimetable_shouldReturnZero_whenTeachersAbsent() {
+    void scheduleTimetable_shouldReturnZero_whenTeacherAbsent() {
         day.setDateTwo(LocalDate.of(2023, 04, 02));
         lesson = new Lesson.LessonBuilder().setID(1).build();
         group = new Group.GroupBuilder().setID(1).build();
