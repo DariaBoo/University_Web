@@ -33,6 +33,8 @@ public class LessonDAOImpl implements LessonDAO {
     private final String LESSON_NAME_MAX_SIZE = "SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE UPPER (table_schema) = UPPER ('timetable') AND UPPER (table_name) = UPPER ('lessons') AND UPPER (column_name) = UPPER ('lesson_name');";
     private final String DESCRIPTION_MAX_SIZE = "SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE UPPER (table_schema) = UPPER ('timetable') AND UPPER (table_name) = UPPER ('lessons') AND UPPER (column_name) = UPPER ('description');";
     private static final Logger log = LoggerFactory.getLogger(LessonDAOImpl.class.getName());
+    private final String debugMessage = "Return count of rows otherwise returns zero. The result is {}";
+    private int result;
 
     /**
      * Returns instance of the class
@@ -49,8 +51,10 @@ public class LessonDAOImpl implements LessonDAO {
      */
     @Override
     public int addLesson(Lesson lesson) {
-        log.info("Add new lesson to timetable.lessons and returns count of added rows otherwise returns zero");
-        return jdbcTemplate.update(ADD_LESSON, lesson.getName(), lesson.getDescription(), lesson.getName());
+        log.trace("Add new lesson to timetable.lessons");
+        result = jdbcTemplate.update(ADD_LESSON, lesson.getName(), lesson.getDescription(), lesson.getName());
+        log.debug(debugMessage, result);
+        return result;
     }
 
     /**
@@ -58,8 +62,10 @@ public class LessonDAOImpl implements LessonDAO {
      */
     @Override
     public int deleteLesson(int lessonID) {
-        log.info("Delete lesson from the database and returns count of deleted rows otherwise returns zero");
-        return jdbcTemplate.update(DELETE_LESSON, lessonID);
+        log.trace("Delete lesson from the database");
+        result = jdbcTemplate.update(DELETE_LESSON, lessonID);
+        log.debug(debugMessage, result);        
+        return result;
     }
 
     /**
@@ -67,8 +73,10 @@ public class LessonDAOImpl implements LessonDAO {
      */
     @Override
     public Optional<Lesson> findByID(int lessonID) {
-        log.debug("Find lesson by id {} from the timetable.lessons", lessonID);
-        return jdbcTemplate.query(FIND_BY_ID, new Object[] { lessonID }, new LessonMapper()).stream().findFirst();
+        log.trace("Find lesson by id {} from the timetable.lessons", lessonID);
+        Optional<Lesson> result = jdbcTemplate.query(FIND_BY_ID, new Object[] { lessonID }, new LessonMapper()).stream().findFirst();
+        log.debug("Return optional lesson {}", result);
+        return result;
     }
 
     /**
@@ -76,8 +84,10 @@ public class LessonDAOImpl implements LessonDAO {
      */
     @Override
     public Optional<List<Lesson>> findAllLessons() {
-        log.debug("Find all lessons from the timetable.lessons and return optional list of lessons");
-        return Optional.of(jdbcTemplate.query(FIND_ALL_LESSONS, new LessonMapper()));
+        log.trace("Find all lessons from the timetable.lessons");
+        Optional<List<Lesson>> result = Optional.of(jdbcTemplate.query(FIND_ALL_LESSONS, new LessonMapper()));
+        log.debug("Return optional list of lessons {}", result);
+        return result;
     }
 
     /**
@@ -86,7 +96,7 @@ public class LessonDAOImpl implements LessonDAO {
     @Override
     public int updateLesson(Lesson lesson) {
         log.trace("Update lesson name and description");
-        int result = 0;
+        result = 0;
         String lessonName = lesson.getName() == null
                 ? jdbcTemplate.queryForObject(SELECT_LESSON_NAME, new Object[] { lesson.getId() }, String.class)
                 : lesson.getName();

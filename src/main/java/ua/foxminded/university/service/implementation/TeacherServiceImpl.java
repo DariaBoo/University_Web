@@ -74,9 +74,7 @@ public class TeacherServiceImpl implements TeacherService{
     @Override
     public int deleteTeacher(int teacherID) {
         log.trace("Delete existed teacher by id {}", teacherID);
-        int result = teacherDAOImpl.deleteTeacher(teacherID);
-        log.debug("Took the result {} of deleting teacher from the database", result);
-        return result;// TODO ui if result == 1 a teacher was deleted correctly, if == 0 - error occurred
+        return teacherDAOImpl.deleteTeacher(teacherID);// TODO ui if result == 1 a teacher was deleted correctly, if == 0 - error occurred
                       // while trying to delete a teacher
     }
 

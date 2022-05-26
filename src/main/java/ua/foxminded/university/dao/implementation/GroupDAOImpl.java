@@ -34,6 +34,8 @@ public class GroupDAOImpl implements GroupDAO {
     private final String UPDATE_GROUP = "UPDATE timetable.groups SET group_name = ? WHERE group_id = ? AND NOT EXISTS (SELECT group_name FROM timetable.groups WHERE group_name = ?) AND EXISTS (SELECT group_id FROM timetable.groups);";
     private final String GROUP_NAME_MAX_SIZE = "SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE UPPER (table_schema) = UPPER ('timetable') AND UPPER (table_name) = UPPER ('groups') AND UPPER (column_name) = UPPER ('group_name');";
     private static final Logger log = LoggerFactory.getLogger(GroupDAOImpl.class.getName());
+    private final String debugMessage = "Return count of rows otherwise returns zero. The result is {}";
+    private int result;
 
     /**
      * Returns instance of the class
@@ -50,8 +52,10 @@ public class GroupDAOImpl implements GroupDAO {
      */
     @Override
     public int addGroup(Group group) {
-        log.trace("Add new group to timetable.groups and returns count of added rows otherwise returns zero");
-        return jdbcTemplate.update(ADD_GROUP, group.getName(), group.getDepartmentID(), group.getName());
+        log.trace("Add new group to timetable.groups");
+        result = jdbcTemplate.update(ADD_GROUP, group.getName(), group.getDepartmentID(), group.getName());
+        log.debug(debugMessage, result);
+        return result;
     }
 
     /**
@@ -59,8 +63,10 @@ public class GroupDAOImpl implements GroupDAO {
      */
     @Override
     public int deleteGroup(int groupID) {
-        log.trace("Delete group from the database and returns count of deleted rows otherwise returns zero");
-        return jdbcTemplate.update(DELETE_GROUP, groupID);
+        log.trace("Delete group from the database");
+        result = jdbcTemplate.update(DELETE_GROUP, groupID);
+        log.debug(debugMessage, result);
+        return result;
     }
 
     /**
@@ -68,8 +74,10 @@ public class GroupDAOImpl implements GroupDAO {
      */
     @Override
     public int assignLessonToGroup(int groupID, int lessonID) {
-        log.trace("Assign lesson to group to the database and returns count of deleted rows otherwise returns zero");
-        return jdbcTemplate.update(ASSIGN_LESSON_TO_GROUP, groupID, lessonID, groupID, lessonID, groupID, lessonID);
+        log.trace("Assign lesson to group to the database");
+        result = jdbcTemplate.update(ASSIGN_LESSON_TO_GROUP, groupID, lessonID, groupID, lessonID, groupID, lessonID);
+        log.debug(debugMessage, result);
+        return result;
     }
 
     /**
@@ -77,9 +85,10 @@ public class GroupDAOImpl implements GroupDAO {
      */
     @Override
     public int deleteLessonFromGroup(int groupID, int lessonID) {
-        log.trace(
-                "Delete lesson from group from the timetable.groups_lessons and returns count of deleted rows otherwise returns zero");
-        return jdbcTemplate.update(DELETE_LESSON_FROM_GROUP, groupID, lessonID);
+        log.trace("Delete lesson from group from the timetable.groups_lessons");
+        result = jdbcTemplate.update(DELETE_LESSON_FROM_GROUP, groupID, lessonID);
+        log.debug(debugMessage, result);
+        return result;
     }
 
     /**
@@ -87,8 +96,10 @@ public class GroupDAOImpl implements GroupDAO {
      */
     @Override
     public Optional<List<Group>> findAllGroups() {
-        log.debug("Find all groups from timetable.groups");
-        return Optional.of(jdbcTemplate.query(FIND_ALL_GROUPS, new GroupMapper()));
+        log.trace("Find all groups from timetable.groups");
+        Optional<List<Group>> result = Optional.of(jdbcTemplate.query(FIND_ALL_GROUPS, new GroupMapper()));
+        log.debug("Return optional list of groups {}", result);
+        return result;
     }
 
     /**
@@ -96,8 +107,10 @@ public class GroupDAOImpl implements GroupDAO {
      */
     @Override
     public Optional<List<Group>> findGroupsByDepartment(int departmentID) {
-        log.debug("Find all groups by department from timetable.groups");
-        return Optional.of(jdbcTemplate.query(FIND_GROUPS_BY_DEPARTMENT, new Object[] { departmentID }, new GroupMapper()));
+        log.trace("Find all groups by department from timetable.groups");
+        Optional<List<Group>> result = Optional.of(jdbcTemplate.query(FIND_GROUPS_BY_DEPARTMENT, new Object[] { departmentID }, new GroupMapper()));
+        log.debug("Return optional list of groups {}", result);
+        return result;
     }
 
     /**
@@ -106,7 +119,9 @@ public class GroupDAOImpl implements GroupDAO {
     @Override
     public int updateGroup(Group group) {
         log.trace("Update group's name to {}", group.getName());
-        return jdbcTemplate.update(UPDATE_GROUP, group.getName(), group.getID(), group.getName());
+        result = jdbcTemplate.update(UPDATE_GROUP, group.getName(), group.getID(), group.getName());
+        log.debug(debugMessage, result);
+        return result;
     }
 
     /**
@@ -115,6 +130,8 @@ public class GroupDAOImpl implements GroupDAO {
     @Override
     public int getGroupNameMaxSize() {
         log.trace("Get the column 'group_name' size");
-        return jdbcTemplate.queryForObject(GROUP_NAME_MAX_SIZE, Integer.class);
+        result = jdbcTemplate.queryForObject(GROUP_NAME_MAX_SIZE, Integer.class);
+        log.debug(debugMessage, result);
+        return result;
     }
 }

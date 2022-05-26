@@ -96,8 +96,10 @@ public class TimetableDAOImpl implements TimetableDAO {
      */
     @Override
     public int deleteTimetable(int timetbleID) {
-        log.debug("Delete dayTimetable from the database and returns count of deleted rows otherwise returns zero");
-        return jdbcTemplate.update(DELETE_TIMETABLE, timetbleID, LocalDate.now());
+        log.trace("Delete dayTimetable from the database");        
+        int result = jdbcTemplate.update(DELETE_TIMETABLE, timetbleID, LocalDate.now());
+        log.debug("Return count of deleted rows otherwise returns zero. The result is {}", result);
+        return result;
     }
 
     /**

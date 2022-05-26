@@ -82,9 +82,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public int changeGroup(int studentID, int groupID) {
         log.trace("Change student group with student id {} and group id {}", studentID, groupID);
-        int result = studentDAOImpl.changeGroup(studentID, groupID);
-        log.debug("Took the result {} of changing student group", result);
-        return result;// TODO ui if result == 1 a group was changed correctly, if == 0 - student id or
+        return studentDAOImpl.changeGroup(studentID, groupID);// TODO ui if result == 1 a group was changed correctly, if == 0 - student id or
                       // group id is incorrect
     }
 
@@ -93,7 +91,7 @@ public class StudentServiceImpl implements StudentService {
      */
     @Override
     public Optional<Student> findByID(int studentID) {
-        log.info("Find student by id {}", studentID);
+        log.trace("Find student by id {}", studentID);
         return studentDAOImpl.findByID(studentID);// TODO ui if student is empty - student with id {} is not exist
     }
 
@@ -102,7 +100,7 @@ public class StudentServiceImpl implements StudentService {
      */
     @Override
     public Optional<List<Student>> findAllStudents() {
-        log.info("Find all students");
+        log.trace("Find all students");
         return studentDAOImpl.findAllStudents();// TODO ui if list is empty - error occurred while take all students from the
                                                 // database
     }
@@ -112,7 +110,7 @@ public class StudentServiceImpl implements StudentService {
      */
     @Override
     public Optional<List<Student>> findStudentsByGroup(int groupID) {
-        log.info("Find students by group");
+        log.trace("Find students by group");
         return studentDAOImpl.findStudentsByGroup(groupID); // TODO ui if list is empty - Group id is incorrect
     }
 

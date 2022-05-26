@@ -51,12 +51,14 @@ public class TimetableServiceImpl implements TimetableService {
         LocalDate day = timetable.getDay().getDateOne();
         log.trace("Check if a day - {} is not a weekend", day);
         if (isWeekend(timetable.getDay().getDateOne())) {
-            throw new ServiceException("Can't schedule timetable for weedend");
+            log.error("Can't schedule timetable for weekend. Try to schedule {}.", timetable.getDay());
+            throw new ServiceException("Can't schedule timetable for weekend");
         }
         log.debug("Take a list of holidays from the database");
         if (holidayDAOImpl.findAllHolidays().isPresent()) {
             log.trace("Check if a day - {} is not a holiday", day);
             if (holidayDAOImpl.findAllHolidays().get().stream().anyMatch(holiday -> holiday.getDate().isEqual(day))) {
+                log.error("Can't schedule timetable for holiday. Try to schedule {}", timetable.getDay());
                 throw new ServiceException("Can't schedule timetable for holiday");
             }
         }

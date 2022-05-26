@@ -42,6 +42,8 @@ public class StudentDAOImpl implements StudentDAO {
     private final String ID_CARD_MAX_SIZE = "SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE UPPER (table_schema) = UPPER ('timetable') AND UPPER (table_name) = UPPER ('students') AND UPPER (column_name) = UPPER ('id_card');";
     private final String PASSWORD_MAX_SIZE = "SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE UPPER (table_schema) = UPPER ('timetable') AND UPPER (table_name) = UPPER ('students') AND UPPER (column_name) = UPPER ('password');";
     private static final Logger log = LoggerFactory.getLogger(StudentDAOImpl.class.getName());
+    private final String debugMessage = "Return count of rows otherwise returns zero. The result is {}";
+    private int result;
 
     /**
      * Returns instance of the class
@@ -58,9 +60,11 @@ public class StudentDAOImpl implements StudentDAO {
      */
     @Override
     public int addStudent(Student student) {
-        log.trace("Add new student to timetable.students and returns count of added rows otherwise returns zero");
-        return jdbcTemplate.update(ADD_STUDENT, student.getFirstName(), student.getLastName(), student.getGroupID(),
+        log.trace("Add new student to timetable.students");
+        result = jdbcTemplate.update(ADD_STUDENT, student.getFirstName(), student.getLastName(), student.getGroupID(),
                 student.getIdCard(), student.getFirstName(), student.getLastName(), student.getGroupID());
+        log.debug(debugMessage, result);
+        return result;
     }
 
     /**
@@ -68,8 +72,10 @@ public class StudentDAOImpl implements StudentDAO {
      */
     @Override
     public int deleteStudent(int studentID) {
-        log.trace("Delete student from the database and returns count of deleted rows otherwise returns zero");
-        return jdbcTemplate.update(DELETE_STUDENT, studentID);
+        log.trace("Delete student from the database");
+        result = jdbcTemplate.update(DELETE_STUDENT, studentID);
+        log.debug(debugMessage, result);
+        return result;
     }
 
     /**
@@ -77,8 +83,10 @@ public class StudentDAOImpl implements StudentDAO {
      */
     @Override
     public int changeGroup(int studentID, int groupID) {
-        log.trace("Change group id in the timetable.students and return count of updated rows otherwise returns zero");
-        return jdbcTemplate.update(CHANGE_GROUP, groupID, studentID, groupID, studentID);
+        log.trace("Change group id in the timetable.students");
+        result = jdbcTemplate.update(CHANGE_GROUP, groupID, studentID, groupID, studentID);
+        log.debug(debugMessage, result);
+        return result;
     }
 
     /**
@@ -86,9 +94,11 @@ public class StudentDAOImpl implements StudentDAO {
      */
     @Override
     public Optional<Student> findByID(int studentID) {
-        log.debug("Find a student by id and return optional student");
-        return jdbcTemplate.query(FIND_STUDENT_BY_ID, new Object[] { studentID }, new StudentMapper()).stream()
+        log.trace("Find a student by id");
+        Optional<Student> result = jdbcTemplate.query(FIND_STUDENT_BY_ID, new Object[] { studentID }, new StudentMapper()).stream()
                 .findFirst();
+        log.debug("Return optional student {}", result);
+        return result;
     }
 
     /**
@@ -96,8 +106,10 @@ public class StudentDAOImpl implements StudentDAO {
      */
     @Override
     public Optional<List<Student>> findAllStudents() {
-        log.debug("Find all students and return optional list of students");
-        return Optional.of(jdbcTemplate.query(FIND_ALL_STUDENTS, new StudentMapper()));
+        log.trace("Find all students and return optional list of students");
+        Optional<List<Student>> result = Optional.of(jdbcTemplate.query(FIND_ALL_STUDENTS, new StudentMapper()));
+        log.debug("Return optional list of students {}", result);
+        return result;
     }
 
     /**
@@ -105,8 +117,10 @@ public class StudentDAOImpl implements StudentDAO {
      */
     @Override
     public Optional<List<Student>> findStudentsByGroup(int groupID) {
-        log.debug("Find all students by group id and return optional list of students");
-        return Optional.of(jdbcTemplate.query(FIND_STUDENTS_BY_GROUP, new Object[] { groupID }, new StudentMapper()));
+        log.trace("Find all students by group id");
+        Optional<List<Student>> result = Optional.of(jdbcTemplate.query(FIND_STUDENTS_BY_GROUP, new Object[] { groupID }, new StudentMapper()));
+        log.debug("Return optional list of students {}", result);
+        return result;
     }
 
     /**
@@ -114,8 +128,10 @@ public class StudentDAOImpl implements StudentDAO {
      */
     @Override
     public int changePassword(int studentID, String newPassword) {
-        log.trace("Change password in the timetable.students and return count of updated rows otherwise returns zero");
-        return jdbcTemplate.update(CHANGE_PASSWORD, newPassword, studentID);
+        log.trace("Change password in the timetable.students for student {}", studentID);
+        result = jdbcTemplate.update(CHANGE_PASSWORD, newPassword, studentID);
+        log.debug(debugMessage, result);
+        return result;
     }
 
     /**
@@ -126,7 +142,7 @@ public class StudentDAOImpl implements StudentDAO {
         log.trace("Change student's name and surname and return count of updated rows otherwise zero");
         int countOfStudents = jdbcTemplate.queryForObject(COUNT_OF_STUDENTS, Integer.class);
         log.debug("Took count of students {} from the timetable.students", countOfStudents);
-        int result = 0;
+        result = 0;
         log.trace("Check if student id - {} is not out of bound", student.getId());
         if(student.getId() <= countOfStudents) {
         String firstName = student.getFirstName() == null
@@ -149,7 +165,9 @@ public class StudentDAOImpl implements StudentDAO {
     @Override
     public int getFirstNameMaxSize() {
         log.trace("Get the column 'fist_name' size");
-        return jdbcTemplate.queryForObject(FIRST_NAME_MAX_SIZE, Integer.class);
+        result = jdbcTemplate.queryForObject(FIRST_NAME_MAX_SIZE, Integer.class);
+        log.debug(debugMessage, result);
+        return result;
     }
     
     /**
@@ -158,7 +176,9 @@ public class StudentDAOImpl implements StudentDAO {
     @Override
     public int getLastNameMaxSize() {
         log.trace("Get the column 'last_name' size");
-        return jdbcTemplate.queryForObject(LAST_NAME_MAX_SIZE, Integer.class);
+        result = jdbcTemplate.queryForObject(LAST_NAME_MAX_SIZE, Integer.class);
+        log.debug(debugMessage, result);
+        return result;
     }
     
     /**
@@ -167,7 +187,9 @@ public class StudentDAOImpl implements StudentDAO {
     @Override
     public int getIdCardMaxSize() {
         log.trace("Get the column 'id_card' size");
-        return jdbcTemplate.queryForObject(ID_CARD_MAX_SIZE, Integer.class);
+        result = jdbcTemplate.queryForObject(ID_CARD_MAX_SIZE, Integer.class);
+        log.debug(debugMessage, result);
+        return result;
     }
 
     /**
@@ -176,6 +198,8 @@ public class StudentDAOImpl implements StudentDAO {
     @Override
     public int getPasswordMaxSize() {
         log.trace("Get the column 'password' size");
-        return jdbcTemplate.queryForObject(PASSWORD_MAX_SIZE, Integer.class);
+        result = jdbcTemplate.queryForObject(PASSWORD_MAX_SIZE, Integer.class);
+        log.debug(debugMessage, result);
+        return result;
     }
 }
