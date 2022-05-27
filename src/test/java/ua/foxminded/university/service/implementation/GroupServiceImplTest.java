@@ -34,7 +34,7 @@ class GroupServiceImplTest {
     @Test
     void addGroup_shouldThrowServiceException_whenInputIncorrectGroupName() {
         group = new Group.GroupBuilder().setName(createCountOfSymbols(maxGroupNameSize + 1)).setDepartmentID(1).build();
-        assertThrows(ServiceException.class, () -> groupServiceImpl.addGroup(group));
+        assertThrows(StringIndexOutOfBoundsException.class, () -> groupServiceImpl.addGroup(group));
     }
     
     @Test
@@ -45,7 +45,7 @@ class GroupServiceImplTest {
     @Test
     void addGroup_shouldThrowServiceExceptionMessage_whenInputIncorrectGroupName() {
         group = new Group.GroupBuilder().setName(createCountOfSymbols(maxGroupNameSize + 1)).setDepartmentID(1).build();
-        exception = assertThrows(ServiceException.class, () -> groupServiceImpl.addGroup(group));
+        exception = assertThrows(StringIndexOutOfBoundsException.class, () -> groupServiceImpl.addGroup(group));
         expectedMessage = "Group name is out of bound";
         actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
@@ -71,7 +71,7 @@ class GroupServiceImplTest {
     @Test
     void updateGroup_shouldThrowServiceException_whenInputIncorrectGroupName() {
         group = new Group.GroupBuilder().setName(createCountOfSymbols(maxGroupNameSize + 1)).setDepartmentID(1).build();
-        assertThrows(ServiceException.class, () -> groupServiceImpl.updateGroup(group));
+        assertThrows(StringIndexOutOfBoundsException.class, () -> groupServiceImpl.updateGroup(group));
     }
     
     @Test
@@ -82,7 +82,7 @@ class GroupServiceImplTest {
     @Test
     void updateGroup_shouldThrowServiceExceptionMessage_whenInputIncorrectGroupName() {
         group = new Group.GroupBuilder().setName(createCountOfSymbols(maxGroupNameSize + 1)).setDepartmentID(1).build();
-        exception = assertThrows(ServiceException.class, () -> groupServiceImpl.updateGroup(group));
+        exception = assertThrows(StringIndexOutOfBoundsException.class, () -> groupServiceImpl.updateGroup(group));
         expectedMessage = "Group name is out of bound";
         actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));

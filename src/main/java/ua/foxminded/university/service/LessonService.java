@@ -3,7 +3,6 @@ package ua.foxminded.university.service;
 import java.util.List;
 import java.util.Optional;
 
-import ua.foxminded.university.service.exception.ServiceException;
 import ua.foxminded.university.service.pojo.Lesson;
 
 /**
@@ -16,9 +15,8 @@ public interface LessonService {
      * 
      * @param lesson
      * @return count of added rows otherwise returns -1
-     * @throws ServiceException 
      */
-    int addLesson(Lesson lesson) throws ServiceException;
+    int addLesson(Lesson lesson);
 
     /**
      * Deletes lesson from the timetable.lessons
@@ -45,7 +43,6 @@ public interface LessonService {
      * The method lets update lesson's name and description and returns count of updated rows otherwise zero
      * @param lesson
      * @return count of updated rows otherwise zero
-     * @throws ServiceException 
      */
-    int updateLesson(Lesson lesson) throws ServiceException;
+    int updateLesson(Lesson lesson) ;
 }

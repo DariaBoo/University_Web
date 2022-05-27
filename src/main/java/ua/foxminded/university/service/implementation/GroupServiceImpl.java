@@ -43,7 +43,7 @@ public class GroupServiceImpl implements GroupService{
         log.trace("Check if group name - {} is not out of bound", group.getName());
         if(group.getName().length() > groupDAOImpl.getGroupNameMaxSize()) {
             log.error("Group name - {} is out of bound", group.getName());
-            throw new ServiceException("Group name is out of bound");
+            throw new StringIndexOutOfBoundsException("Group name is out of bound");
         }
         log.trace("Check if group name - {} matches the pattern {}", group.getName(), groupNamePattern);
         if(!group.getName().matches(groupNamePattern)) {
@@ -107,7 +107,7 @@ public class GroupServiceImpl implements GroupService{
         log.trace("Check if group name - {} is not out of bound", group.getName());
         if(group.getName().length() > groupDAOImpl.getGroupNameMaxSize()) {
             log.error("Group name - {} is out of bound", group.getName());
-            throw new ServiceException("Group name is out of bound");
+            throw new StringIndexOutOfBoundsException("Group name is out of bound");
         }
         log.trace("Check if group name - {} matches the pattern {}", group.getName(), groupNamePattern);
         if(!group.getName().matches(groupNamePattern)) {

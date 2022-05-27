@@ -66,7 +66,6 @@ public class HolidayDAOImpl implements HolidayDAO {
      */
     @Override
     public int getHolidayNameMaxSize() {
-        log.trace("Get max size of column holiday from the database");
         return jdbcTemplate.queryForObject(HOLIDAY_NAME_MAX_SIZE, Integer.class);
     }
 

@@ -33,22 +33,22 @@ class StudentServiceImplTest {
     @Test
     void addStudent_shouldThrowServiceException_whenInputIncorrectStudentData() {
         student = new Student.StudentBuilder().setFirstName(createCountOfSymbols(maxFirstNameSize + 1)).setLastName(createCountOfSymbols(maxLastNameSize + 1)).setIdCard(createCountOfSymbols(maxIdCardSize + 1)).build();
-        assertThrows(ServiceException.class, () -> studentServiceImpl.addStudent(student));
+        assertThrows(StringIndexOutOfBoundsException.class, () -> studentServiceImpl.addStudent(student));
     }
     @Test
     void addStudent_shouldThrowServiceException_whenInputIncorrectStudentName() {
         student = new Student.StudentBuilder().setFirstName(createCountOfSymbols(maxFirstNameSize + 1)).setLastName("Potter").setIdCard("12345").build();
-        assertThrows(ServiceException.class, () -> studentServiceImpl.addStudent(student));
+        assertThrows(StringIndexOutOfBoundsException.class, () -> studentServiceImpl.addStudent(student));
     }
     @Test
     void addStudent_shouldThrowServiceException_whenInputIncorrectStudentSurname() {
         student = new Student.StudentBuilder().setFirstName("Harry").setLastName(createCountOfSymbols(maxLastNameSize + 1)).setIdCard("12345").build();
-        assertThrows(ServiceException.class, () -> studentServiceImpl.addStudent(student));
+        assertThrows(StringIndexOutOfBoundsException.class, () -> studentServiceImpl.addStudent(student));
     }
     @Test
     void addStudent_shouldThrowServiceException_whenInputIncorrectStudentIdCard() {
         student = new Student.StudentBuilder().setFirstName("Harry").setLastName("Potter").setIdCard(createCountOfSymbols(maxIdCardSize + 1)).build();
-        assertThrows(ServiceException.class, () -> studentServiceImpl.addStudent(student));
+        assertThrows(StringIndexOutOfBoundsException.class, () -> studentServiceImpl.addStudent(student));
     }
     @Test
     void addStudent_shouldReturnResult_whenInputCorrectData() throws ServiceException {
@@ -58,17 +58,17 @@ class StudentServiceImplTest {
     @Test
     void updateStudent_shouldThrowServiceException_whenInputIncorrectStudentData() {
         student = new Student.StudentBuilder().setID(1).setFirstName(createCountOfSymbols(maxFirstNameSize + 1)).setLastName(createCountOfSymbols(maxLastNameSize + 1)).build();
-        assertThrows(ServiceException.class, () -> studentServiceImpl.updateStudent(student));
+        assertThrows(StringIndexOutOfBoundsException.class, () -> studentServiceImpl.updateStudent(student));
     }
     @Test
     void updateStudent_shouldThrowServiceException_whenInputIncorrectStudentName() {
         student = new Student.StudentBuilder().setID(1).setFirstName(createCountOfSymbols(maxFirstNameSize + 1)).setLastName("Potter").build();
-        assertThrows(ServiceException.class, () -> studentServiceImpl.updateStudent(student));
+        assertThrows(StringIndexOutOfBoundsException.class, () -> studentServiceImpl.updateStudent(student));
     }
     @Test
     void updateStudent_shouldThrowServiceException_whenInputIncorrectStudentSurname() {
         student = new Student.StudentBuilder().setID(1).setFirstName("Harry").setLastName(createCountOfSymbols(maxLastNameSize + 1)).build();
-        assertThrows(ServiceException.class, () -> studentServiceImpl.updateStudent(student));
+        assertThrows(StringIndexOutOfBoundsException.class, () -> studentServiceImpl.updateStudent(student));
     }
     @Test
     void updateStudent_shouldReturnResult_whenInputCorrectStudentData() throws ServiceException {
@@ -77,7 +77,7 @@ class StudentServiceImplTest {
     }
     @Test
     void changePasswod_shouldThrowServiceException_whenInputIncorrectPassword() {
-        assertThrows(ServiceException.class, () -> studentServiceImpl.changePassword(1, createCountOfSymbols(maxPasswordSize + 1)));
+        assertThrows(StringIndexOutOfBoundsException.class, () -> studentServiceImpl.changePassword(1, createCountOfSymbols(maxPasswordSize + 1)));
     }
     @Test
     void changePassword_shouldReturnResutl_whenInputCorrectData() throws ServiceException {

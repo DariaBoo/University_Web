@@ -220,10 +220,7 @@ public class TeacherDAOImpl implements TeacherDAO {
      */
     @Override
     public int getFirstNameMaxSize() {
-        log.trace("Get the column 'fist_name' size");
-        result = jdbcTemplate.queryForObject(FIRST_NAME_MAX_SIZE, Integer.class);
-        log.debug(debugMessage, result);
-        return result;
+        return jdbcTemplate.queryForObject(FIRST_NAME_MAX_SIZE, Integer.class);
     }
 
     /**
@@ -231,10 +228,7 @@ public class TeacherDAOImpl implements TeacherDAO {
      */
     @Override
     public int getLastNameMaxSize() {
-        log.trace("Get the column 'last_name' size");
-        result = jdbcTemplate.queryForObject(LAST_NAME_MAX_SIZE, Integer.class);
-        log.debug(debugMessage, result);
-        return result;
+        return jdbcTemplate.queryForObject(LAST_NAME_MAX_SIZE, Integer.class);
     }
 
     /**
@@ -242,10 +236,7 @@ public class TeacherDAOImpl implements TeacherDAO {
      */
     @Override
     public int getPositionMaxSize() {
-        log.trace("Get the column 'position' size");
-        result = jdbcTemplate.queryForObject(POSITION_MAX_SIZE, Integer.class);
-        log.debug(debugMessage, result);
-        return result;
+        return jdbcTemplate.queryForObject(POSITION_MAX_SIZE, Integer.class);
     }
 
     /**
@@ -253,9 +244,6 @@ public class TeacherDAOImpl implements TeacherDAO {
      */
     @Override
     public int getPasswordMaxSize() {
-        log.trace("Get the column 'password' size");
-        result = jdbcTemplate.queryForObject(PASSWORD_MAX_SIZE, Integer.class);
-        log.debug(debugMessage, result);
-        return result;
+        return jdbcTemplate.queryForObject(PASSWORD_MAX_SIZE, Integer.class);
     }
 }

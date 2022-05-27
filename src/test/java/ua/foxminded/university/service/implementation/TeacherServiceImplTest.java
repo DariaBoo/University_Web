@@ -40,7 +40,7 @@ class TeacherServiceImplTest {
     void addTeacher_shouldThrowServiceException_whenInputIncorrectTeacherData() {
         teacher = new Teacher.TeacherBuidler().setFirstName(createCountOfSymbols(maxFirstNameSize + 1)).setLastName(createCountOfSymbols(maxLastNameSize + 1))
                 .setPosition(createCountOfSymbols(maxPositionSize + 1)).setPassword(createCountOfSymbols(maxPasswordSize)).build();
-        assertThrows(ServiceException.class, () -> teacherServiceImpl.addTeacher(teacher));
+        assertThrows(StringIndexOutOfBoundsException.class, () -> teacherServiceImpl.addTeacher(teacher));
     }
     
     @Test
@@ -54,7 +54,7 @@ class TeacherServiceImplTest {
     void addTeacher_shouldThrowServiceExceptionMessage_whenInputIncorrectTeacherName() throws ServiceException {
         teacher = new Teacher.TeacherBuidler().setFirstName(createCountOfSymbols(maxFirstNameSize + 1)).setLastName("Voldemort")
                 .setPosition("professor of evil").setPassword("555").build();
-        exception = assertThrows(ServiceException.class, () -> teacherServiceImpl.addTeacher(teacher));
+        exception = assertThrows(StringIndexOutOfBoundsException.class, () -> teacherServiceImpl.addTeacher(teacher));
         expectedMessage = "Teacher's first name is out of bound.";
         actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
@@ -64,7 +64,7 @@ class TeacherServiceImplTest {
     void addTeacher_shouldThrowServiceExceptionMessage_whenInputIncorrectTeacherSurname() throws ServiceException {
         teacher = new Teacher.TeacherBuidler().setFirstName("Lord").setLastName(createCountOfSymbols(maxLastNameSize + 1))
                 .setPosition("professor of evil").setPassword("555").build();
-        exception = assertThrows(ServiceException.class, () -> teacherServiceImpl.addTeacher(teacher));
+        exception = assertThrows(StringIndexOutOfBoundsException.class, () -> teacherServiceImpl.addTeacher(teacher));
         expectedMessage = "Teacher's last name is out of bound.";
         actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
@@ -74,7 +74,7 @@ class TeacherServiceImplTest {
     void addTeacher_shouldThrowServiceExceptionMessage_whenInputIncorrectTeacherPosition() throws ServiceException {
         teacher = new Teacher.TeacherBuidler().setFirstName("Lord").setLastName("Voldemort")
                 .setPosition(createCountOfSymbols(maxPositionSize + 1)).setPassword("555").build();
-        exception = assertThrows(ServiceException.class, () -> teacherServiceImpl.addTeacher(teacher));
+        exception = assertThrows(StringIndexOutOfBoundsException.class, () -> teacherServiceImpl.addTeacher(teacher));
         expectedMessage = "Teacher's position is out of bound.";
         actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
@@ -84,7 +84,7 @@ class TeacherServiceImplTest {
     void addTeacher_shouldThrowServiceExceptionMessage_whenInputIncorrectTeacherPassword() throws ServiceException {
         teacher = new Teacher.TeacherBuidler().setFirstName("Lord").setLastName("Voldemort")
                 .setPosition("professor of evil").setPassword(createCountOfSymbols(maxPasswordSize + 1)).build();
-        exception = assertThrows(ServiceException.class, () -> teacherServiceImpl.addTeacher(teacher));
+        exception = assertThrows(StringIndexOutOfBoundsException.class, () -> teacherServiceImpl.addTeacher(teacher));
         expectedMessage = "Teacher's password is out of bound.";
         actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
@@ -92,7 +92,7 @@ class TeacherServiceImplTest {
     
     @Test
     void changePassword_shouldThrowServiceException_whenInputIncorrectPassword() {
-        assertThrows(ServiceException.class, () -> teacherServiceImpl.changePassword(1, createCountOfSymbols(maxPasswordSize + 1)));
+        assertThrows(StringIndexOutOfBoundsException.class, () -> teacherServiceImpl.changePassword(1, createCountOfSymbols(maxPasswordSize + 1)));
     }
     
     @Test
@@ -103,7 +103,7 @@ class TeacherServiceImplTest {
     @Test
     void updateTeacher_shouldThrowServiceException_whenInputIncorrectData() {
         teacher = new Teacher.TeacherBuidler().setFirstName(createCountOfSymbols(maxFirstNameSize + 1)).setLastName(createCountOfSymbols(maxLastNameSize + 1)).build();
-        assertThrows(ServiceException.class, () -> teacherServiceImpl.updateTeacher(teacher));
+        assertThrows(StringIndexOutOfBoundsException.class, () -> teacherServiceImpl.updateTeacher(teacher));
     }
     
     @Test
@@ -115,7 +115,7 @@ class TeacherServiceImplTest {
     @Test
     void updateTeacher_shouldThrowServiceExceptionMessage_whenInputIncorrectData() {
         teacher = new Teacher.TeacherBuidler().setID(1).setFirstName(createCountOfSymbols(maxFirstNameSize + 1)).setLastName("Voldemort").build();
-        exception = assertThrows(ServiceException.class, () -> teacherServiceImpl.addTeacher(teacher));
+        exception = assertThrows(StringIndexOutOfBoundsException.class, () -> teacherServiceImpl.addTeacher(teacher));
         expectedMessage = "Teacher's first name is out of bound.";
         actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
@@ -124,7 +124,7 @@ class TeacherServiceImplTest {
     @Test
     void updateTeacher_shouldThrowServiceExceptionMessage_whenInputIncorrectTeacherSurname() throws ServiceException {
         teacher = new Teacher.TeacherBuidler().setID(1).setFirstName("Lord").setLastName(createCountOfSymbols(maxLastNameSize + 1)).build();
-        exception = assertThrows(ServiceException.class, () -> teacherServiceImpl.addTeacher(teacher));
+        exception = assertThrows(StringIndexOutOfBoundsException.class, () -> teacherServiceImpl.addTeacher(teacher));
         expectedMessage = "Teacher's last name is out of bound.";
         actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));

@@ -129,9 +129,6 @@ public class GroupDAOImpl implements GroupDAO {
      */
     @Override
     public int getGroupNameMaxSize() {
-        log.trace("Get the column 'group_name' size");
-        result = jdbcTemplate.queryForObject(GROUP_NAME_MAX_SIZE, Integer.class);
-        log.debug(debugMessage, result);
-        return result;
+        return jdbcTemplate.queryForObject(GROUP_NAME_MAX_SIZE, Integer.class);
     }
 }

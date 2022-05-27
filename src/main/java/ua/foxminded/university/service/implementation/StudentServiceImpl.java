@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import ua.foxminded.university.dao.implementation.StudentDAOImpl;
 import ua.foxminded.university.service.StudentService;
-import ua.foxminded.university.service.exception.ServiceException;
 import ua.foxminded.university.service.pojo.Student;
 
 /**
@@ -36,28 +35,28 @@ public class StudentServiceImpl implements StudentService {
      * {@inheritDoc}
      */
     @Override
-    public int addStudent(Student student) throws ServiceException {
+    public int addStudent(Student student) {
         log.trace("Add new student {}", student);
         int result = 0;
         log.trace("Check if student's first name is not out of bound");
         if (student.getFirstName().length() > studentDAOImpl.getFirstNameMaxSize()) {
-            log.error("Student first name is out of bound.");
-            throw new ServiceException("Student first name is out of bound.");
+            log.error("Student first name - {} is out of bound.", student.getFirstName());
+            throw new StringIndexOutOfBoundsException("Student first name is out of bound.");
         }
         log.trace("Check if student's last name is not out of bound");
         if (student.getLastName().length() > studentDAOImpl.getLastNameMaxSize()) {
-            log.error("Student last name is out of bound.");
-            throw new ServiceException("Student last name is out of bound.");
+            log.error("Student last name - {} is out of bound.", student.getLastName());
+            throw new StringIndexOutOfBoundsException("Student last name is out of bound.");
         }
         log.trace("Check if student's id card is not out of bound");
         if (student.getIdCard().length() > studentDAOImpl.getIdCardMaxSize()) {
-            log.error("Student id card is out of bound.");
-            throw new ServiceException("Student id card is out of bound.");
+            log.error("Student id card - {} is out of bound.", student.getIdCard());
+            throw new StringIndexOutOfBoundsException("Student id card is out of bound.");
         }
         log.trace("Check if student's password is not out of bound");
         if (student.getPassword().length() > studentDAOImpl.getPasswordMaxSize()) {
             log.error("Student password is out of bound.");
-            throw new ServiceException("Student password is out of bound.");
+            throw new StringIndexOutOfBoundsException("Student password is out of bound.");
         }
         result = studentDAOImpl.addStudent(student);
         log.debug("Took a result {} of adding a new student", result);
@@ -118,7 +117,7 @@ public class StudentServiceImpl implements StudentService {
      * {@inheritDoc}
      */
     @Override
-    public int changePassword(int studentID, String newPassword) throws ServiceException {
+    public int changePassword(int studentID, String newPassword) {
         log.trace("Change student password");
         int result = 0;
         log.trace("Check the size of password {}", newPassword);
@@ -127,7 +126,7 @@ public class StudentServiceImpl implements StudentService {
             log.debug("Took the result {} of changing password", result);
         } else {
             log.error("A password can't be more than 10 symbols. Current password length {}", newPassword.length());
-            throw new ServiceException("A password can't be more than 10 symbols");
+            throw new StringIndexOutOfBoundsException("A password can't be more than 10 symbols");
         }
         return result;
     }
@@ -136,18 +135,18 @@ public class StudentServiceImpl implements StudentService {
      * {@inheritDoc}
      */
     @Override
-    public int updateStudent(Student student) throws ServiceException {
+    public int updateStudent(Student student) {
         log.trace("Update existed student {}", student);
         int result = 0;
         log.trace("Check if student's first name is not out of bound");
         if (student.getFirstName().length() > studentDAOImpl.getFirstNameMaxSize()) {
-            log.error("Student first name is out of bound.");
-            throw new ServiceException("Student first name is out of bound.");
+            log.error("Student first name - {} is out of bound.", student.getFirstName());
+            throw new StringIndexOutOfBoundsException("Student first name is out of bound.");
         }
         log.trace("Check if student's last name is not out of bound");
         if (student.getLastName().length() > studentDAOImpl.getLastNameMaxSize()) {
-            log.error("Student last name is out of bound.");
-            throw new ServiceException("Student last name is out of bound.");
+            log.error("Student last name - {} is out of bound.", student.getLastName());
+            throw new StringIndexOutOfBoundsException("Student last name is out of bound.");
         }
         result = studentDAOImpl.updateStudent(student);
         log.debug("Took a result {} of updating a student", result);

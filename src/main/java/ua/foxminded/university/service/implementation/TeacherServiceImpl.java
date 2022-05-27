@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import ua.foxminded.university.dao.implementation.TeacherDAOImpl;
 import ua.foxminded.university.service.TeacherService;
-import ua.foxminded.university.service.exception.ServiceException;
 import ua.foxminded.university.service.pojo.Day;
 import ua.foxminded.university.service.pojo.Teacher;
 
@@ -36,31 +35,30 @@ public class TeacherServiceImpl implements TeacherService{
 
     /**
      * {@inheritDoc}
-     * @throws ServiceException 
      */
     @Override
-    public int addTeacher(Teacher teacher) throws ServiceException {
+    public int addTeacher(Teacher teacher) {
         log.trace("Add new teacher {}", teacher);
         int result = 0;
         log.trace("Check if teacher's first name is not out of bound");
         if (teacher.getFirstName().length() > teacherDAOImpl.getFirstNameMaxSize()) {
-            log.error("Teacher's first name is out of bound.");
-            throw new ServiceException("Teacher's first name is out of bound.");
+            log.error("Teacher's first name - {} is out of bound.", teacher.getFirstName());
+            throw new StringIndexOutOfBoundsException("Teacher's first name is out of bound.");
         }
         log.trace("Check if teacher's last name is not out of bound");
         if (teacher.getLastName().length() > teacherDAOImpl.getLastNameMaxSize()) {
-            log.error("Teacher's last name is out of bound.");
-            throw new ServiceException("Teacher's last name is out of bound.");
+            log.error("Teacher's last name -{} is out of bound.", teacher.getLastName());
+            throw new StringIndexOutOfBoundsException("Teacher's last name is out of bound.");
         }
         log.trace("Check if teacher's position is not out of bound");
         if (teacher.getPosition().length() > teacherDAOImpl.getPositionMaxSize()) {
-            log.error("Teacher's position is out of bound.");
-            throw new ServiceException("Teacher's position is out of bound.");
+            log.error("Teacher's position - {} is out of bound.", teacher.getPosition());
+            throw new StringIndexOutOfBoundsException("Teacher's position is out of bound.");
         }
         log.trace("Check if teacher's password is not out of bound");
         if (teacher.getPassword().length() > teacherDAOImpl.getPasswordMaxSize()) {
             log.error("Teacher's password is out of bound.");
-            throw new ServiceException("Teacher's password is out of bound.");
+            throw new StringIndexOutOfBoundsException("Teacher's password is out of bound.");
         }
         result = teacherDAOImpl.addTeacher(teacher);
         log.debug("Took a result {} of adding a new teacher", result);
@@ -100,11 +98,11 @@ public class TeacherServiceImpl implements TeacherService{
      * {@inheritDoc}
      */
     @Override
-    public int changePosition(int teacherID, String position) throws ServiceException {
+    public int changePosition(int teacherID, String position) {
         log.trace("Change teacher's position to {}, teacher id {}", position, teacherID);
         if(position.length() > teacherDAOImpl.getPositionMaxSize()) {
             log.error("Position - {} is out of bound", position);
-            throw new ServiceException("Position is out of bound");
+            throw new StringIndexOutOfBoundsException("Position is out of bound");
         }
         return teacherDAOImpl.changePosition(teacherID, position);
     }
@@ -158,12 +156,12 @@ public class TeacherServiceImpl implements TeacherService{
      * {@inheritDoc}
      */
     @Override
-    public int changePassword(int teacherID, String newPassword) throws ServiceException {
+    public int changePassword(int teacherID, String newPassword) {
         log.trace("Change teacher's password");
         log.info("Check is new password is not bigger then 10 symbols");
         if(newPassword.length() > teacherDAOImpl.getPasswordMaxSize()) {
             log.error("Password can't be more than 10 symbols. Password length {}", newPassword.length());
-            throw new ServiceException("Password can't be more than 10 symbols");
+            throw new StringIndexOutOfBoundsException("Password can't be more than 10 symbols");
         }
         return teacherDAOImpl.changePassword(teacherID, newPassword);
     }
@@ -172,18 +170,18 @@ public class TeacherServiceImpl implements TeacherService{
      * {@inheritDoc}
      */
     @Override
-    public int updateTeacher(Teacher teacher) throws ServiceException {
+    public int updateTeacher(Teacher teacher) {
         log.trace("Update existed teacher {}", teacher);
         int result = 0;
         log.trace("Check if teacher's first name is not out of bound");
         if (teacher.getFirstName().length() > teacherDAOImpl.getFirstNameMaxSize()) {
             log.error("Teacher first name is out of bound.");
-            throw new ServiceException("Teacher first name is out of bound.");
+            throw new StringIndexOutOfBoundsException("Teacher first name is out of bound.");
         }
         log.trace("Check if teacher's last name is not out of bound");
         if (teacher.getLastName().length() > teacherDAOImpl.getLastNameMaxSize()) {
             log.error("Teachert last name is out of bound.");
-            throw new ServiceException("Teacher last name is out of bound.");
+            throw new StringIndexOutOfBoundsException("Teacher last name is out of bound.");
         }
         result = teacherDAOImpl.updateTeacher(teacher);
         log.debug("Took a result {} of updating a teacher", result);

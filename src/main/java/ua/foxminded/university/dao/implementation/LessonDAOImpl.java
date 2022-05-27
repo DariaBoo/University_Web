@@ -119,7 +119,6 @@ public class LessonDAOImpl implements LessonDAO {
      */
     @Override
     public int getLessonNameMaxSize() {
-        log.trace("Get max size of column lesson_name");
         return jdbcTemplate.queryForObject(LESSON_NAME_MAX_SIZE, Integer.class);
     }
 
@@ -128,7 +127,6 @@ public class LessonDAOImpl implements LessonDAO {
      */
     @Override
     public int getDescriptionMaxSize() {
-        log.trace("Get max size of column description");
         return jdbcTemplate.queryForObject(DESCRIPTION_MAX_SIZE, Integer.class);
     }
 

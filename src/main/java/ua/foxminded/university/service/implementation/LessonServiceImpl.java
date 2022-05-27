@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import ua.foxminded.university.dao.implementation.LessonDAOImpl;
 import ua.foxminded.university.service.LessonService;
-import ua.foxminded.university.service.exception.ServiceException;
 import ua.foxminded.university.service.pojo.Lesson;
 
 /**
@@ -36,16 +35,16 @@ public class LessonServiceImpl implements LessonService{
      * {@inheritDoc}
      */
     @Override
-    public int addLesson(Lesson lesson) throws ServiceException {
+    public int addLesson(Lesson lesson) {
         log.trace("Add new lesson to the database");
         log.trace("Check is lesson name - {} is not out of bound", lesson.getName());
         if(lesson.getName().length() > lessonDaoImpl.getLessonNameMaxSize()) {
             log.error("Lesson name - {} is out of bound", lesson.getName());
-            throw new ServiceException("Lesson name is out of bound.");
+            throw new StringIndexOutOfBoundsException("Lesson name is out of bound.");
         }
         if(lesson.getDescription().length() > lessonDaoImpl.getDescriptionMaxSize()) {
             log.error("Lesson description - {} is out of bound", lesson.getDescription());
-            throw new ServiceException("Lesson description is out of bound.");
+            throw new StringIndexOutOfBoundsException("Lesson description is out of bound.");
         }       
         return lessonDaoImpl.addLesson(lesson);
     }
@@ -81,17 +80,17 @@ public class LessonServiceImpl implements LessonService{
      * {@inheritDoc}
      */
     @Override
-    public int updateLesson(Lesson lesson) throws ServiceException {
+    public int updateLesson(Lesson lesson) {
         log.trace("Update lesson name and description");
         log.trace("Check is lesson name - {} is not out of bound.", lesson.getName());
         if(lesson.getName().length() > lessonDaoImpl.getLessonNameMaxSize()) {
             log.error("Lesson name is out of bound");
-            throw new ServiceException("Lesson name is out of bound.");
+            throw new StringIndexOutOfBoundsException("Lesson name is out of bound.");
         }
         log.trace("Check is description - {} is not out of bound", lesson.getDescription());
         if(lesson.getDescription().length() > lessonDaoImpl.getDescriptionMaxSize()) {
             log.error("Description is out of bound");
-            throw new ServiceException("Lesson description is out of bound.");
+            throw new StringIndexOutOfBoundsException("Lesson description is out of bound.");
         }        
         return lessonDaoImpl.updateLesson(lesson);
     }

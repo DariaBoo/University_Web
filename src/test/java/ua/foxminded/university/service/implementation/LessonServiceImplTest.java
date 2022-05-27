@@ -32,7 +32,7 @@ class LessonServiceImplTest {
     @Test
     void addLesson_shouldThrowServiceException_whenInputIncorrectLessonData() {
         lesson = new Lesson.LessonBuilder().setName(createCountOfSymbols(maxLessonNameSize + 1)).setDescription(createCountOfSymbols(maxDexcriptionSize + 1)).build();
-        assertThrows(ServiceException.class, () -> lessonServiceImpl.addLesson(lesson));
+        assertThrows(StringIndexOutOfBoundsException.class, () -> lessonServiceImpl.addLesson(lesson));
         
     }
     @Test
@@ -43,7 +43,7 @@ class LessonServiceImplTest {
     @Test
     void addLesson_shouldThrowServiceExceptionMessage_whenInputIncorrectLessonName() {
         lesson = new Lesson.LessonBuilder().setName(createCountOfSymbols(maxLessonNameSize + 1)).setDescription("sport").build();
-        exception = assertThrows(ServiceException.class, () -> lessonServiceImpl.addLesson(lesson));
+        exception = assertThrows(StringIndexOutOfBoundsException.class, () -> lessonServiceImpl.addLesson(lesson));
         expectedMessage = "Lesson name is out of bound.";
         actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
@@ -51,7 +51,7 @@ class LessonServiceImplTest {
     @Test
     void addLesson_shouldThrowServiceExceptionMessage_whenInputIncorrectDescription() {
         lesson = new Lesson.LessonBuilder().setName("Quidditch").setDescription(createCountOfSymbols(maxDexcriptionSize + 1)).build();
-        exception = assertThrows(ServiceException.class, () -> lessonServiceImpl.addLesson(lesson));
+        exception = assertThrows(StringIndexOutOfBoundsException.class, () -> lessonServiceImpl.addLesson(lesson));
         expectedMessage = "Lesson description is out of bound.";
         actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
@@ -59,7 +59,7 @@ class LessonServiceImplTest {
     @Test
     void updateLesson_shouldThrowServiceException_whenInputIncorrectLessonData() {
         lesson = new Lesson.LessonBuilder().setID(1).setName(createCountOfSymbols(maxLessonNameSize + 1)).setDescription(createCountOfSymbols(maxDexcriptionSize + 1)).build();
-        assertThrows(ServiceException.class, () -> lessonServiceImpl.updateLesson(lesson));
+        assertThrows(StringIndexOutOfBoundsException.class, () -> lessonServiceImpl.updateLesson(lesson));
     }
     @Test
     void updateLesson_shouldReturnResult_whenInputCorrectLessonData() throws ServiceException {
@@ -69,7 +69,7 @@ class LessonServiceImplTest {
     @Test
     void updateLesson_shouldThrowServiceExceptionMessage_whenInputIncorrectLessonName() {
         lesson = new Lesson.LessonBuilder().setName(createCountOfSymbols(maxLessonNameSize + 1)).setDescription("sport").build();
-        exception = assertThrows(ServiceException.class, () -> lessonServiceImpl.updateLesson(lesson));
+        exception = assertThrows(StringIndexOutOfBoundsException.class, () -> lessonServiceImpl.updateLesson(lesson));
         expectedMessage = "Lesson name is out of bound.";
         actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
@@ -77,7 +77,7 @@ class LessonServiceImplTest {
     @Test
     void updateLesson_shouldThrowServiceExceptionMessage_whenInputIncorrectDescription() {
         lesson = new Lesson.LessonBuilder().setName("Quidditch").setDescription(createCountOfSymbols(maxDexcriptionSize + 1)).build();
-        exception = assertThrows(ServiceException.class, () -> lessonServiceImpl.updateLesson(lesson));
+        exception = assertThrows(StringIndexOutOfBoundsException.class, () -> lessonServiceImpl.updateLesson(lesson));
         expectedMessage = "Lesson description is out of bound.";
         actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));

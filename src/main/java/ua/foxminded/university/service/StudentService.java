@@ -3,7 +3,6 @@ package ua.foxminded.university.service;
 import java.util.List;
 import java.util.Optional;
 
-import ua.foxminded.university.service.exception.ServiceException;
 import ua.foxminded.university.service.pojo.Student;
 
 /**
@@ -17,9 +16,8 @@ public interface StudentService {
      * Add new student to the timetable.students, if student was added returns 1 otherwise returns 0
      * @param student
      * @return 1 or 0
-     * @throws ServiceException
      */
-    int addStudent(Student student) throws ServiceException;
+    int addStudent(Student student) ;
     
     /**
      * Delete existed student from the timetable.students, if student was deleted returns 1 otherwise returns 0
@@ -60,16 +58,14 @@ public interface StudentService {
      * @param studentID
      * @param newPassword
      * @return count of updated rows otherwise 0
-     * @throws ServiceException 
      */
-    int changePassword(int studentID, String newPassword) throws ServiceException;
+    int changePassword(int studentID, String newPassword) ;
     
     /**
      * The method updates student name and surname
      * @param student
      * @return count of updated rows otherwise 0
-     * @throws ServiceException 
      */
-    int updateStudent(Student student) throws ServiceException;
+    int updateStudent(Student student);
 
 }

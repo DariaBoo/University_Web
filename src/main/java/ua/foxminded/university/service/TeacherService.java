@@ -3,7 +3,6 @@ package ua.foxminded.university.service;
 import java.util.List;
 import java.util.Optional;
 
-import ua.foxminded.university.service.exception.ServiceException;
 import ua.foxminded.university.service.pojo.Day;
 import ua.foxminded.university.service.pojo.Teacher;
 
@@ -17,9 +16,8 @@ public interface TeacherService {
      * 
      * @param teacher
      * @return count of added rows otherwise -1
-     * @throws ServiceException 
      */
-    int addTeacher(Teacher teacher) throws ServiceException;
+    int addTeacher(Teacher teacher) ;
 
     /**
      * Deletes teacher from the timetable.teachers
@@ -53,9 +51,8 @@ public interface TeacherService {
      * @param teacherID existed teacher id
      * @param position
      * @return count of updated rows otherwise -1
-     * @throws ServiceException 
      */
-    int changePosition(int teacherID, String position) throws ServiceException;
+    int changePosition(int teacherID, String position) ;
 
     /**
      * The method set date start and date end of teacher's absent
@@ -100,15 +97,13 @@ public interface TeacherService {
      * @param teacherID
      * @param newPassword
      * @return count of updated rows otherwise 0
-     * @throws ServiceException 
      */
-    int changePassword(int teacherID, String newPassword) throws ServiceException;
+    int changePassword(int teacherID, String newPassword) ;
     
     /**
      * The method lets update teacher's first name and last name and returns count of updated rows otherwise zero
      * @param teacher
      * @return count of updated rows otherwise zero
-     * @throws ServiceException 
      */
-    int updateTeacher(Teacher teacher) throws ServiceException;
+    int updateTeacher(Teacher teacher) ;
 }
