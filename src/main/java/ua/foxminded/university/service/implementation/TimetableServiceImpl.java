@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.dao.implementation.HolidayDAOImpl;
 import ua.foxminded.university.dao.implementation.TimetableDAOImpl;
 import ua.foxminded.university.service.TimetableService;
@@ -44,11 +45,13 @@ public class TimetableServiceImpl implements TimetableService {
 
     /**
      * {@inheritDoc}
+     * @throws DAOException 
      */
     @Override
-    public int scheduleTimetable(DayTimetable timetable) throws ServiceException {
+    public int scheduleTimetable(DayTimetable timetable) throws ServiceException, DAOException {
         log.trace("Schedule day timetable");
         LocalDate day = timetable.getDay().getDateOne();
+        int result = 0;
         log.trace("Check if a day - {} is not a weekend", day);
         if (isWeekend(timetable.getDay().getDateOne())) {
             log.error("Can't schedule timetable for weekend. Try to schedule {}.", timetable.getDay());
@@ -63,7 +66,13 @@ public class TimetableServiceImpl implements TimetableService {
             }
         }
         log.info("Schedule timetable");
-        return timetableDAOImpl.scheduleTimetable(timetable);
+        try {
+            result = timetableDAOImpl.scheduleTimetable(timetable);
+        } catch (DAOException e) {
+            log.error("Can't schedule timetable. No available teachers");
+            throw new ServiceException("Can't shcedule timetable.", e);
+        }
+        return result;
     }
 
     /**

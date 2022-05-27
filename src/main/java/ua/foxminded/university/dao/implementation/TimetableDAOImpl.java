@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import ua.foxminded.university.dao.TimetableDAO;
+import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.dao.implementation.mapper.DayTimetableMapper;
 import ua.foxminded.university.service.pojo.Day;
 import ua.foxminded.university.service.pojo.DayTimetable;
@@ -71,7 +72,7 @@ public class TimetableDAOImpl implements TimetableDAO {
      * {@inheritDoc}
      */
     @Override
-    public int scheduleTimetable(DayTimetable timetable) {
+    public int scheduleTimetable(DayTimetable timetable) throws DAOException {
         log.trace("Start to schedule day timetable");
         int result = 0;
         int lessonID = timetable.getLesson().getId();
@@ -142,14 +143,17 @@ public class TimetableDAOImpl implements TimetableDAO {
                 new Object[] { groupID, day.getDateOne(), day.getLessonTimePeriod() }, Integer.class);
     }
 
-    private int selectAvailableTeacher(int lessonID, Day day) {
+    private int selectAvailableTeacher(int lessonID, Day day) throws DAOException {
         log.trace("Select available teacher for date {} and time {}", day.getDateOne(), day.getLessonTimePeriod());
+        int result = 0;
         try {
-            return jdbcTemplate.queryForObject(SELECT_AVAILABLE_TEACHER, new Object[] { day.getDateOne(),
+            result = jdbcTemplate.queryForObject(SELECT_AVAILABLE_TEACHER, new Object[] { day.getDateOne(),
                     day.getDateOne(), day.getDateOne(), day.getLessonTimePeriod(), lessonID }, Integer.class);
         } catch (EmptyResultDataAccessException e) {
-            return 0;
+            log.error("No available teachers for this time {} and date {}.", day.getLessonTimePeriod(), day.getDateOne());
+            throw new DAOException("No available teachers for this time and date.");
         }
+        return result;
     }
 
 }

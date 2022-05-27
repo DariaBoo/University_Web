@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.service.exception.ServiceException;
 import ua.foxminded.university.service.pojo.Day;
 import ua.foxminded.university.service.pojo.DayTimetable;
@@ -24,8 +25,9 @@ public interface TimetableService {
      * @param timetable includes lesson id, group id, date and lesson time period
      * @return count of added rows otherwise -1
      * @throws ServiceException 
+     * @throws DAOException 
      */
-    int scheduleTimetable(DayTimetable timetable) throws ServiceException;
+    int scheduleTimetable(DayTimetable timetable) throws ServiceException, DAOException;
 
     /**
      * Deletes scheduled timetable by timetable id

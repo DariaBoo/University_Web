@@ -12,6 +12,7 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import ua.foxminded.university.config.SpringConfigTest;
+import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.service.exception.ServiceException;
 import ua.foxminded.university.service.pojo.Day;
 import ua.foxminded.university.service.pojo.DayTimetable;
@@ -49,7 +50,7 @@ class TimetableServiceImplTest {
     }    
     
     @Test
-    void scheduleTimetable_shouldReturnResult_whenInputTimetableWithWeekDayNotHoliday() throws ServiceException {
+    void scheduleTimetable_shouldReturnResult_whenInputTimetableWithWeekDayNotHoliday() throws ServiceException, DAOException {
         day.setDateOne(LocalDate.of(2022, 01, 03));
         lesson = new Lesson.LessonBuilder().setID(4).build();
         group = new Group.GroupBuilder().setID(2).build();
