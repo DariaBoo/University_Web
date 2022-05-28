@@ -283,6 +283,9 @@ INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id) VALUES 
 INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-01', '08:00 - 09:20', 1, 1, 1, 201);
 INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-01', '08:00 - 09:20', 1, 1, 2, 201);
 INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-02', '08:00 - 09:20', 1, 1, 1, 201);
+INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-03', '08:00 - 09:20', 1, 1, 1, 301);
+INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-03', '08:00 - 09:20', 1, 1, 1, 204);
+INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-03', '08:00 - 09:20', 1, 1, 1, 201);
 
 INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-01-01', 'NEW YEAR');
 INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-01-06', 'THREE KINGS DAY');

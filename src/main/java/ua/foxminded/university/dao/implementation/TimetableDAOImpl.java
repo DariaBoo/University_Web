@@ -87,8 +87,9 @@ public class TimetableDAOImpl implements TimetableDAO {
         int roomID = selectSuitableRoom(groupID, day);
         log.info("Took room id {} from the method selectAvailableRoom", roomID);
         if (teacherID > 0 && roomID > 0) {
-            result = jdbcTemplate.update(SCHEDULE_TIMETABLE, day.getDateOne(), day.getLessonTimePeriod(), lessonID, groupID,
-                    teacherID, roomID, day.getDateOne(), day.getLessonTimePeriod(), lessonID, groupID, groupID, lessonID);
+            result = jdbcTemplate.update(SCHEDULE_TIMETABLE, day.getDateOne(), day.getLessonTimePeriod(), lessonID,
+                    groupID, teacherID, roomID, day.getDateOne(), day.getLessonTimePeriod(), lessonID, groupID, groupID,
+                    lessonID);
         }
         return result;
     }
@@ -98,7 +99,7 @@ public class TimetableDAOImpl implements TimetableDAO {
      */
     @Override
     public int deleteTimetable(int timetbleID) {
-        log.trace("Delete dayTimetable from the database");        
+        log.trace("Delete dayTimetable from the database");
         int result = jdbcTemplate.update(DELETE_TIMETABLE, timetbleID, LocalDate.now());
         log.debug("Return count of deleted rows otherwise returns zero. The result is {}", result);
         return result;
@@ -138,20 +139,28 @@ public class TimetableDAOImpl implements TimetableDAO {
                 .map(date -> getDayTimetable(date, user)).collect(Collectors.toList());
     }
 
-    private int selectSuitableRoom(int groupID, Day day) {
+    private int selectSuitableRoom(int groupID, Day day) throws DAOException {
         log.trace("Select available room  for date {} and time {}", day.getDateOne(), day.getLessonTimePeriod());
-        return jdbcTemplate.queryForObject(SELECT_SUITABLE_ROOM,
-                new Object[] { groupID, day.getDateOne(), day.getLessonTimePeriod() }, Integer.class);
+        int result = 0;
+        try {
+            result = jdbcTemplate.queryForObject(SELECT_SUITABLE_ROOM,
+                    new Object[] { groupID, day.getDateOne(), day.getLessonTimePeriod() }, Integer.class);
+        } catch (EmptyResultDataAccessException e) {
+            log.error("No available rooms for this time {} and date {}.", day.getLessonTimePeriod(), day.getDateOne());
+            throw new DAOException("No available rooms for this time and date. Can't schedule timetable.", e);
+        }
+        return result;
     }
 
     private int selectAvailableTeacher(int lessonID, Day day) throws DAOException {
         log.trace("Select available teacher for date {} and time {}", day.getDateOne(), day.getLessonTimePeriod());
-        int result = 0;       
+        int result = 0;
         try {
             result = jdbcTemplate.queryForObject(SELECT_AVAILABLE_TEACHER, new Object[] { day.getDateOne(),
                     day.getDateOne(), day.getDateOne(), day.getLessonTimePeriod(), lessonID }, Integer.class);
         } catch (EmptyResultDataAccessException e) {
-            log.error("No available teachers for this time {} and date {}.", day.getLessonTimePeriod(), day.getDateOne());
+            log.error("No available teachers for this time {} and date {}.", day.getLessonTimePeriod(),
+                    day.getDateOne());
             throw new DAOException("No available teachers for this time and date. Can't schedule timetable.", e);
         }
         return result;

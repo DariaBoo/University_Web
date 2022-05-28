@@ -86,6 +86,16 @@ class TimetableDAOImplTest {
 
         assertThrows(DAOException.class, () -> timetable.scheduleTimetable(dayTimetable));
     }
+    
+    @Test
+    void scheduleTimetable_shouldThrowDAOException_whenIsNoAvailableRooms() throws DAOException {
+    day.setDateOne(LocalDate.of(2023, 04, 03));
+    lesson = new Lesson.LessonBuilder().setID(1).build();
+    group = new Group.GroupBuilder().setID(1).build();
+    dayTimetable = new DayTimetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
+    
+    assertThrows(DAOException.class, () -> timetable.scheduleTimetable(dayTimetable));
+    }
 
     @Test
     void deleteTimetable_shouldReturnCountOfDeletedRows_whenInputCorrectTimetableIDAndNotPastDate() {

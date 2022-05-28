@@ -68,7 +68,7 @@ public class TimetableServiceImpl implements TimetableService {
             result = timetableDAOImpl.scheduleTimetable(timetable);
             log.debug("Took the result - {} of shceduling timetable.", result);
         } catch (DAOException e) {
-            log.error("Can't schedule timetable. No available teacher for this date and time");
+            log.error("No available rooms or teachers. {}", e.getMessage());
             throw new NoSuchElementException(e.getMessage());
         }
         return result;
@@ -78,7 +78,7 @@ public class TimetableServiceImpl implements TimetableService {
      * {@inheritDoc}
      */
     @Override
-    public int deleteTimetable(int timetableID) {// TODO delete by day and time_period
+    public int deleteTimetable(int timetableID) {
         log.trace("Delete timetable by id");
         return timetableDAOImpl.deleteTimetable(timetableID);
     }
