@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ public class TimetableServiceImpl implements TimetableService {
 
     /**
      * Returns instance of the class
+     * 
      * @param timetableDAOImpl
      * @param holidayDAOImpl
      */
@@ -45,10 +47,9 @@ public class TimetableServiceImpl implements TimetableService {
 
     /**
      * {@inheritDoc}
-     * @throws DAOException 
      */
     @Override
-    public int scheduleTimetable(DayTimetable timetable) throws ServiceException, DAOException {
+    public int scheduleTimetable(DayTimetable timetable) {
         log.trace("Schedule day timetable");
         LocalDate day = timetable.getDay().getDateOne();
         int result = 0;
@@ -57,20 +58,18 @@ public class TimetableServiceImpl implements TimetableService {
             log.error("Can't schedule timetable for weekend. Try to schedule {}.", timetable.getDay());
             throw new ServiceException("Can't schedule timetable for weekend");
         }
-        log.debug("Take a list of holidays from the database");
-        if (holidayDAOImpl.findAllHolidays().isPresent()) {
-            log.trace("Check if a day - {} is not a holiday", day);
-            if (holidayDAOImpl.findAllHolidays().get().stream().anyMatch(holiday -> holiday.getDate().isEqual(day))) {
-                log.error("Can't schedule timetable for holiday. Try to schedule {}", timetable.getDay());
-                throw new ServiceException("Can't schedule timetable for holiday");
-            }
+        log.trace("Check if a day - {} is not a holiday", day);
+        if (isHoliday(day)) {
+            log.error("Can't schedule timetable for holiday. Try to schedule {}", timetable.getDay());
+            throw new ServiceException("Can't schedule timetable for holiday");
         }
         log.info("Schedule timetable");
         try {
             result = timetableDAOImpl.scheduleTimetable(timetable);
+            log.debug("Took the result - {} of shceduling timetable.", result);
         } catch (DAOException e) {
-            log.error("Can't schedule timetable. No available teachers");
-            throw new ServiceException("Can't shcedule timetable.", e);
+            log.error("Can't schedule timetable. No available teacher for this date and time");
+            throw new NoSuchElementException(e.getMessage());
         }
         return result;
     }
@@ -79,7 +78,7 @@ public class TimetableServiceImpl implements TimetableService {
      * {@inheritDoc}
      */
     @Override
-    public int deleteTimetable(int timetableID) {//TODO delete by day and time_period
+    public int deleteTimetable(int timetableID) {// TODO delete by day and time_period
         log.trace("Delete timetable by id");
         return timetableDAOImpl.deleteTimetable(timetableID);
     }
@@ -102,18 +101,28 @@ public class TimetableServiceImpl implements TimetableService {
         return timetableDAOImpl.getMonthTimetable(day, user);
     }
 
-    
     private boolean isWeekend(LocalDate date) {
-        log.trace("Check is input date - {] is weekend", date);
+        log.trace("Check is input date - {} is weekend", date);
         DayOfWeek dayOfWeek = DayOfWeek.of(date.get(ChronoField.DAY_OF_WEEK));
         switch (dayOfWeek) {
         case SATURDAY:
-            log.trace("Input date - {} is saturday", date);
+            log.info("Input date - {} is saturday", date);
             return true;
         case SUNDAY:
-            log.trace("Input date - {} is sunday", date);
+            log.info("Input date - {} is sunday", date);
             return true;
         }
         return false;
+    }
+
+    private boolean isHoliday(LocalDate day) {
+        boolean result = false;
+        log.debug("Take a list of holidays from the database");
+        if (holidayDAOImpl.findAllHolidays().isPresent()) {
+            result = holidayDAOImpl.findAllHolidays().get().stream()
+                    .anyMatch(holiday -> holiday.getDate().isEqual(day));
+            log.info("Input day - {} is a holiday", day);
+        }
+        return result;
     }
 }

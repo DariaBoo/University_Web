@@ -38,7 +38,7 @@ public class GroupServiceImpl implements GroupService{
      * {@inheritDoc}
      */
     @Override
-    public int addGroup(Group group) throws ServiceException {
+    public int addGroup(Group group) {
         log.trace("Add new group");
         log.trace("Check if group name - {} is not out of bound", group.getName());
         if(group.getName().length() > groupDAOImpl.getGroupNameMaxSize()) {
@@ -102,7 +102,7 @@ public class GroupServiceImpl implements GroupService{
      * {@inheritDoc}
      */
     @Override
-    public int updateGroup(Group group) throws ServiceException {
+    public int updateGroup(Group group) {
         log.trace("Update existed group");
         log.trace("Check if group name - {} is not out of bound", group.getName());
         if(group.getName().length() > groupDAOImpl.getGroupNameMaxSize()) {

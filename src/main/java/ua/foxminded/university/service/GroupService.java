@@ -3,7 +3,6 @@ package ua.foxminded.university.service;
 import java.util.List;
 import java.util.Optional;
 
-import ua.foxminded.university.service.exception.ServiceException;
 import ua.foxminded.university.service.pojo.Group;
 
 /**
@@ -17,9 +16,8 @@ public interface GroupService {
      * 
      * @param group
      * @return 1 or 0
-     * @throws ServiceException 
      */
-    int addGroup(Group group) throws ServiceException;
+    int addGroup(Group group);
 
     /**
      * The method deletes group from the database by group id
@@ -63,7 +61,6 @@ public interface GroupService {
      * The method updated existed group and returns count of updated rows
      * @param group
      * @return count of updated rows or 0 if nothing was updated
-     * @throws ServiceException 
      */
-    int updateGroup(Group group) throws ServiceException;
+    int updateGroup(Group group);
 }

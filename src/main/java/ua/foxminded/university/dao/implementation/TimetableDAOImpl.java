@@ -3,6 +3,7 @@ package ua.foxminded.university.dao.implementation;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -145,13 +146,13 @@ public class TimetableDAOImpl implements TimetableDAO {
 
     private int selectAvailableTeacher(int lessonID, Day day) throws DAOException {
         log.trace("Select available teacher for date {} and time {}", day.getDateOne(), day.getLessonTimePeriod());
-        int result = 0;
+        int result = 0;       
         try {
             result = jdbcTemplate.queryForObject(SELECT_AVAILABLE_TEACHER, new Object[] { day.getDateOne(),
                     day.getDateOne(), day.getDateOne(), day.getLessonTimePeriod(), lessonID }, Integer.class);
         } catch (EmptyResultDataAccessException e) {
             log.error("No available teachers for this time {} and date {}.", day.getLessonTimePeriod(), day.getDateOne());
-            throw new DAOException("No available teachers for this time and date.");
+            throw new DAOException("No available teachers for this time and date. Can't schedule timetable.", e);
         }
         return result;
     }
