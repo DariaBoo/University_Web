@@ -6,7 +6,11 @@ public class Teacher extends User {
     private String position;
     private int departmentID;
 
-    public Teacher(int id, String firstName, String lastName, int password, String position, int departmentID, List<Lesson> lessons) {
+    public Teacher() {
+        
+    }
+    
+    public Teacher(int id, String firstName, String lastName, String password, String position, int departmentID, List<Lesson> lessons) {
         super(id, firstName, lastName, password, lessons);
         this.departmentID = departmentID;
         this.position = position;
@@ -18,7 +22,7 @@ public class Teacher extends User {
         private int id;
         private String firstName;
         private String lastName;
-        private int password;
+        private String password;
         private List<Lesson> lessons;
         private String position;
         private int departmentID;
@@ -35,7 +39,7 @@ public class Teacher extends User {
             this.lastName = lastName;
             return this;
         }
-        public TeacherBuidler setPassword(int password) {
+        public TeacherBuidler setPassword(String password) {
             this.password = password;
             return this;
         }
@@ -68,6 +72,14 @@ public class Teacher extends User {
        
     public int getDepartmentID() {
         return departmentID;
+    }
+    
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public void setDepartmentID(int departmentID) {
+        this.departmentID = departmentID;
     }
 
     @Override

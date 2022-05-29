@@ -1,14 +1,16 @@
 package ua.foxminded.university.dao.implementation;
 
-import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import ua.foxminded.university.dao.LessonDAO;
+import ua.foxminded.university.dao.implementation.mapper.LessonMapper;
 import ua.foxminded.university.service.pojo.Lesson;
 
 /**
@@ -17,13 +19,22 @@ import ua.foxminded.university.service.pojo.Lesson;
  *
  *
  */
-@Component
+@Repository
 public class LessonDAOImpl implements LessonDAO {
     private final JdbcTemplate jdbcTemplate;
     private final String ADD_LESSON = "INSERT INTO timetable.lessons (lesson_name, description, isActive) SELECT ?, ?, 'true' "
             + "WHERE NOT EXISTS (SELECT lesson_name FROM timetable.lessons WHERE lesson_name = ?)";
     private final String DELETE_LESSON = "UPDATE timetable.lessons SET isActive = false WHERE lesson_id = ?";
+    private final String FIND_BY_ID = "SELECT * FROM timetable.lessons WHERE lesson_id = ?;";
+    private final String FIND_ALL_LESSONS = "SELECT * FROM timetable.lessons WHERE isActive = true ORDER BY lesson_id;";
+    private final String SELECT_LESSON_NAME = "SELECT lesson_name FROM timetable.lessons WHERE lesson_id = ?;";
+    private final String SELECT_LESSON_DESCRIPTION = "SELECT description FROM timetable.lessons WHERE lesson_id = ?;";
+    private final String UPDATE_LESSON = "UPDATE timetable.lessons SET lesson_name = ?, description = ? WHERE lesson_id = ? AND NOT EXISTS (SELECT lesson_name FROM timetable.lessons WHERE lesson_name = ?) AND EXISTS (SELECT lesson_id FROM timetable.lessons);";
+    private final String LESSON_NAME_MAX_SIZE = "SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE UPPER (table_schema) = UPPER ('timetable') AND UPPER (table_name) = UPPER ('lessons') AND UPPER (column_name) = UPPER ('lesson_name');";
+    private final String DESCRIPTION_MAX_SIZE = "SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE UPPER (table_schema) = UPPER ('timetable') AND UPPER (table_name) = UPPER ('lessons') AND UPPER (column_name) = UPPER ('description');";
     private static final Logger log = LoggerFactory.getLogger(LessonDAOImpl.class.getName());
+    private final String debugMessage = "Return count of rows otherwise returns zero. The result is {}";
+    private int result;
 
     /**
      * Returns instance of the class
@@ -39,9 +50,11 @@ public class LessonDAOImpl implements LessonDAO {
      * {@inheritDoc}
      */
     @Override
-    public int addLesson(Lesson lesson) throws SQLException {
-        log.info("Add new lesson to timetable.lessons and returns count of added rows otherwise returns zero");
-        return jdbcTemplate.update(ADD_LESSON, lesson.getName(), lesson.getDescription(), lesson.getName());
+    public int addLesson(Lesson lesson) {
+        log.trace("Add new lesson to timetable.lessons");
+        result = jdbcTemplate.update(ADD_LESSON, lesson.getName(), lesson.getDescription(), lesson.getName());
+        log.debug(debugMessage, result);
+        return result;
     }
 
     /**
@@ -49,7 +62,72 @@ public class LessonDAOImpl implements LessonDAO {
      */
     @Override
     public int deleteLesson(int lessonID) {
-        log.debug("Delete lesson from the database and returns count of deleted rows otherwise returns zero");
-        return jdbcTemplate.update(DELETE_LESSON, lessonID);
+        log.trace("Delete lesson from the database");
+        result = jdbcTemplate.update(DELETE_LESSON, lessonID);
+        log.debug(debugMessage, result);        
+        return result;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<Lesson> findByID(int lessonID) {
+        log.trace("Find lesson by id {} from the timetable.lessons", lessonID);
+        Optional<Lesson> result = jdbcTemplate.query(FIND_BY_ID, new Object[] { lessonID }, new LessonMapper()).stream().findFirst();
+        log.debug("Return optional lesson {}", result);
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<List<Lesson>> findAllLessons() {
+        log.trace("Find all lessons from the timetable.lessons");
+        Optional<List<Lesson>> result = Optional.of(jdbcTemplate.query(FIND_ALL_LESSONS, new LessonMapper()));
+        log.debug("Return optional list of lessons {}", result);
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int updateLesson(Lesson lesson) {
+        log.trace("Update lesson name and description");
+        result = 0;
+        String lessonName = lesson.getName() == null
+                ? jdbcTemplate.queryForObject(SELECT_LESSON_NAME, new Object[] { lesson.getId() }, String.class)
+                : lesson.getName();
+        log.debug(
+                "Took lesson's name {} from the lesson, if equals null took previous value from the timetable.lessons",
+                lessonName);
+        String description = lesson.getDescription() == null
+                ? jdbcTemplate.queryForObject(SELECT_LESSON_DESCRIPTION, new Object[] { lesson.getId() }, String.class)
+                : lesson.getDescription();
+        log.debug(
+                "Took lesson's description {} from the lesson, if equals null took previous value from the timetable.lessons",
+                description);
+        result = jdbcTemplate.update(UPDATE_LESSON, lessonName, description, lesson.getId(), lesson.getName());
+        log.debug("Took a result {}, if the result equals 1 lesson was updated, if 0 - not updated", result);
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getLessonNameMaxSize() {
+        return jdbcTemplate.queryForObject(LESSON_NAME_MAX_SIZE, Integer.class);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getDescriptionMaxSize() {
+        return jdbcTemplate.queryForObject(DESCRIPTION_MAX_SIZE, Integer.class);
+    }
+
 }

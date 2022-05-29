@@ -15,7 +15,7 @@ CREATE TABLE timetable.lessons
 (
     lesson_id SERIAL,
     lesson_name VARCHAR(20) UNIQUE NOT NULL,
-    description VARCHAR(150),
+    description VARCHAR(100),
     isActive BOOLEAN,
     PRIMARY KEY (lesson_id)
 );
@@ -27,8 +27,8 @@ CREATE TABLE timetable.students
     first_name VARCHAR(30)  NOT NULL,
     last_name VARCHAR(30)  NOT NULL,
     group_id INT references timetable.groups(group_id),
-    password INT NOT NULL,
-    id_card VARCHAR(10) NOT NULL,
+    password VARCHAR(10) NOT NULL,
+    id_card VARCHAR(5) NOT NULL,
     isActive BOOLEAN,
     CONSTRAINT students_pkey PRIMARY KEY (student_id)
 );
@@ -40,7 +40,7 @@ CREATE TABLE timetable.teachers
      first_name VARCHAR(30)  NOT NULL,
      last_name VARCHAR(30)  NOT NULL,
      position VARCHAR(30) NOT NULL,
-     password INT NOT NULL,
+     password VARCHAR(10) NOT NULL,
      department_id INT,
      isActive BOOLEAN,
      CONSTRAINT teachers_pkey PRIMARY KEY (teacher_id)
@@ -92,4 +92,13 @@ CREATE TABLE timetable.timetable
     teacher_id INT REFERENCES timetable.teachers (teacher_id),
     room_id INT REFERENCES timetable.rooms (room_id),
     CONSTRAINT timetable_pkey PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS timetable.holidays;
+CREATE TABLE timetable.holidays
+(
+    id SERIAL,
+    holiday VARCHAR(20) NOT NULL,
+    date DATE NOT NULL,    
+    CONSTRAINT holiday_pkey PRIMARY KEY (id)
 );

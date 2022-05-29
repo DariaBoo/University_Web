@@ -1,4 +1,4 @@
-package ua.foxminded.university.service;
+package ua.foxminded.university.service.pojo;
 
 public enum LessonTimePeriod {
     lesson1("08:00 - 09:20"),

@@ -129,7 +129,5 @@ public class DayTimetable {
         } else if (!teacher.equals(other.teacher))
             return false;
         return true;
-    }
-
-    
+    }   
 }

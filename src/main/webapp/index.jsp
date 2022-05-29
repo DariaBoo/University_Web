@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html>
 <body>
-<h2>Hello World!</h2>
+<h2>Hogwarts</h2>
+<p>Timetable</p>
 </body>
 </html>

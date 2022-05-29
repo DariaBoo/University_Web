@@ -6,10 +6,10 @@ public class User {
     private int id;
     private String firstName;
     private String lastName;
-    private int password;
+    private String password;
     private List<Lesson> lessons;
 
-    public User(int id, String firstName, String lastName, int password, List<Lesson> lessons) {
+    public User(int id, String firstName, String lastName, String password, List<Lesson> lessons) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -32,6 +32,10 @@ public class User {
     public String getFirstName() {
         return firstName;
     }
+    
+    public String getPassword() {
+        return password;
+    }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -45,7 +49,7 @@ public class User {
         this.lastName = lastName;
     }
 
-    public void setPassword(int password) {
+    public void setPassword(String password) {
         this.password = password;
     }
     public List<Lesson> getLessons() {
@@ -63,7 +67,8 @@ public class User {
         result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
         result = prime * result + id;
         result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
-        result = prime * result + password;
+        result = prime * result + ((lessons == null) ? 0 : lessons.hashCode());
+        result = prime * result + ((password == null) ? 0 : password.hashCode());
         return result;
     }
 
@@ -88,8 +93,16 @@ public class User {
                 return false;
         } else if (!lastName.equals(other.lastName))
             return false;
-        if (password != other.password)
+        if (lessons == null) {
+            if (other.lessons != null)
+                return false;
+        } else if (!lessons.equals(other.lessons))
+            return false;
+        if (password == null) {
+            if (other.password != null)
+                return false;
+        } else if (!password.equals(other.password))
             return false;
         return true;
-    }
+    }   
 }

@@ -1,19 +1,13 @@
-package ua.foxminded.university.dao.exception;
+package ua.foxminded.university.service.exception;
 
-/**
- * @version 1.0
- * @author Bogush Daria
- *
- *
- */
-public class DAOException extends Exception {
+public class ServiceException extends RuntimeException{
     /**
      * Constructs a new exception with the specified detail message.
      * 
      * @author Bogush Daria
      * 
      */
-    public DAOException(String message) {
+    public ServiceException(String message) {
         super(message);
     }
 
@@ -22,7 +16,7 @@ public class DAOException extends Exception {
      * 
      * @author Bogush Daria
      */
-    public DAOException(String message, Throwable cause) {
+    public ServiceException(String message, Throwable cause) {
         super(message, cause);
     }
 }

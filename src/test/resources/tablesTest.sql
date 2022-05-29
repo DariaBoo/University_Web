@@ -15,7 +15,7 @@ CREATE TABLE timetable.lessons
 (
     lesson_id SERIAL,
     lesson_name VARCHAR(20) UNIQUE NOT NULL,
-    description VARCHAR(150),
+    description VARCHAR(100),
     isActive BOOLEAN,
     PRIMARY KEY (lesson_id)
 );
@@ -27,8 +27,8 @@ CREATE TABLE timetable.students
     first_name VARCHAR(30)  NOT NULL,
     last_name VARCHAR(30)  NOT NULL,
     group_id INT references timetable.groups(group_id),
-    password INT NOT NULL,
-    id_card VARCHAR(10) NOT NULL,
+    password VARCHAR(10) NOT NULL,
+    id_card VARCHAR(5) NOT NULL,
     isActive BOOLEAN,
     CONSTRAINT students_pkey PRIMARY KEY (student_id)
 );
@@ -40,7 +40,7 @@ CREATE TABLE timetable.teachers
      first_name VARCHAR(30)  NOT NULL,
      last_name VARCHAR(30)  NOT NULL,
      position VARCHAR(30) NOT NULL,
-     password INT NOT NULL,
+     password VARCHAR(10) NOT NULL,
      department_id INT,
      isActive BOOLEAN,
      CONSTRAINT teachers_pkey PRIMARY KEY (teacher_id)
@@ -92,6 +92,15 @@ CREATE TABLE timetable.timetable
     teacher_id INT REFERENCES timetable.teachers (teacher_id),
     room_id INT REFERENCES timetable.rooms (room_id),
     CONSTRAINT timetable_pkey PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS timetable.holidays;
+CREATE TABLE timetable.holidays
+(
+    id SERIAL,
+    holiday VARCHAR(20) NOT NULL,
+    date DATE NOT NULL,    
+    CONSTRAINT holiday_pkey PRIMARY KEY (id)
 );
 
 INSERT INTO timetable.lessons (lesson_name, description, isActive) VALUES ('Alchemy','the study of transmutation of substances into other forms.', 'true');
@@ -272,8 +281,19 @@ insert into timetable.groups_lessons (group_id, lesson_id) values (6, 5);
 
 INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id) VALUES ('2022-04-20', '08:00 - 09:20', 4, 2);
 INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-01', '08:00 - 09:20', 1, 1, 1, 201);
+INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-01', '08:00 - 09:20', 1, 1, 2, 201);
 INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-02', '08:00 - 09:20', 1, 1, 1, 201);
+INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-03', '08:00 - 09:20', 1, 1, 1, 301);
+INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-03', '08:00 - 09:20', 1, 1, 1, 204);
+INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-03', '08:00 - 09:20', 1, 1, 1, 201);
+
+INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-01-01', 'NEW YEAR');
+INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-01-06', 'THREE KINGS DAY');
+INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-04-17', 'EASTER DAY');
+INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-05-01', 'LABOUR DAY');
+INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-11-01', 'ALL SAINTS DAY');
+INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-12-25', 'CHRISTMAS DAY');
 
 
-
+UPDATE timetable.students SET first_name = 'Marry', last_name = 'Potter' WHERE student_id = 1000 AND EXISTS (SELECT student_id FROM timetable.students);
 

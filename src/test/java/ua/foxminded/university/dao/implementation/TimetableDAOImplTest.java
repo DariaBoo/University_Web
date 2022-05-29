@@ -10,26 +10,22 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.stereotype.Component;
 
 import ua.foxminded.university.config.SpringConfigTest;
-import ua.foxminded.university.service.LessonTimePeriod;
+import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.service.pojo.Day;
 import ua.foxminded.university.service.pojo.DayTimetable;
 import ua.foxminded.university.service.pojo.Group;
 import ua.foxminded.university.service.pojo.Lesson;
+import ua.foxminded.university.service.pojo.LessonTimePeriod;
 import ua.foxminded.university.service.pojo.Student;
 import ua.foxminded.university.service.pojo.Teacher;
 import ua.foxminded.university.service.pojo.User;
 
-@Component
-@TestInstance(Lifecycle.PER_CLASS)
 class TimetableDAOImplTest {
     private TimetableDAOImpl timetable;
     private TeacherDAOImpl teacherDAOImpl;
@@ -51,7 +47,7 @@ class TimetableDAOImplTest {
     }
 
     @Test
-    void scheduleTimetable_shouldReturnCountOfAddedRows_whenInputCorrectData() {
+    void scheduleTimetable_shouldReturnCountOfAddedRows_whenInputCorrectData() throws DAOException {
         lesson = new Lesson.LessonBuilder().setID(5).build();
         group = new Group.GroupBuilder().setID(1).build();
         dayTimetable = new DayTimetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
@@ -59,27 +55,28 @@ class TimetableDAOImplTest {
         assertEquals(1, timetable.scheduleTimetable(dayTimetable));
     }
 
-    @ParameterizedTest(name = "{index}. Input data: lessonID {0}, groupID {1}, result {2}.")
-    @CsvSource({ "100, 1, 0", "1, 100, 0", "3, 1, 0" })
-    void scheduleTimetable_shouldReturnZero_whenInputInCorrectData(int lessonID, int groupID, int result) {
+    @ParameterizedTest(name = "{index}. Input data: lessonID {0}, groupID {1}.")
+    @CsvSource({"100,1", "1, 100" })
+    void scheduleTimetable_shouldThrowDAOException_whenInputInCorrectData(int lessonID, int groupID) throws DAOException {
         lesson = new Lesson.LessonBuilder().setID(lessonID).build();
         group = new Group.GroupBuilder().setID(groupID).build();
         dayTimetable = new DayTimetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
 
-        assertEquals(result, timetable.scheduleTimetable(dayTimetable));
+        assertThrows(DAOException.class, () -> timetable.scheduleTimetable(dayTimetable));
     }
-
+    
     @Test
-    void scheduleTimetable_shouldReturnZero_whenInputScheduledLessonAndGroup() {
+    void scheduleTimetable_shouldThrowDAOException_whenInputScheduledLessonAndGroup() throws DAOException {
         lesson = new Lesson.LessonBuilder().setID(1).build();
         group = new Group.GroupBuilder().setID(1).build();
         dayTimetable = new DayTimetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
 
-        assertEquals(0, timetable.scheduleTimetable(dayTimetable));
+        assertThrows(DAOException.class, () -> timetable.scheduleTimetable(dayTimetable));
     }
 
     @Test
-    void scheduleTimetable_shouldReturnZero_whenTeachersAbsent() {
+    void scheduleTimetable_shouldThrowDAOException_whenTeacherAbsent() throws DAOException {
+        day.setDateOne(LocalDate.of(2023, 04, 01));
         day.setDateTwo(LocalDate.of(2023, 04, 02));
         lesson = new Lesson.LessonBuilder().setID(1).build();
         group = new Group.GroupBuilder().setID(1).build();
@@ -87,7 +84,17 @@ class TimetableDAOImplTest {
         teacherDAOImpl.setTeahcerAbsent(1, day);
         teacherDAOImpl.setTeahcerAbsent(2, day);
 
-        assertEquals(0, timetable.scheduleTimetable(dayTimetable));
+        assertThrows(DAOException.class, () -> timetable.scheduleTimetable(dayTimetable));
+    }
+    
+    @Test
+    void scheduleTimetable_shouldThrowDAOException_whenIsNoAvailableRooms() throws DAOException {
+    day.setDateOne(LocalDate.of(2023, 04, 03));
+    lesson = new Lesson.LessonBuilder().setID(1).build();
+    group = new Group.GroupBuilder().setID(1).build();
+    dayTimetable = new DayTimetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
+    
+    assertThrows(DAOException.class, () -> timetable.scheduleTimetable(dayTimetable));
     }
 
     @Test
@@ -165,27 +172,5 @@ class TimetableDAOImplTest {
         result.add(Optional.empty());
         result.add(Optional.empty());
         assertEquals(result, timetable.getMonthTimetable(day, user));
-    }
-
-    @Test
-    void selectSuitableRoom() {
-        assertEquals(204, timetable.selectSuitableRoom(1, day));
-    }
-
-    @Test
-    void selectSuitableRoom2() {
-        assertEquals(101, timetable.selectSuitableRoom(100, day));
-    }
-
-    @Test
-    void selectAvailableTeacher() {
-        assertEquals(2, timetable.selectAvailableTeacher(1, day));
-    }
-
-    @Test
-    void selectAvailableTeacher2() {
-        day.setDateOne(LocalDate.of(2022, 04, 01));
-        day.setLessonTimePeriod(LessonTimePeriod.lesson1.getTimePeriod());
-        assertEquals(0, timetable.selectAvailableTeacher(100, day));
     }
 }

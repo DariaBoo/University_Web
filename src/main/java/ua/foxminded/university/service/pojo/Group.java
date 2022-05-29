@@ -7,6 +7,10 @@ public class Group {
     private String name;
     private int departmentID;
     private List<Student> students;
+    
+    public Group() {
+        
+    }
 
     public Group(int id, String name, int departmentID, List<Student> students) {
         this.id = id;
@@ -66,6 +70,22 @@ public class Group {
         return students;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDepartmentID(int departmentID) {
+        this.departmentID = departmentID;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -102,4 +122,6 @@ public class Group {
             return false;
         return true;
     }
+
+   
 }
