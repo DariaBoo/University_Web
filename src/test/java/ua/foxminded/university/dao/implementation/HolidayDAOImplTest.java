@@ -54,7 +54,7 @@ class HolidayDAOImplTest {
     }
     @Test
     void findAllHolidays_shouldReturnCountOfHolidays_whenCallTheMethod() {
-        assertEquals(7, (int)holidayDAOImpl.findAllHolidays().get().stream().count());
+        assertEquals(8, (int)holidayDAOImpl.findAllHolidays().get().stream().count());
     }
     
     @Test
