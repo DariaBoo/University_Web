@@ -26,16 +26,13 @@ class TeacherDAOImplTest {
     private Day day;
     private Teacher teacher;
     private List<Teacher> teachers = new ArrayList<Teacher>();
-    private final int maxFirstNameSize = 30;
-    private final int maxLastNameSize = 30;
-    private final int maxPositionSize = 30;
     private final int maxPasswordSize = 10;
 
     @BeforeEach
     void init() {
         context = new AnnotationConfigApplicationContext(SpringConfigTest.class);
         teacherDAOImpl = context.getBean("teacherDAOImpl", TeacherDAOImpl.class);
-        day = new Day(LocalDate.of(2022, 04, 22), LocalDate.of(2022, 04, 28));
+        day = new Day(LocalDate.of(2023, 01, 01), LocalDate.of(2023, 01, 01));
     }
 
     @Test
@@ -96,16 +93,6 @@ class TeacherDAOImplTest {
     }
 
     @Test
-    void changePosition_shouldReturnCountOfChangedRows_whenInputExistedTeacherID() {
-        assertEquals(1, teacherDAOImpl.changePosition(5, "lecturer"));
-    }
-
-    @Test
-    void changePosition_shouldReturnZero_whenInputNotExistedTeacherID() {
-        assertEquals(0, teacherDAOImpl.changePosition(12, "lecturer"));
-    }
-
-    @Test
     void setTeacherAbsent_shouldReturnCountOfSetRows_whenInputExistedTeacher() {
         assertEquals(1, teacherDAOImpl.setTeahcerAbsent(1, day));
     }
@@ -117,7 +104,7 @@ class TeacherDAOImplTest {
 
     @Test
     void deleteTeacherAbsent_shouldReturnCountOfDeletedRows_whenInputCorrectData() {
-        teacherDAOImpl.setTeahcerAbsent(1, day);
+        teacherDAOImpl.setTeahcerAbsent(1, new Day(LocalDate.of(2023, 01, 02), LocalDate.of(2023, 01, 02)));
         assertEquals(1, teacherDAOImpl.deleteTeahcerAbsent(1, day));
     }
 
@@ -182,6 +169,44 @@ class TeacherDAOImplTest {
     }
 
     @Test
+    void findTeachersByLessonId_shouldReturnContOfTeachers_whenInputLessonId() {
+        assertEquals(2, teacherDAOImpl.findTeachersByLessonId(1).get().size());
+    }
+    
+    @Test
+    void findTeachersByLessonId_shouldReturnContOfTeachers_whenInputLessonId2() {
+        Teacher teacher = new Teacher.TeacherBuidler().setID(1).setFirstName("Albus").setLastName("Dumbledore")
+                .setPosition("professor").setDepartmentID(1).build();
+        teacherDAOImpl.findTeachersByLessonId(1).get().stream().map(t -> t.getId() + " " + t.getFirstName() + " " + t.getLastName()).forEach(System.out::println);
+        
+        assertEquals(teacher, teacherDAOImpl.findTeachersByLessonId(1).get().get(0));
+    }
+    
+    
+    @Test
+    void findTeachersByLessonId_shouldReturnEmptyArrayList_whenInputIncorectLessonId() {
+        assertTrue(teacherDAOImpl.findTeachersByLessonId(100).get().isEmpty());
+    }
+    
+    @Test
+    void showTeacherAbsent_shouldReturnSizeOfList_whenInputCorrectTeacherId() {
+        assertEquals(5, teacherDAOImpl.showTeacherAbsent(1).get().size());
+    }
+    
+    @Test
+    void showTeacherAbsentL_shouldReturnFirstTeacherAbsent_whenInputCorrectTeacherId() {
+        day.setDateOne(LocalDate.of(2022, 01, 10));
+        day.setDateTwo(LocalDate.of(2022, 01, 12));
+        teacher = new Teacher.TeacherBuidler().setID(1).setAbsentPeriod(day).build();
+        assertEquals(teacher, teacherDAOImpl.showTeacherAbsent(1).get().get(0));
+    }
+    
+    @Test
+    void showTeacherAbsent_shouldReturnEmptyList_whenInputIncorrectTeacherId() {
+        assertTrue(teacherDAOImpl.showTeacherAbsent(100).get().isEmpty());
+    }
+    
+    @Test
     void changePassword_shouldReturnOne_whenInputExistedTeacherID() {
         assertEquals(1, teacherDAOImpl.changePassword(1, "5555"));
     }
@@ -198,19 +223,7 @@ class TeacherDAOImplTest {
 
     @Test
     void updateTeacher_shouldReturnOne_whenInputExistedTeacherID() {
-        teacher = new Teacher.TeacherBuidler().setID(1).setFirstName("Lord").setLastName("Voldemort").build();
-        assertEquals(1, teacherDAOImpl.updateTeacher(teacher));
-    }
-    
-    @Test
-    void updateTeacher_shouldReturnOne_whenInputExistedTeacherIDAndNullName() {
-        teacher = new Teacher.TeacherBuidler().setID(1).setLastName("Voldemort").build();
-        assertEquals(1, teacherDAOImpl.updateTeacher(teacher));
-    }
-    
-    @Test
-    void updateTeacher_shouldReturnOne_whenInputExistedTeacherIDAndNullSurname() {
-        teacher = new Teacher.TeacherBuidler().setID(1).setFirstName("Lord").build();
+        teacher = new Teacher.TeacherBuidler().setID(1).setFirstName("Lord").setLastName("Voldemort").setPosition("professor").build();
         assertEquals(1, teacherDAOImpl.updateTeacher(teacher));
     }
     
@@ -220,18 +233,6 @@ class TeacherDAOImplTest {
         assertEquals(0, teacherDAOImpl.updateTeacher(teacher));
     }
     
-    @Test
-    void getFirstNameMaxSize_shouldReturnColumnSize() {
-        assertEquals(maxFirstNameSize, teacherDAOImpl.getFirstNameMaxSize());       
-    }   
-    @Test
-    void getLastNameMaxSize_shouldReturnColumnSize() {
-        assertEquals(maxLastNameSize, teacherDAOImpl.getLastNameMaxSize());       
-    } 
-    @Test
-    void getPositionMaxSize_shouldReturnColumnSize() {
-        assertEquals(maxPositionSize, teacherDAOImpl.getPositionMaxSize());       
-    } 
     @Test
     void getPasswordMaxSize_shouldReturnColumnSize() {
         assertEquals(maxPasswordSize, teacherDAOImpl.getPasswordMaxSize());       

@@ -1,14 +1,16 @@
 package ua.foxminded.university.service.pojo;
 
-public class DayTimetable {
+public class Timetable {
+    private int id;
     private Day day;
     private Group group;
     private int roomNumber;
     private Teacher teacher;
     private Lesson lesson;
 
-    private DayTimetable(Day day, Group group, int roomNumber, Teacher teacher,
+    private Timetable(int id, Day day, Group group, int roomNumber, Teacher teacher,
             Lesson lesson) {
+        this.id = id;
         this.day = day;
         this.group = group;
         this.roomNumber = roomNumber;
@@ -21,11 +23,17 @@ public class DayTimetable {
     }
 
     public static class TimetableBuilder {
+        private int id;
         private Day day;
         private Group group;
         private int roomNumber;
         private Teacher teacher;
         private Lesson lesson;
+        
+        public TimetableBuilder setId(int id) {
+            this.id = id;
+            return this;
+        }
 
         public TimetableBuilder setDay(Day day) {
             this.day = day;
@@ -52,7 +60,7 @@ public class DayTimetable {
             return this;
         }
 
-        public DayTimetable buildWith(Object object) {
+        public Timetable buildWith(Object object) {
             return construct(object).build();
         }
 
@@ -60,9 +68,13 @@ public class DayTimetable {
             return this;
         }
 
-        public DayTimetable build() {
-            return new DayTimetable(day, group, roomNumber, teacher, lesson);
+        public Timetable build() {
+            return new Timetable(id, day, group, roomNumber, teacher, lesson);
         }
+    }
+    
+    public int getId() {
+        return id;
     }
 
     public Day getDay() {
@@ -91,6 +103,7 @@ public class DayTimetable {
         int result = 1;
         result = prime * result + ((day == null) ? 0 : day.hashCode());
         result = prime * result + ((group == null) ? 0 : group.hashCode());
+        result = prime * result + id;
         result = prime * result + ((lesson == null) ? 0 : lesson.hashCode());
         result = prime * result + roomNumber;
         result = prime * result + ((teacher == null) ? 0 : teacher.hashCode());
@@ -105,7 +118,7 @@ public class DayTimetable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        DayTimetable other = (DayTimetable) obj;
+        Timetable other = (Timetable) obj;
         if (day == null) {
             if (other.day != null)
                 return false;
@@ -115,6 +128,8 @@ public class DayTimetable {
             if (other.group != null)
                 return false;
         } else if (!group.equals(other.group))
+            return false;
+        if (id != other.id)
             return false;
         if (lesson == null) {
             if (other.lesson != null)
@@ -129,5 +144,6 @@ public class DayTimetable {
         } else if (!teacher.equals(other.teacher))
             return false;
         return true;
-    }   
+    }
+    
 }

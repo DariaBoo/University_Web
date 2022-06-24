@@ -2,11 +2,12 @@ package ua.foxminded.university.dao;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.service.pojo.Day;
-import ua.foxminded.university.service.pojo.DayTimetable;
+import ua.foxminded.university.service.pojo.Timetable;
 import ua.foxminded.university.service.pojo.User;
 
 /**
@@ -25,7 +26,7 @@ public interface TimetableDAO {
      * @return count of added rows otherwise -1
      * @throws DAOException 
      */
-    int scheduleTimetable(DayTimetable timetable) throws DAOException;
+    int scheduleTimetable(Timetable timetable) throws DAOException;
 
     /**
      * Deletes scheduled timetable by timetable id
@@ -36,16 +37,6 @@ public interface TimetableDAO {
     int deleteTimetable(int timetableID);
 
     /**
-     * Returns Optional DayTimetable by date and user
-     * 
-     * @param date
-     * @param user
-     * @return dayTimetable if this user has lessons at this date otherwise
-     *         Optional.empty
-     */
-    Optional<DayTimetable> getDayTimetable(LocalDate date, User user);
-
-    /**
      * Returns list of Optional DayTimetable by date and user
      * 
      * @param day
@@ -53,5 +44,12 @@ public interface TimetableDAO {
      * @return list of dayTimetable if this user has lessons at this date otherwise
      *         List of Optional.empty
      */
-    List<Optional<DayTimetable>> getMonthTimetable(Day day, User user);
+    Optional<List<Timetable>> getUserTimetable(Day day, User user);
+    
+    /**
+     * Returns list of DayTimetable for all groups and teachers by period of dates
+     * @param day
+     * @return list of dayTimetable
+     */
+    Optional<List<Timetable>> showTimetable(Day day);
 }

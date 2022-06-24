@@ -1,4 +1,4 @@
-package ua.foxminded.university.dao.implementation.mapper;
+package ua.foxminded.university.dao.implementation.mappers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,9 +25,9 @@ public class HolidayMapper implements RowMapper<Holiday>{
     public Holiday mapRow(ResultSet rs, int rowNum) throws SQLException {
         log.trace("Create rowMapper for Holiday");
         Holiday holiday = new Holiday();
+        holiday.setId(rs.getInt("id"));
         holiday.setDate(rs.getDate("date").toLocalDate());
         holiday.setHolidayName(rs.getString("holiday"));
         return holiday;
     }
-
 }

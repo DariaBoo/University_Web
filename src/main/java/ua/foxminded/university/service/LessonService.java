@@ -1,7 +1,6 @@
 package ua.foxminded.university.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import ua.foxminded.university.service.pojo.Lesson;
 
@@ -19,6 +18,13 @@ public interface LessonService {
     int addLesson(Lesson lesson);
 
     /**
+     * The method lets update lesson's name and description and returns count of updated rows otherwise zero
+     * @param lesson
+     * @return count of updated rows otherwise zero
+     */
+    int updateLesson(Lesson lesson) ;
+    
+    /**
      * Deletes lesson from the timetable.lessons
      * 
      * @param lessonID
@@ -31,18 +37,23 @@ public interface LessonService {
      * @param lessonID
      * @return optional lesson
      */
-    Optional<Lesson> findByID(int lessonID);
+    Lesson findByID(int lessonID);
 
     /**
      * The method finds all lessons and returns optional list of lessons
      * @return optional list of lessons
      */
-    Optional<List<Lesson>> findAllLessons();
+    List<Lesson> findAllLessons();
     
     /**
-     * The method lets update lesson's name and description and returns count of updated rows otherwise zero
-     * @param lesson
-     * @return count of updated rows otherwise zero
+     * The method finds teachers lessons by teacher id
+     * @return list of lessons
      */
-    int updateLesson(Lesson lesson) ;
+    List<Lesson> findLessonsByTeacherId(int teacherID);
+    
+    /**
+     * The method finds groups lessons by group id
+     * @return list of lessons
+     */
+    List<Lesson> findLessonsByGroupId(int groupID);
 }

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Timetable</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/university/css/styles.css">
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+
+<style>
+.hidden {
+	display: none;
+}
+
+div.from_to {
+	position: relative;
+	top: 70px;
+}
+</style>
+</head>
+<body>
+	<div class="bg">
+		<div id="nav-placeholder"></div>
+
+		<script>
+			$(function() {
+				$("#nav-placeholder").load("/university/navbar/navbar.html");
+			});
+		</script>
+		<div class="from_to">
+			<form id="form" >
+				<label for="from">From: </label> <input type="date" id="from"
+					name="from" value="" /> <label for="to"> to: </label> <input
+					type="date" id="to" name="to" value="" />
+				<p id="link" />
+				<input type="button" onclick="goToPage();" value="show" />
+			</form>
+		</div>
+		<script type="text/javascript">
+			function goToPage() {
+				var from = document.getElementById('from').value;
+				var to = document.getElementById('to').value;
+				window.location = "http://localhost:8080/university/timetable/"
+						+ from + "/" + to;
+			}
+		</script>
+	</div>
+</body>
+</html>

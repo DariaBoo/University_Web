@@ -293,7 +293,18 @@ INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-04-17', 'EASTER DAY
 INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-05-01', 'LABOUR DAY');
 INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-11-01', 'ALL SAINTS DAY');
 INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-12-25', 'CHRISTMAS DAY');
+INSERT INTO timetable.holidays (date, holiday) VALUES ('2023-01-01', 'NEW YEAR');
 
+INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (1, '2022-01-10', '2022-01-12');
+INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (1, '2022-03-01', '2022-03-06');
+INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (1, '2022-04-08', '2022-04-11');
+INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (1, '2022-06-17', '2022-06-18');
+INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (1, '2023-01-01', '2023-01-01');
+INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (2, '2022-01-10', '2022-01-12');
+INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (2, '2023-01-01', '2023-01-01');
+INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (3, '2022-01-10', '2022-01-12');
+INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (3, '2023-01-01', '2023-01-01');
+INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (4, '2022-01-10', '2022-01-12');
+INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (4, '2023-01-01', '2023-01-01');
 
-UPDATE timetable.students SET first_name = 'Marry', last_name = 'Potter' WHERE student_id = 1000 AND EXISTS (SELECT student_id FROM timetable.students);
-
+SELECT timetable.id, timetable.date, timetable.time_period, teachers.first_name AS teacher_name, teachers.last_name AS teacher_surname, lessons.lesson_name, groups.group_name, timetable.room_id FROM timetable.timetable AS timetable INNER JOIN timetable.teachers AS teachers ON teachers.teacher_id = timetable.teacher_id INNER JOIN timetable.lessons AS lessons ON lessons.lesson_id = timetable.lesson_id INNER JOIN timetable.groups AS groups ON groups.group_id = timetable.group_id WHERE date = '2023-04-01' AND timetable.teacher_id = 1;

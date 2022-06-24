@@ -1,7 +1,6 @@
 package ua.foxminded.university.service.implementation;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,9 +61,20 @@ public class TeacherServiceImpl implements TeacherService{
         }
         result = teacherDAOImpl.addTeacher(teacher);
         log.debug("Took a result {} of adding a new teacher", result);
-        return result; // TODO ui if result == 1 a teacher was added correctly, if == 0 - error occurred
-                       // while added a teacher or the teacher already exist
+        return result; 
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int updateTeacher(Teacher teacher) {
+        log.trace("Update existed teacher {}", teacher);
+        int result = 0;
+        result = teacherDAOImpl.updateTeacher(teacher);
+        log.debug("Took a result {} of updating a teacher", result);
+        return result;
+    }  
 
     /**
      * {@inheritDoc}
@@ -72,8 +82,7 @@ public class TeacherServiceImpl implements TeacherService{
     @Override
     public int deleteTeacher(int teacherID) {
         log.trace("Delete existed teacher by id {}", teacherID);
-        return teacherDAOImpl.deleteTeacher(teacherID);// TODO ui if result == 1 a teacher was deleted correctly, if == 0 - error occurred
-                      // while trying to delete a teacher
+        return teacherDAOImpl.deleteTeacher(teacherID);
     }
 
     /**
@@ -98,19 +107,6 @@ public class TeacherServiceImpl implements TeacherService{
      * {@inheritDoc}
      */
     @Override
-    public int changePosition(int teacherID, String position) {
-        log.trace("Change teacher's position to {}, teacher id {}", position, teacherID);
-        if(position.length() > teacherDAOImpl.getPositionMaxSize()) {
-            log.error("Position - {} is out of bound", position);
-            throw new StringIndexOutOfBoundsException("Position is out of bound");
-        }
-        return teacherDAOImpl.changePosition(teacherID, position);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public int setTeacherAbsent(int teacherID, Day day) {
         log.trace("Set teacher with id {} absent in a day - {}",teacherID, day);
         return teacherDAOImpl.setTeahcerAbsent(teacherID, day);
@@ -129,27 +125,35 @@ public class TeacherServiceImpl implements TeacherService{
      * {@inheritDoc}
      */
     @Override
-    public Optional<Teacher> findByID(int teacherID) {
+    public Teacher findByID(int teacherID) {
         log.trace("Find teacher by id {}", teacherID);
-        return teacherDAOImpl.findByID(teacherID);
+        return teacherDAOImpl.findByID(teacherID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Optional<List<Teacher>> findAllTeachers() {
+    public List<Teacher> findAllTeachers() {
         log.trace("Find all teachers");
-        return teacherDAOImpl.findAllTeachers();
+        return teacherDAOImpl.findAllTeachers().orElseThrow(() -> new IllegalArgumentException("Error occured"));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Optional<List<Teacher>> findTeachersByDepartment(int departmentID) {
+    public List<Teacher> findTeachersByDepartment(int departmentID) {
         log.trace("Find teachers by department with id {}", departmentID);
-        return teacherDAOImpl.findTeachersByDepartment(departmentID);
+        return teacherDAOImpl.findTeachersByDepartment(departmentID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Teacher> findTeachersByLessonId(int lessonID) {
+        return teacherDAOImpl.findTeachersByLessonId(lessonID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
     }
 
     /**
@@ -170,21 +174,8 @@ public class TeacherServiceImpl implements TeacherService{
      * {@inheritDoc}
      */
     @Override
-    public int updateTeacher(Teacher teacher) {
-        log.trace("Update existed teacher {}", teacher);
-        int result = 0;
-        log.trace("Check if teacher's first name is not out of bound");
-        if (teacher.getFirstName().length() > teacherDAOImpl.getFirstNameMaxSize()) {
-            log.error("Teacher first name is out of bound.");
-            throw new StringIndexOutOfBoundsException("Teacher first name is out of bound.");
-        }
-        log.trace("Check if teacher's last name is not out of bound");
-        if (teacher.getLastName().length() > teacherDAOImpl.getLastNameMaxSize()) {
-            log.error("Teachert last name is out of bound.");
-            throw new StringIndexOutOfBoundsException("Teacher last name is out of bound.");
-        }
-        result = teacherDAOImpl.updateTeacher(teacher);
-        log.debug("Took a result {} of updating a teacher", result);
-        return result;
-    }   
+    public List<Teacher> showTeacherAbsent(int teacherID) {
+        return teacherDAOImpl.showTeacherAbsent(teacherID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+    }
+
 }

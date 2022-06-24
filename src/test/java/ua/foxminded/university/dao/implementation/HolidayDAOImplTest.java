@@ -3,6 +3,7 @@ package ua.foxminded.university.dao.implementation;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -17,22 +18,54 @@ import ua.foxminded.university.service.pojo.Holiday;
 class HolidayDAOImplTest {
     private HolidayDAOImpl holidayDAOImpl;
     private AnnotationConfigApplicationContext context;
-    private Holiday holiday = new Holiday();
+    private Holiday futureHoliday = new Holiday();
+    private Holiday pastHoliday = new Holiday();
     
     @BeforeAll
     void init() {
         context = new AnnotationConfigApplicationContext(SpringConfigTest.class);
         holidayDAOImpl = context.getBean("holidayDAOImpl", HolidayDAOImpl.class);
+        futureHoliday.setDate(LocalDate.now().plusDays(1));
+        futureHoliday.setHolidayName("Holiday");
+        pastHoliday.setDate(LocalDate.now().minusDays(1));
+        pastHoliday.setHolidayName("Holiday");
     }
     
     @Test
     void addHoliday_shouldReturnOne_whenInputCorrectHolidayData() {
-        holiday.setDate(LocalDate.of(2022, 05, 23));
-        holiday.setHolidayName("Holiday");
-        assertEquals(1, holidayDAOImpl.addHoliday(holiday));
+        assertEquals(1, holidayDAOImpl.addHoliday(futureHoliday));
     }
-
-//    @Test
-//    void 
+    
+    @Test
+    void deleteHoliday_shouldReturnOne_whenInputHolidayIdAfterNow() {
+        holidayDAOImpl.addHoliday(futureHoliday);
+        int lastId = (int)holidayDAOImpl.findAllHolidays().get().stream().count();        
+        assertEquals(1, holidayDAOImpl.deleteHoliday(lastId));
+    }
+    @Test
+    void deleteHoliday_shouldReturnZero_whenInputHolidayIdBeforeNow() {
+        holidayDAOImpl.addHoliday(pastHoliday);
+        int lastId = (int)holidayDAOImpl.findAllHolidays().get().stream().count();        
+        assertEquals(0, holidayDAOImpl.deleteHoliday(lastId));
+    }
+    @Test
+    void deleteHoliday_shouldReturnZero_whenInputIncorrectId() {       
+        assertEquals(0, holidayDAOImpl.deleteHoliday(-1));
+    }
+    @Test
+    void findAllHolidays_shouldReturnCountOfHolidays_whenCallTheMethod() {
+        assertEquals(7, (int)holidayDAOImpl.findAllHolidays().get().stream().count());
+    }
+    
+    @Test
+    void findAllHolidays_shouldReturnCountOfHolidays_whenCallTheMethod2() {
+        Holiday result = new Holiday();
+        result.setId(1);
+        result.setHolidayName("NEW YEAR");
+        result.setDate(LocalDate.of(2022, 01, 01));
+//        holidayDAOImpl.findAllHolidays().get().stream().limit(1).map(holiday -> holiday.getId() + " " + holiday.getHolidayName() + " " + holiday.getDate()).forEach(System.out::println);;
+//        System.out.println(holidayDAOImpl.findAllHolidays().get().stream().limit(1).collect(Collectors.toList()));
+        assertEquals(result, holidayDAOImpl.findAllHolidays().get().stream().limit(1).collect(Collectors.toList()).get(0));
+    }
 
 }

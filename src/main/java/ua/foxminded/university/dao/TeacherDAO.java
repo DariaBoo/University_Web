@@ -48,15 +48,6 @@ public interface TeacherDAO {
     int deleteLessonFromTeacher(int lessonID, int teacherID);
 
     /**
-     * The method lets change teacher's position in the timetable.teachers
-     * 
-     * @param teacherID existed teacher id
-     * @param position
-     * @return count of updated rows otherwise -1
-     */
-    int changePosition(int teacherID, String position);
-
-    /**
      * The method set date start and date end of teacher's absent
      * 
      * @param teacherID existed teacher id
@@ -95,6 +86,20 @@ public interface TeacherDAO {
     Optional<List<Teacher>> findTeachersByDepartment(int departmentID);
     
     /**
+     * The method finds all teachers by lesson id and returns optional list of teachers
+     * @param lessonID
+     * @return optional list of teachers
+     */
+    Optional<List<Teacher>> findTeachersByLessonId(int lessonID);
+    
+   /**
+    * The method finds all teachers absent days by teacher id
+    * @param teacherID
+    * @return optional list of teachers
+    */
+    Optional<List<Teacher>> showTeacherAbsent(int teacherID);
+    
+    /**
      * The method changes password by teacher id 
      * @param teacherID
      * @param newPassword
@@ -126,7 +131,7 @@ public interface TeacherDAO {
      * @return column's size
      */
     int getPositionMaxSize();
-    
+
     /**
      * Returns a size of column 'password' from the timetable.teachers
      * @return column's size

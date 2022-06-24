@@ -1,7 +1,6 @@
 package ua.foxminded.university.service.implementation;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,36 +83,51 @@ public class GroupServiceImpl implements GroupService{
      * {@inheritDoc}
      */
     @Override
-    public Optional<List<Group>> findAllGroups() {
+    public List<Group> findAllGroups() {
         log.trace("Find all groups");
-        return groupDAOImpl.findAllGroups();
+        return groupDAOImpl.findAllGroups().orElseThrow(() -> new IllegalArgumentException("Error occured"));
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Group findById(int groupID) {
+        return groupDAOImpl.findById(groupID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Group> findGroupsByLessonId(int lessonID) {
+        return groupDAOImpl.findGroupsByLessonId(lessonID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Optional<List<Group>> findGroupsByDepartment(int departmentID) {
+    public List<Group> findGroupsByDepartment(int departmentID) {
         log.trace("Find groups by department with id {}", departmentID);
-        return groupDAOImpl.findGroupsByDepartment(departmentID);
+        return groupDAOImpl.findGroupsByDepartment(departmentID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Group> findGroupsByTeacherId(int teacherID) {
+        return groupDAOImpl.findGroupsByTeacherId(teacherID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+    }
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public int updateGroup(Group group) {
-        log.trace("Update existed group");
-        log.trace("Check if group name - {} is not out of bound", group.getName());
-        if(group.getName().length() > groupDAOImpl.getGroupNameMaxSize()) {
-            log.error("Group name - {} is out of bound", group.getName());
-            throw new StringIndexOutOfBoundsException("Group name is out of bound");
-        }
-        log.trace("Check if group name - {} matches the pattern {}", group.getName(), groupNamePattern);
-        if(!group.getName().matches(groupNamePattern)) {
-            log.error("Group name - {} is not matches the pattern {}", group.getName(), groupNamePattern);
-            throw new ServiceException("Group name should contain two letters, dash and two digits");
-        }    
+        log.trace("Update existed group");        
         return groupDAOImpl.updateGroup(group);
     }
+    
 }

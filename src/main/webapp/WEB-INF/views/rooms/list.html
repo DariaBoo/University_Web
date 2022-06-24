@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Rooms</title>
+
+<link rel="stylesheet" href="/university/css/styles.css">
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<style>
+table, th, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+	margin-left: auto;
+	margin-right: auto;
+	width: 40%
+}
+
+th {
+	background-color: #f2f2f2;
+}
+
+tr {
+	text-align: center;
+}
+
+tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+</style>
+</head>
+<body>
+	<div class="bg">
+		<div id="nav-placeholder"></div>
+
+		<script>
+			$(function() {
+				$("#nav-placeholder").load("/university/navbar/navbar.html");
+			});
+		</script>
+
+		<div id="university" class="table_table">
+			<h1>Rooms</h1>
+			<br>
+			<table id="table_table">
+				<thead>
+					<tr>
+						<th>Number</th>
+						<th>Capacity</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="room : ${rooms}">
+						<td th:text="${room.getNumber()}"></td>
+						<td th:text="${room.getCapacity()}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

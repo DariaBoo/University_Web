@@ -1,7 +1,6 @@
 package ua.foxminded.university.service.implementation;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,21 +56,30 @@ public class LessonServiceImpl implements LessonService{
         log.trace("Delete lesson with id {}", lessonID);
         return lessonDaoImpl.deleteLesson(lessonID);
     }
-
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public Optional<Lesson> findByID(int lessonID) {
-        log.trace("Find lesson by id {}", lessonID);
-        return lessonDaoImpl.findByID(lessonID);
+    public int updateLesson(Lesson lesson) {
+        log.trace("Update lesson name and description");           
+        return lessonDaoImpl.updateLesson(lesson);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Optional<List<Lesson>> findAllLessons() {
+    public Lesson findByID(int lessonID) {
+        log.trace("Find lesson by id {}", lessonID);
+        return lessonDaoImpl.findByID(lessonID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Lesson> findAllLessons() {
         log.trace("Find all lessons");
         return lessonDaoImpl.findAllLessons();
     }
@@ -80,18 +88,17 @@ public class LessonServiceImpl implements LessonService{
      * {@inheritDoc}
      */
     @Override
-    public int updateLesson(Lesson lesson) {
-        log.trace("Update lesson name and description");
-        log.trace("Check is lesson name - {} is not out of bound.", lesson.getName());
-        if(lesson.getName().length() > lessonDaoImpl.getLessonNameMaxSize()) {
-            log.error("Lesson name is out of bound");
-            throw new StringIndexOutOfBoundsException("Lesson name is out of bound.");
-        }
-        log.trace("Check is description - {} is not out of bound", lesson.getDescription());
-        if(lesson.getDescription().length() > lessonDaoImpl.getDescriptionMaxSize()) {
-            log.error("Description is out of bound");
-            throw new StringIndexOutOfBoundsException("Lesson description is out of bound.");
-        }        
-        return lessonDaoImpl.updateLesson(lesson);
+    public List<Lesson> findLessonsByTeacherId(int teacherID) {
+        log.trace("Find all lessons by teacher id - {}", teacherID);
+        return lessonDaoImpl.findLessonsByTeacherId(teacherID);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Lesson> findLessonsByGroupId(int groupID) {
+        log.trace("Find all lessons by group id - {}", groupID);
+        return lessonDaoImpl.findLessonsByGroupId(groupID);
     }
 }

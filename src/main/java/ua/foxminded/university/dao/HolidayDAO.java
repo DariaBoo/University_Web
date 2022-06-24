@@ -27,6 +27,13 @@ public interface HolidayDAO {
     int addHoliday(Holiday holiday);
     
     /**
+     * The method deletes existed holiday by id and returns count of deleted rows
+     * @param holidayID
+     * @return 1 or 0
+     */
+    int deleteHoliday(int holidayID);
+    
+    /**
      * Returns column 'holiday' max size
      * @return column size
      */

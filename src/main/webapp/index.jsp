@@ -3,7 +3,8 @@
 <!DOCTYPE html>
 <html>
 <body>
-<h2>Hogwarts</h2>
-<p>Timetable</p>
+<h2>Welcome to Hogwarts!</h2>
+<p>Schedule timetable</p>
+<img alt="image" src="/images/Starwarsyodababy.jpg">
 </body>
 </html>
