@@ -20,7 +20,7 @@ public class RoomsController {
     }
     
     @GetMapping
-    public String list(Model model) {
+    public String listAllRooms(Model model) {
         model.addAttribute("rooms", roomServiceImpl.findAll());
         return "rooms/list";
     }

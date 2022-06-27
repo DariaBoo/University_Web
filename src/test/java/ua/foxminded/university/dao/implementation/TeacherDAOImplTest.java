@@ -176,9 +176,7 @@ class TeacherDAOImplTest {
     @Test
     void findTeachersByLessonId_shouldReturnContOfTeachers_whenInputLessonId2() {
         Teacher teacher = new Teacher.TeacherBuidler().setID(1).setFirstName("Albus").setLastName("Dumbledore")
-                .setPosition("professor").setDepartmentID(1).build();
-        teacherDAOImpl.findTeachersByLessonId(1).get().stream().map(t -> t.getId() + " " + t.getFirstName() + " " + t.getLastName()).forEach(System.out::println);
-        
+                .setPosition("professor").setDepartmentID(1).build();   
         assertEquals(teacher, teacherDAOImpl.findTeachersByLessonId(1).get().get(0));
     }
     

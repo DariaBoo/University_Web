@@ -22,7 +22,7 @@ class RoomDAOImplTest {
     }
     @Test
     void test() {
-        assertEquals(10, roomDAOImpl.findAll().stream().count());
+        assertEquals(10, roomDAOImpl.findAll().get().stream().count());
     }
 
 }

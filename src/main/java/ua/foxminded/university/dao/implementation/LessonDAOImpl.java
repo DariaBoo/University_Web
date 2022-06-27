@@ -76,7 +76,6 @@ public class LessonDAOImpl implements LessonDAO {
     @Override
     public int updateLesson(Lesson lesson) {
         log.trace("Update lesson name and description");
-        result = 0;
         result = jdbcTemplate.update(UPDATE_LESSON, lesson.getName(), lesson.getDescription(), lesson.getId(), lesson.getName());
         log.debug("Took a result {}, if the result equals 1 lesson was updated, if 0 - not updated", result);
         return result;

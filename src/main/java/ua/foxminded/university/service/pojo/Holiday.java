@@ -2,10 +2,13 @@ package ua.foxminded.university.service.pojo;
 
 import java.time.LocalDate;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class Holiday {
     private int id;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
-    private String holiday;
+    private String name;
     
     public LocalDate getDate() {
         return date;
@@ -13,11 +16,11 @@ public class Holiday {
     public void setDate(LocalDate date) {
         this.date = date;
     }
-    public String getHolidayName() {
-        return holiday;
+    public String getName() {
+        return name;
     }
-    public void setHolidayName(String holiday) {
-        this.holiday = holiday;
+    public void setName(String name) {
+        this.name = name;
     }
     public int getId() {
         return id;
@@ -30,7 +33,7 @@ public class Holiday {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((date == null) ? 0 : date.hashCode());
-        result = prime * result + ((holiday == null) ? 0 : holiday.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + id;
         return result;
     }
@@ -48,10 +51,10 @@ public class Holiday {
                 return false;
         } else if (!date.equals(other.date))
             return false;
-        if (holiday == null) {
-            if (other.holiday != null)
+        if (name == null) {
+            if (other.name != null)
                 return false;
-        } else if (!holiday.equals(other.holiday))
+        } else if (!name.equals(other.name))
             return false;
         if (id != other.id)
             return false;

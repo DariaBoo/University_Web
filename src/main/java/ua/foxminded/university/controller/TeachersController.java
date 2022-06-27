@@ -26,13 +26,13 @@ public class TeachersController {
     }
     
     @GetMapping
-    public String list(Model model) {
+    public String listAllTeachers(Model model) {
         model.addAttribute("teachers", teacherServiceImpl.findAllTeachers());
         return "teachers/list";
     }
     
     @RequestMapping("/{id}")
-    public String view(@PathVariable Integer id, Model model) {
+    public String viewTeacherById(@PathVariable Integer id, Model model) {
         model.addAttribute("teacher", teacherServiceImpl.findByID(id));
         model.addAttribute("groups", groupServiceImpl.findGroupsByTeacherId(id));
         model.addAttribute("lessons", lessonServiceImpl.findLessonsByTeacherId(id));

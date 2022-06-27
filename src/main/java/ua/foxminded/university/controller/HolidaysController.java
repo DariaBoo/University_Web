@@ -21,13 +21,13 @@ public class HolidaysController {
     }
 
     @GetMapping()
-    public String list(Model model) {
+    public String listAllHolidays(Model model) {
         model.addAttribute("holidays", holidayServiceImpl.findAllHolidays());
         return "holidays/list";
     }
 
     @RequestMapping("/holiday/delete/{id}")
-    public String delete(@PathVariable Integer id, RedirectAttributes redirectAtt) {
+    public String deleteHolidayById(@PathVariable Integer id, RedirectAttributes redirectAtt) {
         int result = holidayServiceImpl.deleteHoliday(id);
         if (result == 0) {
             redirectAtt.addFlashAttribute("message", "Can't delete past holiday!");
@@ -36,5 +36,5 @@ public class HolidaysController {
         }
         return "redirect:/holidays";
     }
-
+   
 }

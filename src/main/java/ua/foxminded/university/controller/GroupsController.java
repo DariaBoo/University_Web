@@ -28,13 +28,13 @@ public class GroupsController {
     }
     
     @GetMapping
-    public String list(Model model) {
+    public String listAllGroups(Model model) {
         model.addAttribute("groups", groupServiceImpl.findAllGroups());
         return "groups/list";
     }
     
     @RequestMapping("/{id}")
-    public String view(@PathVariable Integer id, Model model) {
+    public String viewGroupById(@PathVariable Integer id, Model model) {
         model.addAttribute("group", groupServiceImpl.findById(id));
         model.addAttribute("lessons", lessonServiceImpl.findLessonsByGroupId(id));
         model.addAttribute("students", studentServiceImpl.findStudentsByGroup(id));

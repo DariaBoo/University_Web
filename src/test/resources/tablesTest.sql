@@ -307,4 +307,3 @@ INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (3
 INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (4, '2022-01-10', '2022-01-12');
 INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (4, '2023-01-01', '2023-01-01');
 
-SELECT timetable.id, timetable.date, timetable.time_period, teachers.first_name AS teacher_name, teachers.last_name AS teacher_surname, lessons.lesson_name, groups.group_name, timetable.room_id FROM timetable.timetable AS timetable INNER JOIN timetable.teachers AS teachers ON teachers.teacher_id = timetable.teacher_id INNER JOIN timetable.lessons AS lessons ON lessons.lesson_id = timetable.lesson_id INNER JOIN timetable.groups AS groups ON groups.group_id = timetable.group_id WHERE date = '2023-04-01' AND timetable.teacher_id = 1;

@@ -27,7 +27,7 @@ public class HolidayMapper implements RowMapper<Holiday>{
         Holiday holiday = new Holiday();
         holiday.setId(rs.getInt("id"));
         holiday.setDate(rs.getDate("date").toLocalDate());
-        holiday.setHolidayName(rs.getString("holiday"));
+        holiday.setName(rs.getString("holiday"));
         return holiday;
     }
 }

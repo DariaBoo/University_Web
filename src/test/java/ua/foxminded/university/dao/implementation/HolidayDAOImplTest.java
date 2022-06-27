@@ -26,9 +26,9 @@ class HolidayDAOImplTest {
         context = new AnnotationConfigApplicationContext(SpringConfigTest.class);
         holidayDAOImpl = context.getBean("holidayDAOImpl", HolidayDAOImpl.class);
         futureHoliday.setDate(LocalDate.now().plusDays(1));
-        futureHoliday.setHolidayName("Holiday");
+        futureHoliday.setName("Holiday");
         pastHoliday.setDate(LocalDate.now().minusDays(1));
-        pastHoliday.setHolidayName("Holiday");
+        pastHoliday.setName("Holiday");
     }
     
     @Test
@@ -61,10 +61,8 @@ class HolidayDAOImplTest {
     void findAllHolidays_shouldReturnCountOfHolidays_whenCallTheMethod2() {
         Holiday result = new Holiday();
         result.setId(1);
-        result.setHolidayName("NEW YEAR");
+        result.setName("NEW YEAR");
         result.setDate(LocalDate.of(2022, 01, 01));
-//        holidayDAOImpl.findAllHolidays().get().stream().limit(1).map(holiday -> holiday.getId() + " " + holiday.getHolidayName() + " " + holiday.getDate()).forEach(System.out::println);;
-//        System.out.println(holidayDAOImpl.findAllHolidays().get().stream().limit(1).collect(Collectors.toList()));
         assertEquals(result, holidayDAOImpl.findAllHolidays().get().stream().limit(1).collect(Collectors.toList()).get(0));
     }
 

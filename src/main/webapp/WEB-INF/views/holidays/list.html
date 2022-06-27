@@ -23,6 +23,12 @@ th {
 tr:nth-child(even) {
 	background-color: #f2f2f2;
 }
+
+.message {
+	position: absolute;
+	top: 10%;
+	left: 2%;
+}
 </style>
 </head>
 
@@ -35,11 +41,9 @@ tr:nth-child(even) {
 				$("#nav-placeholder").load("/university/navbar/navbar.html");
 			});
 		</script>
-
-		<div th:if="${message}" role="alert">
-			<p th:text="${message}">success message</p>
-		</div>
-
+			<div class="message" th:if="${message}">
+				<p th:text="${message}">success message</p>
+			</div>
 		<div id="university" class="table_table">
 			<h1>Holidays</h1>
 			<br>
@@ -53,7 +57,7 @@ tr:nth-child(even) {
 				</thead>
 				<tbody>
 					<tr th:each="holiday : ${holidays}">
-						<td th:text="${holiday.getHolidayName()}"></td>
+						<td th:text="${holiday.getName()}"></td>
 						<td th:text="${holiday.getDate()}"></td>
 						<td style="text-align: center;"><a href="#"
 							th:href="@{holidays/holiday/delete/} + ${holiday.getId()}"><button
@@ -62,7 +66,7 @@ tr:nth-child(even) {
 				</tbody>
 			</table>
 			<div class="div_button_add">
-				<a th:href="@{holidays/create}"><button class="button_add">Add</button></a>
+				<a th:href="@{holidays/new}"><button class="button_add">New</button></a>
 			</div>
 		</div>
 	</div>

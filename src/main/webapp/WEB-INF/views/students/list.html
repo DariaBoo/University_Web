@@ -27,6 +27,11 @@
 	src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
 <style>
+.message {
+    position: absolute;
+    top: 10%;
+    left: 2%;
+}
 </style>
 </head>
 <body>
@@ -37,7 +42,11 @@
 				$("#nav-placeholder").load("/university/navbar/navbar.html");
 			});
 		</script>
-
+		
+		<div class="message" th:if="${message}">
+			<p th:text="${message}">success message</p>
+		</div>
+		
 		<div class="table-responsive">
 			<h1>The students of Hogwarts:</h1>
 			<br>
@@ -62,13 +71,13 @@
 						<td><a href="#" th:href="@{/students/} + ${student.getId()}"><button
 									class="button_view">View</button></a></td>
 						<td><a href="#"
-							th:href="@{/studetns/delete/} + ${student.getId()}"><button
+							th:href="@{/students/delete/} + ${student.getId()}"><button
 									class="button_delete">Delete</button></a></td>
 					</tr>
 				</tbody>
 			</table>
 			<div class="div_button_new">
-				<a th:href="@{students/create}"><button class="button_new">New</button></a>
+				<a th:href="@{students/new}"><button class="button_new">New</button></a>
 			</div>
 		</div>
 

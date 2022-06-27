@@ -57,7 +57,7 @@ public class HolidayDAOImpl implements HolidayDAO {
     @Override
     public int addHoliday(Holiday holiday) {
         log.trace("Add new holiday to the database");
-        result = jdbcTemplate.update(ADD_HOLIDAY, holiday.getDate(), holiday.getHolidayName());
+        result = jdbcTemplate.update(ADD_HOLIDAY, holiday.getDate(), holiday.getName());
         log.debug(debugMessage, result);
         return result;
     }    

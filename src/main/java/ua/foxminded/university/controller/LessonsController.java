@@ -27,16 +27,16 @@ public class LessonsController {
     }
     
     @GetMapping()
-    public String list(Model model) {
+    public String listAllLessons(Model model) {
         model.addAttribute("lessons", lessonServiceImpl.findAllLessons());
         return "lessons/list";       
     }
     
     @RequestMapping("/{id}")
-    public String view(@PathVariable Integer id, Model model) {
+    public String viewLessonById(@PathVariable Integer id, Model model) {
         model.addAttribute("lesson", lessonServiceImpl.findByID(id));
         model.addAttribute("teachers", teacherServiceImpl.findTeachersByLessonId(id)); 
-        System.out.println(model.addAttribute("groups", groupServiceImpl.findGroupsByLessonId(id)));
+        model.addAttribute("groups", groupServiceImpl.findGroupsByLessonId(id));
         return "lessons/view";       
     }
 

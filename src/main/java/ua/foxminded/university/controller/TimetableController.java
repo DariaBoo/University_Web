@@ -26,12 +26,12 @@ public class TimetableController {
     }
 
     @GetMapping("/timetable")
-    public String index() {
+    public String chooseDatePeriod() {
         return "timetable/index";
     }
 
     @GetMapping("/timetable/{from}/{to}")
-    public String show(@PathVariable String from, @PathVariable String to, Model model) {
+    public String showTimetable(@PathVariable String from, @PathVariable String to, Model model) {
         LocalDate dateOne = LocalDate.parse(from);
         LocalDate dateTwo = LocalDate.parse(to);
         Day day = new Day(dateOne, dateTwo);

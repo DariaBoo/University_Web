@@ -20,7 +20,7 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     public List<Room> findAll() {
-        return roomDAOImpl.findAll();
+        return roomDAOImpl.findAll().orElseThrow(() -> new IllegalArgumentException("Error occured"));
     }
 
 }

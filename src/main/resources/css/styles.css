@@ -3,6 +3,7 @@
 body, html {
 	height: 100%;
 	margin: 0;
+	overflow: hidden;
 }
 
 .bg {
@@ -201,3 +202,38 @@ div.table_table {
 	top: 50px;
 	left: 1275px;
 }
+
+.form_bg {
+    background-image: url("/university/img/new.png");
+    height: 100%;
+    left: 2%;
+    top: 5%;
+    background-repeat: no-repeat;
+    background-color: white;
+    background-size: 345px, 585px;
+}
+
+.form_container {
+    font-family: "Lucida Handwriting", "Brush Script MT", cursive;
+    font-size: 20px;
+    position: relative;
+    top: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 30%;
+    border: 2px solid #3b3b44;
+    background-color: #ffffe6;
+    border-radius: 5px;
+}
+
+.form_r {
+    margin-bottom: 10px;
+    margin-left: 20%;
+}
+
+.form_r label {
+    display: inline-block;
+    width: 150px;
+    font-weight: bold;
+}
+

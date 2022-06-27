@@ -23,18 +23,18 @@ public class UniversityController {
         this.teacherServiceImpl = teacherServiceImpl;
     }
     
-    @GetMapping("/welcome")
-    public String welcomePage() {
-        return "/welcome";
+    @GetMapping("/")
+    public String showWelcomePage() {
+        return "/index";
     }
     
     @GetMapping("/home")
-    public String startPage() {
+    public String showAdminPage() {
         return "/home";
     }
 
-    @RequestMapping("/welcome/login")
-    public String login(HttpServletRequest request, Model model) {       
+    @RequestMapping("/login")
+    public String showLoginForm(HttpServletRequest request, Model model) {       
         String userName=request.getParameter("uname");  
         String password=request.getParameter("psw");
         String message;

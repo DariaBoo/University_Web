@@ -97,6 +97,7 @@ public class TimetableDAOImpl implements TimetableDAO {
             result = jdbcTemplate.update(SCHEDULE_TIMETABLE, day.getDateOne(), day.getLessonTimePeriod(), lessonID,
                     groupID, teacherID, roomID, day.getDateOne(), day.getLessonTimePeriod(), lessonID, groupID, groupID,
                     lessonID);
+            log.debug("Return count of rows otherwise returns zero. The result is {}", result);
         }
         return result;
     }
@@ -164,6 +165,7 @@ public class TimetableDAOImpl implements TimetableDAO {
                     .map(date -> showDayTimetable(date)).filter(Optional::isPresent).map(Optional::get)
                     .collect(Collectors.toList()).stream()
                     .collect(ArrayList<Timetable>::new, List::addAll, List::addAll));
+            log.debug("Took timetable - {} for period of days {} - {} ", resultList, day.getDateOne(), day.getDateTwo());
         }
         return resultList;
     }
