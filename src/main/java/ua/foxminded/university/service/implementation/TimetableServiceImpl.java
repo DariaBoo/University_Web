@@ -4,8 +4,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ import ua.foxminded.university.dao.implementation.TimetableDAOImpl;
 import ua.foxminded.university.service.TimetableService;
 import ua.foxminded.university.service.exception.ServiceException;
 import ua.foxminded.university.service.pojo.Day;
-import ua.foxminded.university.service.pojo.DayTimetable;
+import ua.foxminded.university.service.pojo.Timetable;
 import ua.foxminded.university.service.pojo.User;
 
 /**
@@ -32,6 +32,7 @@ public class TimetableServiceImpl implements TimetableService {
     private final TimetableDAOImpl timetableDAOImpl;
     private final HolidayDAOImpl holidayDAOImpl;
     private static final Logger log = LoggerFactory.getLogger(TimetableServiceImpl.class.getName());
+    private final String illegalArgumentExceptionMessage = "No timetable for ";
 
     /**
      * Returns instance of the class
@@ -49,7 +50,7 @@ public class TimetableServiceImpl implements TimetableService {
      * {@inheritDoc}
      */
     @Override
-    public int scheduleTimetable(DayTimetable timetable) {
+    public int scheduleTimetable(Timetable timetable) {
         log.trace("Schedule day timetable");
         LocalDate day = timetable.getDay().getDateOne();
         int result = 0;
@@ -87,18 +88,19 @@ public class TimetableServiceImpl implements TimetableService {
      * {@inheritDoc}
      */
     @Override
-    public Optional<DayTimetable> getDayTimetable(LocalDate date, User user) {
-        log.trace("Get day timetable for user {}", user);
-        return timetableDAOImpl.getDayTimetable(date, user);
+    public List<Timetable> getUserTimetable(Day day, User user) {
+        log.trace("Get month timetable for user {}", user);
+        return timetableDAOImpl.getUserTimetable(day, user).orElseThrow(() -> new IllegalArgumentException(
+                illegalArgumentExceptionMessage + day.getDateOne() + " - " + day.getDateTwo()));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Optional<DayTimetable>> getMonthTimetable(Day day, User user) {
-        log.trace("Get month timetable for user {}", user);
-        return timetableDAOImpl.getMonthTimetable(day, user);
+    public List<Timetable> showTimetable(Day day) {
+        return timetableDAOImpl.showTimetable(day).orElseThrow(() -> new IllegalArgumentException(
+                illegalArgumentExceptionMessage + day.getDateOne() + " - " + day.getDateTwo()));
     }
 
     private boolean isWeekend(LocalDate date) {

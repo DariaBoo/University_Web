@@ -67,35 +67,13 @@ class GroupServiceImplTest {
         actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }
-
-    @Test
-    void updateGroup_shouldThrowServiceException_whenInputIncorrectGroupName() {
-        group = new Group.GroupBuilder().setName(createCountOfSymbols(maxGroupNameSize + 1)).setDepartmentID(1).build();
-        assertThrows(StringIndexOutOfBoundsException.class, () -> groupServiceImpl.updateGroup(group));
-    }
     
     @Test
     void updateGroup_shouldReturnResult_whenInputCorrectGroupName() throws ServiceException {
         group = new Group.GroupBuilder().setID(1).setName("ZZ-00").setDepartmentID(1).build();
         assertEquals(1, groupServiceImpl.updateGroup(group));
     }
-    @Test
-    void updateGroup_shouldThrowServiceExceptionMessage_whenInputIncorrectGroupName() {
-        group = new Group.GroupBuilder().setName(createCountOfSymbols(maxGroupNameSize + 1)).setDepartmentID(1).build();
-        exception = assertThrows(StringIndexOutOfBoundsException.class, () -> groupServiceImpl.updateGroup(group));
-        expectedMessage = "Group name is out of bound";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
-    }
-    
-    @Test
-    void updateGroup_shouldThrowServiceExceptionMessage_whenInputIncorrectGroupName2() {
-        group = new Group.GroupBuilder().setName("88-uu").setDepartmentID(1).build();
-        exception = assertThrows(ServiceException.class, () -> groupServiceImpl.updateGroup(group));
-        expectedMessage = "Group name should contain two letters, dash and two digits";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
-    }
+
     private String createCountOfSymbols(int count) {
         return Stream.generate(() -> "a")
                 .limit(count)

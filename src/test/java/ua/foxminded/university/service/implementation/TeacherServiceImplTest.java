@@ -101,14 +101,8 @@ class TeacherServiceImplTest {
     }
     
     @Test
-    void updateTeacher_shouldThrowServiceException_whenInputIncorrectData() {
-        teacher = new Teacher.TeacherBuidler().setFirstName(createCountOfSymbols(maxFirstNameSize + 1)).setLastName(createCountOfSymbols(maxLastNameSize + 1)).build();
-        assertThrows(StringIndexOutOfBoundsException.class, () -> teacherServiceImpl.updateTeacher(teacher));
-    }
-    
-    @Test
     void updateTeacher_shouldReturnResult_whenInputCorrectData() throws ServiceException {
-        teacher = new Teacher.TeacherBuidler().setID(1).setFirstName("Vlad").setLastName("Cepish").build();
+        teacher = new Teacher.TeacherBuidler().setID(1).setFirstName("Vlad").setLastName("Cepish").setPosition("professor").build();
         assertEquals(1, teacherServiceImpl.updateTeacher(teacher));
     }
     

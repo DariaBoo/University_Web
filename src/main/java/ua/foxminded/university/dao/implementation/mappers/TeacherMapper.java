@@ -1,4 +1,4 @@
-package ua.foxminded.university.dao.implementation.mapper;
+package ua.foxminded.university.dao.implementation.mappers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,7 +29,7 @@ public class TeacherMapper implements RowMapper<Teacher>{
         teacher.setFirstName(rs.getString("first_name"));
         teacher.setLastName(rs.getString("last_name"));
         teacher.setPosition(rs.getString("position"));
-        teacher.setDepartmentID(rs.getInt("department_id"));     
+        teacher.setDepartmentID(rs.getInt("department_id")); 
         return teacher;
     }
 }

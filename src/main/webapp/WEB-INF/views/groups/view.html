@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Group</title>
+
+<style>
+body, html {
+	height: 100%;
+	margin: 0;
+	overflow: hidden;
+}
+
+.bg {
+	background-color: #ffffe6;
+	height: 100%;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.group {
+	font-family: "Lucida Handwriting", "Brush Script MT", cursive;
+	font-size: 20px;
+	position: relative;
+	top: 150px;
+}
+
+h1 {
+	text-align: center;
+}
+
+table {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+tr {
+	height: 50px;
+}
+
+th {
+	text-align: left;
+	width: 200px;
+}
+
+td {
+	text-align: left;
+}
+
+.lists {
+	position: absolute;
+	top: 85%;
+	left: 42%;
+}
+
+.div_button_back {
+	position: absolute;
+	top: 140%;
+	left: 20%;
+}
+
+.div_btn_edit {
+	position: absolute;
+	top: 21%;
+	left: 43%;
+}
+
+.button_edit {
+	border: 1px solid orange;
+	color: black;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	cursor: pointer;
+	background-color: #ffcc66;
+	border-radius: 4px;
+}
+
+.div_btn_delete {
+	position: absolute;
+	top: 21%;
+	left: 53%;
+}
+
+.button_delete {
+	border: 1px solid red;
+	color: black;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	cursor: pointer;
+	background-color: #e60000;
+	border-radius: 4px;
+}
+
+.button_delete:hover {
+	background-color: #ff4d4d;
+}
+
+.button_edit:hover {
+	background-color: #ffaa00;
+}
+
+.button_back {
+	border: 1px solid black;
+	color: white;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	cursor: pointer;
+	background-color: #45454a;
+	border-radius: 4px;
+}
+
+.button_back:hover {
+	background-color: #6f6f76;
+}
+
+.div_lessons {
+	position: relative;
+	width: 500%;
+}
+
+.div_btn_newL {
+	position: absolute;
+	top: 0%;
+	left: 25%;
+}
+
+.div_btn_deleteL {
+	position: absolute;
+	top: 0%;
+	left: 55%;
+}
+
+.button_new {
+	border: 1px solid green;
+	color: black;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	cursor: pointer;
+	background-color: #009933;
+	border-radius: 4px;
+}
+
+.button_new:hover {
+	background-color: #248f24;
+}
+</style>
+</head>
+<body>
+	<div class="bg">
+		<div class="group">
+			<h1>Group details:</h1>
+			<div class="div_btn_edit">
+				<a href="#" th:href="@{/groups/edit/} + ${group.getID()}"><button
+						class="button_edit">Update</button></a>
+			</div>
+			<div class="div_btn_delete">
+				<a href="#" th:href="@{/groups/delete/} + ${group.getID()}"><button
+						class="button_delete">Delete</button></a>
+			</div>
+			<table>
+				<tr>
+					<th>Name:</th>
+					<td th:text="${group.getName()}" />
+				</tr>
+				<tr>
+					<th>Department Number:</th>
+					<td th:text="${group.getDepartmentID()}" />
+				</tr>
+			</table>
+			<br>
+			<br>
+			<div class="lists">
+				<div class="div_lessons">
+					<details class="lessons-list">
+						<summary>Lessons: </summary>
+						<ul th:each="lesson : ${lessons}">
+							<li><a th:href="@{/lessons/} + ${lesson.getId()}"
+								th:text="${lesson.getName()}"></a></li>
+						</ul>
+					</details>
+					<div class="div_btn_newL">
+						<a th:href="@{groups/group/assign_lesson}"><button
+								class="button_new">Add Lesson</button></a>
+					</div>
+					<div class="div_btn_deleteL">
+						<a th:href="@{groups/group/delete_lesson}"><button
+								class="button_delete">Delete Lesson</button></a>
+					</div>
+				</div>
+
+				<br>
+				<details class="students-list">
+					<summary>Students: </summary>
+
+					<ul th:each="student : ${students}">
+						<li><a th:href="@{/students/} + ${student.getId()}"
+							th:text="${student.getFirstName()} + ' ' + ${student.getLastName()}"></a></li>
+					</ul>
+				</details>
+			</div>
+			<div class="div_button_back">
+				<a th:href="@{/groups}"><button class="button_back">Back
+						To Groups</button></a>
+			</div>
+		</div>
+
+		<script>
+	const detailsElement = document.querySelector('.lessons-list');
+
+	detailsElement.addEventListener('toggle', event => {
+	    if (event.target.open) {
+	        console.log('open');
+	    } else {
+	        console.log('closed');
+	    }
+	});
+</script>
+		<script>
+    const detailsElement = document.querySelector('.students-list');
+
+    detailsElement.addEventListener('toggle', event => {
+        if (event.target.open) {
+            console.log('open');
+        } else {
+            console.log('closed');
+        }
+    });
+</script>
+	</div>
+</body>
+</html>

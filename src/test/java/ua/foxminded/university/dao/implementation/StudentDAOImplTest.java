@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -64,17 +63,6 @@ class StudentDAOImplTest {
     @ValueSource(ints = { 1000, -1, 0 })
     void deleteStudent_shouldReturnZero_whenInputIncorrectStudentID(int studentID) {
         assertEquals(0, studentDAOImpl.deleteStudent(studentID));
-    }
-
-    @Test
-    void changeGroup_shouldReturnCountOfChangedGroups_whenInputExistedGroupIDAndStudentID() {
-        assertEquals(1, studentDAOImpl.changeGroup(4, 1));
-    }
-
-    @ParameterizedTest(name = "{index}. When input not existed or incorrect studentID {0} and not existed or incorrect groupID {1} will return zero {2}.")
-    @CsvSource({ "1, 100, 0", "200, 1, 0", "100, 100, 0" })
-    void changeGroup_shouldReturnZero_whenInputNotExistedGroupID(int studentID, int groupID, int result) {
-        assertEquals(result, studentDAOImpl.changeGroup(studentID, groupID));
     }
 
     @Test
@@ -155,17 +143,13 @@ class StudentDAOImplTest {
         assertEquals(0, studentDAOImpl.changePassword(-1, "5555"));
     }
     @Test
-    void updateStudent_shouldReturnOne_whenInputExistedStudentIDAndNullLastName() {
-        student = new Student.StudentBuilder().setID(1).setFirstName("Marry").build();
+    void updateStudent_shouldReturnOne_whenInputUpdatedStudentData() {
+        student = new Student.StudentBuilder().setID(1).setFirstName("Marry").setLastName("poter").setGroupID(2).setIdCard("W2").build();
         assertEquals(1, studentDAOImpl.updateStudent(student));
     }
+
     @Test
-    void updateStudent_shouldReturnOne_whenInputExistedStudentIDAndNullFirstName() {
-        student = new Student.StudentBuilder().setID(1).setLastName("poter").build();
-        assertEquals(1, studentDAOImpl.updateStudent(student));
-    }
-    @Test
-    void updateStudent_shouldReturnOne_whenInputNotExistedStudentID() {
+    void updateStudent_shouldReturnZero_whenInputNotExistedStudentID() {
         student = new Student.StudentBuilder().setID(200).setFirstName("Marry").build();
         assertEquals(0, studentDAOImpl.updateStudent(student));
     }    

@@ -37,8 +37,7 @@ public class Day {
 
     public void setLessonTimePeriod(String lessonTimePeriod) {
         this.lessonTimePeriod = lessonTimePeriod;
-    }  
-
+    }
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -48,7 +47,6 @@ public class Day {
         result = prime * result + ((lessonTimePeriod == null) ? 0 : lessonTimePeriod.hashCode());
         return result;
     }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -74,5 +72,7 @@ public class Day {
         } else if (!lessonTimePeriod.equals(other.lessonTimePeriod))
             return false;
         return true;
-    }       
+    }  
+
+    
 }

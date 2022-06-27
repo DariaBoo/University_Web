@@ -1,0 +1,239 @@
+@charset "UTF-8";
+
+body, html {
+	height: 100%;
+	margin: 0;
+	overflow: hidden;
+}
+
+.bg {
+	background-color: #ffffe6;
+	height: 100%;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.nav {
+	top: 0;
+	width: 100%;
+	position: fixed;
+}
+
+ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background-color: #3b3b44;
+	width: 100%;
+}
+
+li {
+	float: left;
+	border-right: 1px solid #bbb;
+}
+
+li a {
+	display: block;
+	font-family: "Lucida Handwriting", "Brush Script MT", cursive;
+	color: #f0b40f;
+	text-align: center;
+	padding: 14px 16px;
+	text-decoration: none;
+}
+
+li a:hover:not(.active) {
+	background: #870808;
+	color: #f0b40f;
+}
+
+div.table-responsive {
+	font-family: "Lucida Handwriting", "Brush Script MT", cursive;
+	font-size: 100%;
+	font-weight: bold;
+	width: 60%;
+	position: relative;
+	top: 120px;
+	margin: auto;
+}
+
+#university {
+	text-align: center;
+}
+
+#university th {
+	background-color: black;
+	font-size: 110%;
+    color: #f0b40f;
+}
+
+#university td {
+	background-color: #3b3b44;
+    color: #f0b40f;
+}
+
+#university tr:hover {
+    background: #870808;
+    color: #f0b40f;
+}
+
+h1 {
+	font-family: "Lucida Handwriting", "Brush Script MT", cursive;
+	text-align: center;
+}
+
+.button_new {
+	border: 1px solid green;
+	color: black;
+	padding: 2px 6px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	margin: 4px 2px;
+	cursor: pointer;
+	background-color: #009933;
+	border-radius: 4px;
+}
+
+.button_new:hover {
+	background-color: #248f24;
+}
+
+.div_button_new {
+	position: absolute;
+	top: 70px;
+	left: 170px;
+}
+
+.button_view {
+	border: 1px solid blue;
+	color: black;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	cursor: pointer;
+	background-color: #6da6df;
+	border-radius: 4px;
+}
+
+.button_view:hover {
+	background-color: #26caf2;
+}
+
+.button_edit {
+	border: 1px solid orange;
+	color: black;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	cursor: pointer;
+	background-color: #ffcc66;
+	border-radius: 4px;
+}
+
+.button_edit:hover {
+	background-color: #ffaa00;
+}
+
+.button_delete {
+	border: 1px solid red;
+	color: black;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	cursor: pointer;
+	background-color: #e60000;
+	border-radius: 4px;
+}
+
+.button_delete:hover {
+	background-color: #ff4d4d;
+}
+
+.button_back {
+	border: 1px solid black;
+	color: white;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	cursor: pointer;
+	background-color: #45454a;
+	border-radius: 4px;
+}
+
+.button_back:hover {
+	background-color: #6f6f76;
+}
+
+div.table_table {
+	position: relative;
+	top: 120px;
+	font-family: "Lucida Handwriting", "Brush Script MT", cursive;
+	color: black;
+	font-size: 100%;
+}
+
+.button_add {
+	border: 1px solid green;
+	color: black;
+	padding: 2px 6px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	margin: 4px 2px;
+	cursor: pointer;
+	background-color: #4CAF50;
+	border-radius: 4px;
+}
+
+.button_add:hover {
+	background-color: #248f24;
+}
+
+.div_button_add {
+	position: absolute;
+	top: 50px;
+	left: 1275px;
+}
+
+.form_bg {
+    background-image: url("/university/img/new.png");
+    height: 100%;
+    left: 2%;
+    top: 5%;
+    background-repeat: no-repeat;
+    background-color: white;
+    background-size: 345px, 585px;
+}
+
+.form_container {
+    font-family: "Lucida Handwriting", "Brush Script MT", cursive;
+    font-size: 20px;
+    position: relative;
+    top: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 30%;
+    border: 2px solid #3b3b44;
+    background-color: #ffffe6;
+    border-radius: 5px;
+}
+
+.form_r {
+    margin-bottom: 10px;
+    margin-left: 20%;
+}
+
+.form_r label {
+    display: inline-block;
+    width: 150px;
+    font-weight: bold;
+}
+

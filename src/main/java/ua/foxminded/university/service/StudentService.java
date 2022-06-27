@@ -1,7 +1,6 @@
 package ua.foxminded.university.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import ua.foxminded.university.service.pojo.Student;
 
@@ -27,31 +26,23 @@ public interface StudentService {
     int deleteStudent(int studentID);
     
     /**
-     * Change student group, if group was changed returns 1 otherwise 0
-     * @param studentID
-     * @param groupID
-     * @return 1 or 0
-     */
-    int changeGroup(int studentID, int groupID);
-    
-    /**
      * The method finds a student by student id
      * @param studentID existed student id
      * @return optional student
      */
-    Optional<Student> findByID(int studentID);
+    Student findByID(int studentID);
     
     /**
      * The method finds all students from the timetable.students
      * @return optional list of students
      */
-    Optional<List<Student>> findAllStudents();
+    List<Student> findAllStudents();
     
     /**
      * The method finds students by group id
      * @return optional list of students
      */
-    Optional<List<Student>> findStudentsByGroup(int groupID);
+    List<Student> findStudentsByGroup(int groupID);
     
     /**
      * The method changes password by student id

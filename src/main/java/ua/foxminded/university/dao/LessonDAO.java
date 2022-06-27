@@ -38,7 +38,19 @@ public interface LessonDAO {
      * The method finds all lessons and returns optional list of lessons
      * @return optional list of lessons
      */
-    Optional<List<Lesson>> findAllLessons();
+    List<Lesson> findAllLessons();
+    
+    /**
+     * The method finds teachers lessons by teacher id
+     * @return list of lessons
+     */
+    List<Lesson> findLessonsByTeacherId(int teacherID);
+    
+    /**
+     * The method finds groups lessons by group id
+     * @return list of lessons
+     */
+    List<Lesson> findLessonsByGroupId(int groupID);
     
     /**
      * The method lets update lesson's name and description and returns count of updated rows otherwise zero

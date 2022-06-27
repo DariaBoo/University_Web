@@ -1,7 +1,6 @@
 package ua.foxminded.university.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import ua.foxminded.university.service.pojo.Group;
 
@@ -49,14 +48,34 @@ public interface GroupService {
      * The method finds all groups and returns optional list of groups
      * @return optional list of groups
      */
-    Optional<List<Group>> findAllGroups();
+    List<Group> findAllGroups();
+    
+    /**
+     * The method finds group by id
+     * @param groupID
+     * @return group
+     */
+    Group findById(int groupID);
+ 
+    /**
+     * The method finds groups by lesson id
+     * @param lessonID
+     * @return list of groups
+     */
+    List<Group> findGroupsByLessonId(int lessonID);
     
     /**
      * The method finds all groups by department and returns optional list of groups
      * @return optional list of groups
      */
-    Optional<List<Group>> findGroupsByDepartment(int departmentID);
+    List<Group> findGroupsByDepartment(int departmentID);
     
+    /**
+     * The method finds all groups by teacher id and returns list of groups
+     * @return list of groups
+     */
+    List<Group> findGroupsByTeacherId(int teacherID);
+       
     /**
      * The method updated existed group and returns count of updated rows
      * @param group

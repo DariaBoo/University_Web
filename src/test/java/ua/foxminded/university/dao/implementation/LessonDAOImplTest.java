@@ -73,7 +73,7 @@ class LessonDAOImplTest {
     
     @Test
     void findAllLessons_shouldReturnCountOfLessons_whenCallTheMethod() {
-        assertEquals(5, lessonDAOImpl.findAllLessons().get().stream().count());
+        assertEquals(5, lessonDAOImpl.findAllLessons().stream().count());
     }
     
     @Test
@@ -81,18 +81,12 @@ class LessonDAOImplTest {
         lessons.add(new Lesson.LessonBuilder().setID(1).setName("Alchemy").setDescription("the study of transmutation of substances into other forms.").build());
         lessons.add(new Lesson.LessonBuilder().setID(2).setName("Herbology").setDescription("the study of magical plants and how to take care of, utilise and combat them.").build());
         lessons.add(new Lesson.LessonBuilder().setID(3).setName("History of Magic").setDescription("the study of magical history.").build());
-        assertEquals(lessons, lessonDAOImpl.findAllLessons().get().stream().limit(3).collect(Collectors.toList()));
+        assertEquals(lessons, lessonDAOImpl.findAllLessons().stream().limit(3).collect(Collectors.toList()));
     }
     
     @Test
     void updateLesson_shouldReturnOne_whenInputExistedLessonID() {
         lesson = new Lesson.LessonBuilder().setID(1).setName("Quidditch").setDescription("sport").build();
-        assertEquals(1, lessonDAOImpl.updateLesson(lesson));
-    }
-    
-    @Test
-    void updateLesson_shouldReturnOne_whenInputExistedLessonIDAndNullName() {
-        lesson = new Lesson.LessonBuilder().setID(1).setDescription("sport").build();
         assertEquals(1, lessonDAOImpl.updateLesson(lesson));
     }
     
@@ -106,6 +100,24 @@ class LessonDAOImplTest {
     void updateLesson_shouldReturnOne_whenInputNotExistedLessonID() {
         lesson = new Lesson.LessonBuilder().setID(100).setName("Quidditch").setDescription("sport").build();
         assertEquals(0, lessonDAOImpl.updateLesson(lesson));
+    }
+    @Test
+    void findLessonsByTeacherId_shouldReturnCountOfLessons_whenCallTheMethod() {
+        assertEquals(2, lessonDAOImpl.findLessonsByTeacherId(1).stream().count());
+    }
+    @Test
+    void findLessonsByTeacherId_shouldReturnZero_whenInputNotExistedTeacherId() {
+        assertEquals(0, lessonDAOImpl.findLessonsByTeacherId(-1).stream().count());
+    }
+    
+    @Test
+    void findLessonsByGroupId_shouldReturnCountOfLessons_whenCallTheMethod() {
+        assertEquals(3, lessonDAOImpl.findLessonsByGroupId(1).stream().count());
+    }
+    
+    @Test
+    void findLessonsByGroupId_shouldReturnCountOfLessons_InputNotExistedGroupId() {
+        assertEquals(0, lessonDAOImpl.findLessonsByGroupId(-1).stream().count());
     }
     
     @Test

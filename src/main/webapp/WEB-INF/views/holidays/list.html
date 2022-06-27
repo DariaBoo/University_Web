@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Holidays</title>
+
+<link rel="stylesheet" href="/university/css/styles.css">
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+<style>
+table, th, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+	margin-left: auto;
+	margin-right: auto;
+	width: 40%
+}
+
+th {
+	background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+.message {
+	position: absolute;
+	top: 10%;
+	left: 2%;
+}
+</style>
+</head>
+
+<body>
+	<div class="bg">
+		<div id="nav-placeholder"></div>
+
+		<script>
+			$(function() {
+				$("#nav-placeholder").load("/university/navbar/navbar.html");
+			});
+		</script>
+			<div class="message" th:if="${message}">
+				<p th:text="${message}">success message</p>
+			</div>
+		<div id="university" class="table_table">
+			<h1>Holidays</h1>
+			<br>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Date</th>
+						<th>Delete</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="holiday : ${holidays}">
+						<td th:text="${holiday.getName()}"></td>
+						<td th:text="${holiday.getDate()}"></td>
+						<td style="text-align: center;"><a href="#"
+							th:href="@{holidays/holiday/delete/} + ${holiday.getId()}"><button
+									class="button_delete">Delete</button></a></td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="div_button_add">
+				<a th:href="@{holidays/new}"><button class="button_add">New</button></a>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

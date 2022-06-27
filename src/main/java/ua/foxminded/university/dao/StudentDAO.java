@@ -26,15 +26,6 @@ public interface StudentDAO {
      * @return count of deleted rows otherwise 0
      */
     int deleteStudent(int studentID);
-
-    /**
-     * The method lets change group id in the timetable.students
-     * 
-     * @param groupID   existed group id
-     * @param studentID existed student id
-     * @return count of updated rows otherwise 0
-     */
-    int changeGroup(int groupID, int studentID);
     
     /**
      * The method finds a student by student id

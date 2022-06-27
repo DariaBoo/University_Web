@@ -121,4 +121,8 @@ class GroupDAOImplTest {
     void getGroupNameMaxSize_shouldReturnColumnSize_whenCallTheMethod() {
         assertEquals(maxGroupNameSize, groupDAOImpl.getGroupNameMaxSize());
     }
+    @Test
+    void findGroupsByTeacherId_shouldReturnCountOfGroups_whenInputTeacherId() {
+        assertEquals(4, groupDAOImpl.findGroupsByTeacherId(1).get().size());
+    }
 }
