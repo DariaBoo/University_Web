@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.RowMapper;
 
 import ua.foxminded.university.service.pojo.Group;
 
-
 /**
  * @version 1.0
  * @author Bogush Daria
@@ -17,8 +16,9 @@ import ua.foxminded.university.service.pojo.Group;
  *
  */
 public class GroupMapper implements RowMapper<Group> {
+
     private static final Logger log = LoggerFactory.getLogger(GroupMapper.class.getName());
-    
+
     /**
      * Returns rowMapper for Group
      */

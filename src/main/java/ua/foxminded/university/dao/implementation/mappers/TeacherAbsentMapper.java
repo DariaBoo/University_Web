@@ -10,7 +10,8 @@ import org.springframework.jdbc.core.RowMapper;
 import ua.foxminded.university.service.pojo.Day;
 import ua.foxminded.university.service.pojo.Teacher;
 
-public class TeacherAbsentMapper implements RowMapper<Teacher>{
+public class TeacherAbsentMapper implements RowMapper<Teacher> {
+
     private static final Logger log = LoggerFactory.getLogger(TeacherAbsentMapper.class.getName());
 
     /**
@@ -23,7 +24,7 @@ public class TeacherAbsentMapper implements RowMapper<Teacher>{
         day.setDateOne(rs.getDate("date_start").toLocalDate());
         day.setDateTwo(rs.getDate("date_end").toLocalDate());
         Teacher teacher = new Teacher();
-        teacher.setId(rs.getInt("teacher_id"));       
+        teacher.setId(rs.getInt("teacher_id"));
         teacher.setAbsentPeriod(day);
         return teacher;
     }

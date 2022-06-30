@@ -9,7 +9,8 @@ import org.springframework.jdbc.core.RowMapper;
 
 import ua.foxminded.university.service.pojo.Room;
 
-public class RoomMapper implements RowMapper<Room>{
+public class RoomMapper implements RowMapper<Room> {
+
     private static final Logger log = LoggerFactory.getLogger(RoomMapper.class);
 
     @Override
@@ -20,5 +21,4 @@ public class RoomMapper implements RowMapper<Room>{
         room.setCapacity(rs.getInt("capacity"));
         return room;
     }
-
 }

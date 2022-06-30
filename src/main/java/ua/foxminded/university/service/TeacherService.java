@@ -16,7 +16,7 @@ public interface TeacherService {
      * @param teacher
      * @return count of added rows otherwise -1
      */
-    int addTeacher(Teacher teacher) ;
+    int addTeacher(Teacher teacher);
 
     /**
      * Deletes teacher from the timetable.teachers
@@ -61,53 +61,63 @@ public interface TeacherService {
      * @return count of deleted rows otherwise zero
      */
     int deleteTeacherAbsent(int teacherID, Day day);
-    
+
     /**
      * The method finds all teachers absent days by teacher id
+     * 
      * @param teacherID
      * @return list of teachers
      */
-     List<Teacher> showTeacherAbsent(int teacherID);
-     
+    List<Teacher> showTeacherAbsent(int teacherID);
+
     /**
      * The method finds a teacher by id from the timetable.teachers
+     * 
      * @param teacherID
-     * @return  teacher
+     * @return teacher
      */
     Teacher findByID(int teacherID);
-    
+
     /**
      * The method finds all teachers and returns optional list of teachers
-     * @return  list of teachers
+     * 
+     * @return list of teachers
      */
     List<Teacher> findAllTeachers();
-    
+
     /**
-     * The method finds all teachers by department id and returns optional list of teachers
+     * The method finds all teachers by department id and returns optional list of
+     * teachers
+     * 
      * @param departmentID
-     * @return  list of teachers
+     * @return list of teachers
      */
     List<Teacher> findTeachersByDepartment(int departmentID);
-    
+
     /**
-     * The method finds all teachers by lesson id and returns optional list of teachers
+     * The method finds all teachers by lesson id and returns optional list of
+     * teachers
+     * 
      * @param lessonID
      * @return optional list of teachers
      */
     List<Teacher> findTeachersByLessonId(int lessonID);
-    
+
     /**
-     * The method changes password by teacher id 
+     * The method changes password by teacher id
+     * 
      * @param teacherID
      * @param newPassword
      * @return count of updated rows otherwise 0
      */
-    int changePassword(int teacherID, String newPassword) ;
-    
+    int changePassword(int teacherID, String newPassword);
+
     /**
-     * The method lets update teacher's first name and last name and returns count of updated rows otherwise zero
+     * The method lets update teacher's first name and last name and returns count
+     * of updated rows otherwise zero
+     * 
      * @param teacher
      * @return count of updated rows otherwise zero
      */
-    int updateTeacher(Teacher teacher) ;
+    int updateTeacher(Teacher teacher);
 }

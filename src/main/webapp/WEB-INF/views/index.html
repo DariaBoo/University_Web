@@ -111,8 +111,9 @@ to {
 }
 
 }
-@keyframes animatezoom {
-	from {	transform: scale(0) }
+@keyframes animatezoom {from { transform:scale(0)
+	
+}
 
 to {
 	transform: scale(1)
@@ -144,31 +145,32 @@ to {
 	<p>Decoration in process...</p>
 
 
-    <div th:if="${message}" role="alert">
-            <p th:text="${message}"/>
-        </div>
+	<div th:if="${message}" role="alert">
+		<p th:text="${message}" />
+	</div>
 	<button class="button_login"
 		onclick="document.getElementById('id01').style.display='block'"
 		style="width: auto;">Login</button>
 
 	<div id="id01" class="modal">
 
-		<form class="modal-content animate" action="/university/login" method="post">
+		<form class="modal-content animate" action="/university/login"
+			method="post">
 			<div class="imgcontainer">
 				<span onclick="document.getElementById('id01').style.display='none'"
 					class="close" title="Close Modal">&times;</span>
 			</div>
 
 			<div class="container">
-				<label for="uname"><b>Username</b></label> 
-				<input type="text" placeholder="Enter Username" name="uname" required> 
-				<label	for="psw"><b>Password</b></label> 
-				<input type="password" placeholder="Enter Password" name="psw" required>
+				<label for="uname"><b>Username</b></label> <input type="text"
+					placeholder="Enter Username" name="uname" required> <label
+					for="psw"><b>Password</b></label> <input type="password"
+					placeholder="Enter Password" name="psw" required>
 
 				<button type="submit">Login</button>
 				<label> <input type="checkbox" checked="checked"
 					name="remember"> Remember me
-				</label>				
+				</label>
 			</div>
 
 			<div class="container" style="background-color: #f1f1f1">

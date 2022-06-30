@@ -33,6 +33,7 @@ import ua.foxminded.university.service.pojo.User;
  */
 @Repository
 public class TimetableDAOImpl implements TimetableDAO {
+
     private final JdbcTemplate jdbcTemplate;
     private final String SCHEDULE_TIMETABLE = "INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) SELECT ?, ?, ?, ?, ?, ? \n"
             + "WHERE NOT EXISTS (SELECT lesson_id, group_id FROM timetable.timetable WHERE date = ? AND time_period = ? AND lesson_id = ? AND group_id = ?) \n"
@@ -85,7 +86,7 @@ public class TimetableDAOImpl implements TimetableDAO {
         log.trace("Start to schedule day timetable");
         int lessonID = timetable.getLesson().getId();
         log.info("Took lesson id {} from inputed DayTimetable", lessonID);
-        int groupID = timetable.getGroup().getID();
+        int groupID = timetable.getGroup().getId();
         log.info("Took group id {} from inputed DayTimetable", groupID);
         Day day = timetable.getDay();
         log.info("Took date {} and lesson time period {}", day.getDateOne(), day.getLessonTimePeriod());
@@ -140,15 +141,15 @@ public class TimetableDAOImpl implements TimetableDAO {
         if (date != null) {
             if (user instanceof Teacher) {
                 sql = GET_TEACHER_DAY_TIMETABLE;
-                
+
             } else if (user instanceof Student) {
                 log.trace("Check inputed user class {} if instanceof Student", user.getClass().getName());
                 sql = GET_STUDENT_DAY_TIMETABLE;
             }
             resultList = Optional
                     .of(jdbcTemplate.query(sql, new Object[] { date, user.getId() }, new TimetableMapper()));
-            log.debug("Took timetable for the user - {} with id {} and date {} from the timetable.timetable", user.getClass().getName(),user.getId(),
-                    date);
+            log.debug("Took timetable for the user - {} with id {} and date {} from the timetable.timetable",
+                    user.getClass().getName(), user.getId(), date);
         }
         return resultList;
     }
@@ -165,11 +166,12 @@ public class TimetableDAOImpl implements TimetableDAO {
                     .map(date -> showDayTimetable(date)).filter(Optional::isPresent).map(Optional::get)
                     .collect(Collectors.toList()).stream()
                     .collect(ArrayList<Timetable>::new, List::addAll, List::addAll));
-            log.debug("Took timetable - {} for period of days {} - {} ", resultList, day.getDateOne(), day.getDateTwo());
+            log.debug("Took timetable - {} for period of days {} - {} ", resultList, day.getDateOne(),
+                    day.getDateTwo());
         }
         return resultList;
     }
-    
+
     private Optional<List<Timetable>> showDayTimetable(LocalDate date) {
         Optional<List<Timetable>> resultList = Optional.empty();
         if (date != null) {
@@ -185,7 +187,7 @@ public class TimetableDAOImpl implements TimetableDAO {
                     new Object[] { groupID, day.getDateOne(), day.getLessonTimePeriod() }, Integer.class);
         } catch (EmptyResultDataAccessException e) {
             log.error("No available rooms for this time {} and date {}.", day.getLessonTimePeriod(), day.getDateOne());
-            throw new DAOException("No available rooms for this time and date. Can't schedule timetable.", e);
+            throw new DAOException("No available rooms for this time and date! Can't schedule timetable.", e);
         }
         return result;
     }
@@ -198,7 +200,7 @@ public class TimetableDAOImpl implements TimetableDAO {
         } catch (EmptyResultDataAccessException e) {
             log.error("No available teachers for this time {} and date {}.", day.getLessonTimePeriod(),
                     day.getDateOne());
-            throw new DAOException("No available teachers for this time and date. Can't schedule timetable.", e);
+            throw new DAOException("No available teachers for this time and date! Can't schedule timetable.", e);
         }
         return result;
     }

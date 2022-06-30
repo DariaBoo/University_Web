@@ -17,19 +17,21 @@ import ua.foxminded.university.service.pojo.Lesson;
  *
  */
 @Service
-public class LessonServiceImpl implements LessonService{
+public class LessonServiceImpl implements LessonService {
+
     private final LessonDAOImpl lessonDaoImpl;
     private static final Logger log = LoggerFactory.getLogger(LessonServiceImpl.class.getName());
 
     /**
      * Returns instance of the class
+     * 
      * @param lessonDaoImpl
      */
     @Autowired
     public LessonServiceImpl(LessonDAOImpl lessonDaoImpl) {
         this.lessonDaoImpl = lessonDaoImpl;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -37,14 +39,14 @@ public class LessonServiceImpl implements LessonService{
     public int addLesson(Lesson lesson) {
         log.trace("Add new lesson to the database");
         log.trace("Check is lesson name - {} is not out of bound", lesson.getName());
-        if(lesson.getName().length() > lessonDaoImpl.getLessonNameMaxSize()) {
+        if (lesson.getName().length() > lessonDaoImpl.getLessonNameMaxSize()) {
             log.error("Lesson name - {} is out of bound", lesson.getName());
             throw new StringIndexOutOfBoundsException("Lesson name is out of bound.");
         }
-        if(lesson.getDescription().length() > lessonDaoImpl.getDescriptionMaxSize()) {
+        if (lesson.getDescription().length() > lessonDaoImpl.getDescriptionMaxSize()) {
             log.error("Lesson description - {} is out of bound", lesson.getDescription());
             throw new StringIndexOutOfBoundsException("Lesson description is out of bound.");
-        }       
+        }
         return lessonDaoImpl.addLesson(lesson);
     }
 
@@ -53,17 +55,19 @@ public class LessonServiceImpl implements LessonService{
      */
     @Override
     public int deleteLesson(int lessonID) {
-        log.trace("Delete lesson with id {}", lessonID);
-        return lessonDaoImpl.deleteLesson(lessonID);
+        int result = lessonDaoImpl.deleteLesson(lessonID);
+        log.debug("Delete lesson with id {} and return a result - {}", lessonID, result);
+        return result;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public int updateLesson(Lesson lesson) {
-        log.trace("Update lesson name and description");           
-        return lessonDaoImpl.updateLesson(lesson);
+        int result = lessonDaoImpl.updateLesson(lesson);
+        log.debug("Update lesson - {} and return a result - {}", lesson, result);
+        return result;
     }
 
     /**
@@ -71,8 +75,9 @@ public class LessonServiceImpl implements LessonService{
      */
     @Override
     public Lesson findByID(int lessonID) {
-        log.trace("Find lesson by id {}", lessonID);
-        return lessonDaoImpl.findByID(lessonID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        Lesson resultLesson = lessonDaoImpl.findByID(lessonID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        log.debug("Find lesson by id - {} and return lesson - {}", lessonID, resultLesson);
+        return resultLesson;
     }
 
     /**
@@ -80,8 +85,9 @@ public class LessonServiceImpl implements LessonService{
      */
     @Override
     public List<Lesson> findAllLessons() {
-        log.trace("Find all lessons");
-        return lessonDaoImpl.findAllLessons();
+        List<Lesson> resultList = lessonDaoImpl.findAllLessons();
+        log.debug("Take a list of lessons - {}", resultList);
+        return resultList;
     }
 
     /**
@@ -89,8 +95,9 @@ public class LessonServiceImpl implements LessonService{
      */
     @Override
     public List<Lesson> findLessonsByTeacherId(int teacherID) {
-        log.trace("Find all lessons by teacher id - {}", teacherID);
-        return lessonDaoImpl.findLessonsByTeacherId(teacherID);
+        List<Lesson> resultList = lessonDaoImpl.findLessonsByTeacherId(teacherID);
+        log.debug("Find all lessons by teacher id - {} and return list of lessons - {}", teacherID, resultList);
+        return resultList;
     }
 
     /**
@@ -98,7 +105,8 @@ public class LessonServiceImpl implements LessonService{
      */
     @Override
     public List<Lesson> findLessonsByGroupId(int groupID) {
-        log.trace("Find all lessons by group id - {}", groupID);
-        return lessonDaoImpl.findLessonsByGroupId(groupID);
+        List<Lesson> resultList = lessonDaoImpl.findLessonsByGroupId(groupID);
+        log.debug("Find all lessons by group id - {} and return list of lessons - {}", groupID, resultList);
+        return resultList;
     }
 }

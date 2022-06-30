@@ -3,6 +3,7 @@ package ua.foxminded.university.service.pojo;
 import java.util.List;
 
 public class Student extends User {
+
     private String idCard;
     private int groupID;
 
@@ -121,5 +122,4 @@ public class Student extends User {
             return false;
         return true;
     }
-
 }

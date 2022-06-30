@@ -16,8 +16,9 @@ import ua.foxminded.university.service.pojo.Lesson;
  *
  */
 public class LessonMapper implements RowMapper<Lesson> {
+
     private static final Logger log = LoggerFactory.getLogger(LessonMapper.class.getName());
-    
+
     /**
      * Returns rowMapper for Lesson
      */

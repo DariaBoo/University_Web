@@ -165,7 +165,7 @@ td {
 							<b>Groups:</b>
 						</summary>
 						<ul th:each="group : ${groups}">
-							<li><a th:href="@{/groups/} + ${group.getID()}"
+							<li><a th:href="@{/groups/} + ${group.getId()}"
 								th:text="${group.getName()}"></a></li>
 						</ul>
 					</details>

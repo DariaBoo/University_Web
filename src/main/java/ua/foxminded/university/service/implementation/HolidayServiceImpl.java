@@ -2,6 +2,8 @@ package ua.foxminded.university.service.implementation;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,20 +12,24 @@ import ua.foxminded.university.service.HolidayService;
 import ua.foxminded.university.service.pojo.Holiday;
 
 @Service
-public class HolidayServiceImpl implements HolidayService{
-    private final HolidayDAOImpl holidayDAOImpl;
+public class HolidayServiceImpl implements HolidayService {
     
+    private final HolidayDAOImpl holidayDAOImpl;
+    private static final Logger log = LoggerFactory.getLogger(HolidayServiceImpl.class);
+
     @Autowired
     public HolidayServiceImpl(HolidayDAOImpl holidayDAOImpl) {
         this.holidayDAOImpl = holidayDAOImpl;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public List<Holiday> findAllHolidays() {
-        return holidayDAOImpl.findAllHolidays().orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        List<Holiday> resultList = holidayDAOImpl.findAllHolidays().orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        log.debug("Take list of holidays - {}, otherwise return IllegalArgumentException", resultList);
+        return resultList;
     }
 
     /**
@@ -31,7 +37,9 @@ public class HolidayServiceImpl implements HolidayService{
      */
     @Override
     public int addHoliday(Holiday holiday) {
-        return holidayDAOImpl.addHoliday(holiday);
+        int result = holidayDAOImpl.addHoliday(holiday);
+        log.debug("Add new holiday - {} and return a result - {}", holiday, result);
+        return result;
     }
 
     /**
@@ -40,8 +48,7 @@ public class HolidayServiceImpl implements HolidayService{
     @Override
     public int deleteHoliday(int holidayID) {
         int result = holidayDAOImpl.deleteHoliday(holidayID);
-        System.out.println(result);
+        log.debug("Delete holiday with id - {} and return a result - {}", holidayID, result);
         return result;
     }
-
 }

@@ -28,9 +28,9 @@
 
 <style>
 .message {
-    position: absolute;
-    top: 10%;
-    left: 2%;
+	position: absolute;
+	top: 10%;
+	left: 2%;
 }
 </style>
 </head>
@@ -42,11 +42,11 @@
 				$("#nav-placeholder").load("/university/navbar/navbar.html");
 			});
 		</script>
-		
+
 		<div class="message" th:if="${message}">
 			<p th:text="${message}">success message</p>
 		</div>
-		
+
 		<div class="table-responsive">
 			<h1>The students of Hogwarts:</h1>
 			<br>

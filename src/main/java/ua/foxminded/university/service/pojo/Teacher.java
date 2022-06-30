@@ -3,23 +3,27 @@ package ua.foxminded.university.service.pojo;
 import java.util.List;
 
 public class Teacher extends User {
+
     private String position;
     private int departmentID;
     private Day absentPeriod;
 
     public Teacher() {
-        
+
     }
-    
-    public Teacher(int id, String firstName, String lastName, String password, String position, int departmentID, List<Lesson> lessons, Day absentPeriod) {
+
+    public Teacher(int id, String firstName, String lastName, String password, String position, int departmentID,
+            List<Lesson> lessons, Day absentPeriod) {
         super(id, firstName, lastName, password, lessons);
         this.departmentID = departmentID;
         this.position = position;
         this.absentPeriod = absentPeriod;
     }
+
     public static TeacherBuidler builder() {
         return new TeacherBuidler();
     }
+
     public static class TeacherBuidler {
         private int id;
         private String firstName;
@@ -29,58 +33,68 @@ public class Teacher extends User {
         private String position;
         private int departmentID;
         private Day absentPeriod;
-        
+
         public TeacherBuidler setID(int id) {
             this.id = id;
             return this;
         }
+
         public TeacherBuidler setFirstName(String firstName) {
             this.firstName = firstName;
             return this;
         }
+
         public TeacherBuidler setLastName(String lastName) {
             this.lastName = lastName;
             return this;
         }
+
         public TeacherBuidler setPassword(String password) {
             this.password = password;
             return this;
         }
+
         public TeacherBuidler setLessons(List<Lesson> lessons) {
             this.lessons = lessons;
             return this;
-        }       
+        }
+
         public TeacherBuidler setPosition(String position) {
             this.position = position;
             return this;
         }
+
         public TeacherBuidler setDepartmentID(int departmentID) {
             this.departmentID = departmentID;
             return this;
         }
+
         public TeacherBuidler setAbsentPeriod(Day absentPeriod) {
             this.absentPeriod = absentPeriod;
             return this;
         }
+
         private TeacherBuidler construct(Object object) {
             return this;
         }
+
         public Teacher build() {
             return new Teacher(id, firstName, lastName, password, position, departmentID, lessons, absentPeriod);
         }
+
         public Teacher buildWith(Object object) {
             return construct(object).build();
         }
-    }    
-    
+    }
+
     public String getPosition() {
         return position;
     }
-       
+
     public int getDepartmentID() {
         return departmentID;
     }
-    
+
     public void setPosition(String position) {
         this.position = position;
     }

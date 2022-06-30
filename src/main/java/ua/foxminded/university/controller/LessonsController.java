@@ -1,6 +1,5 @@
 package ua.foxminded.university.controller;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,26 +17,27 @@ public class LessonsController {
     private final LessonServiceImpl lessonServiceImpl;
     private final TeacherServiceImpl teacherServiceImpl;
     private final GroupServiceImpl groupServiceImpl;
-    
+
     @Autowired
-    public LessonsController(LessonServiceImpl lessonServiceImpl, TeacherServiceImpl teacherServiceImpl, GroupServiceImpl groupServiceImpl) {
+    public LessonsController(LessonServiceImpl lessonServiceImpl, TeacherServiceImpl teacherServiceImpl,
+            GroupServiceImpl groupServiceImpl) {
         this.lessonServiceImpl = lessonServiceImpl;
-        this.teacherServiceImpl = teacherServiceImpl; 
+        this.teacherServiceImpl = teacherServiceImpl;
         this.groupServiceImpl = groupServiceImpl;
     }
-    
+
     @GetMapping()
     public String listAllLessons(Model model) {
         model.addAttribute("lessons", lessonServiceImpl.findAllLessons());
-        return "lessons/list";       
+        return "lessons/list";
     }
-    
+
     @RequestMapping("/{id}")
     public String viewLessonById(@PathVariable Integer id, Model model) {
         model.addAttribute("lesson", lessonServiceImpl.findByID(id));
-        model.addAttribute("teachers", teacherServiceImpl.findTeachersByLessonId(id)); 
+        model.addAttribute("teachers", teacherServiceImpl.findTeachersByLessonId(id));
         model.addAttribute("groups", groupServiceImpl.findGroupsByLessonId(id));
-        return "lessons/view";       
+        return "lessons/view";
     }
 
 }

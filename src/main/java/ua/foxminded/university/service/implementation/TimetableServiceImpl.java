@@ -29,6 +29,7 @@ import ua.foxminded.university.service.pojo.User;
  */
 @Service
 public class TimetableServiceImpl implements TimetableService {
+
     private final TimetableDAOImpl timetableDAOImpl;
     private final HolidayDAOImpl holidayDAOImpl;
     private static final Logger log = LoggerFactory.getLogger(TimetableServiceImpl.class.getName());
@@ -62,7 +63,7 @@ public class TimetableServiceImpl implements TimetableService {
         log.trace("Check if a day - {} is not a holiday", day);
         if (isHoliday(day)) {
             log.error("Can't schedule timetable for holiday. Try to schedule {}", timetable.getDay());
-            throw new ServiceException("Can't schedule timetable for holiday");
+            throw new ServiceException("Can't schedule timetable for holiday!");
         }
         log.info("Schedule timetable");
         try {
@@ -80,8 +81,9 @@ public class TimetableServiceImpl implements TimetableService {
      */
     @Override
     public int deleteTimetable(int timetableID) {
-        log.trace("Delete timetable by id");
-        return timetableDAOImpl.deleteTimetable(timetableID);
+        int result = timetableDAOImpl.deleteTimetable(timetableID);
+        log.debug("Delete timetable by id -{} and return a result - {}", timetableID, result);
+        return result;
     }
 
     /**
@@ -89,9 +91,10 @@ public class TimetableServiceImpl implements TimetableService {
      */
     @Override
     public List<Timetable> getUserTimetable(Day day, User user) {
-        log.trace("Get month timetable for user {}", user);
-        return timetableDAOImpl.getUserTimetable(day, user).orElseThrow(() -> new IllegalArgumentException(
+        List<Timetable> resultList = timetableDAOImpl.getUserTimetable(day, user).orElseThrow(() -> new IllegalArgumentException(
                 illegalArgumentExceptionMessage + day.getDateOne() + " - " + day.getDateTwo()));
+        log.debug("Get month timetable for user {} and return a list of timetable - {}", user, resultList);
+        return resultList;
     }
 
     /**
@@ -99,8 +102,10 @@ public class TimetableServiceImpl implements TimetableService {
      */
     @Override
     public List<Timetable> showTimetable(Day day) {
-        return timetableDAOImpl.showTimetable(day).orElseThrow(() -> new IllegalArgumentException(
+        List<Timetable> resultList = timetableDAOImpl.showTimetable(day).orElseThrow(() -> new IllegalArgumentException(
                 illegalArgumentExceptionMessage + day.getDateOne() + " - " + day.getDateTwo()));
+        log.debug("Return a list of timetable - {}", resultList);
+        return resultList;
     }
 
     private boolean isWeekend(LocalDate date) {

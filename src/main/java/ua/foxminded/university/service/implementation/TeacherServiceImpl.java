@@ -19,12 +19,14 @@ import ua.foxminded.university.service.pojo.Teacher;
  *
  */
 @Service
-public class TeacherServiceImpl implements TeacherService{
+public class TeacherServiceImpl implements TeacherService {
+
     private final TeacherDAOImpl teacherDAOImpl;
     private static final Logger log = LoggerFactory.getLogger(TeacherServiceImpl.class.getName());
 
     /**
      * Returns instance of the class
+     * 
      * @param teacherDAOImpl
      */
     @Autowired
@@ -61,28 +63,27 @@ public class TeacherServiceImpl implements TeacherService{
         }
         result = teacherDAOImpl.addTeacher(teacher);
         log.debug("Took a result {} of adding a new teacher", result);
-        return result; 
+        return result;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public int updateTeacher(Teacher teacher) {
-        log.trace("Update existed teacher {}", teacher);
-        int result = 0;
-        result = teacherDAOImpl.updateTeacher(teacher);
+        int result = teacherDAOImpl.updateTeacher(teacher);
         log.debug("Took a result {} of updating a teacher", result);
         return result;
-    }  
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public int deleteTeacher(int teacherID) {
-        log.trace("Delete existed teacher by id {}", teacherID);
-        return teacherDAOImpl.deleteTeacher(teacherID);
+        int result = teacherDAOImpl.deleteTeacher(teacherID);
+        log.debug("Delete existed teacher by id {} and return a result - {}", teacherID, result);
+        return result;
     }
 
     /**
@@ -90,8 +91,9 @@ public class TeacherServiceImpl implements TeacherService{
      */
     @Override
     public int assignLessonToTeacher(int lessonID, int teacherID) {
-        log.trace("Assign lesson with id {} to teacher with id {}", lessonID, teacherID);        
-        return teacherDAOImpl.assignLessonToTeacher(lessonID, teacherID);
+        int result = teacherDAOImpl.assignLessonToTeacher(lessonID, teacherID);
+        log.debug("Assign lesson with id {} to teacher with id {} and return a result - {}", lessonID, teacherID, result);
+        return result;
     }
 
     /**
@@ -99,8 +101,9 @@ public class TeacherServiceImpl implements TeacherService{
      */
     @Override
     public int deleteLessonFromTeacher(int lessonID, int teacherID) {
-        log.trace("Delete lesson with id {} from teacher with id {}", lessonID, teacherID);
-        return teacherDAOImpl.deleteLessonFromTeacher(lessonID, teacherID);
+        int result = teacherDAOImpl.deleteLessonFromTeacher(lessonID, teacherID);
+        log.debug("Delete lesson with id {} from teacher with id {} and return a result - {}", lessonID, teacherID, result);
+        return result;
     }
 
     /**
@@ -108,8 +111,9 @@ public class TeacherServiceImpl implements TeacherService{
      */
     @Override
     public int setTeacherAbsent(int teacherID, Day day) {
-        log.trace("Set teacher with id {} absent in a day - {}",teacherID, day);
-        return teacherDAOImpl.setTeahcerAbsent(teacherID, day);
+        int result = teacherDAOImpl.setTeahcerAbsent(teacherID, day);
+        log.debug("Set teacher with id {} absent in a day - {} and return a result - {}", teacherID, day, result);
+        return result;
     }
 
     /**
@@ -117,8 +121,9 @@ public class TeacherServiceImpl implements TeacherService{
      */
     @Override
     public int deleteTeacherAbsent(int teacherID, Day day) {
-        log.trace("Delete teacher with id {} absent in a day - {}", teacherID, day);
-        return teacherDAOImpl.deleteTeahcerAbsent(teacherID, day);
+        int result = teacherDAOImpl.deleteTeahcerAbsent(teacherID, day);
+        log.debug("Delete teacher with id {} absent in a day - {} and return a result - {}", teacherID, day, result);
+        return result;
     }
 
     /**
@@ -126,8 +131,9 @@ public class TeacherServiceImpl implements TeacherService{
      */
     @Override
     public Teacher findByID(int teacherID) {
-        log.trace("Find teacher by id {}", teacherID);
-        return teacherDAOImpl.findByID(teacherID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        Teacher resultTeacher = teacherDAOImpl.findByID(teacherID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        log.debug("Find teacher by id {}  and return a result - {}", teacherID, resultTeacher);
+        return resultTeacher;
     }
 
     /**
@@ -135,8 +141,9 @@ public class TeacherServiceImpl implements TeacherService{
      */
     @Override
     public List<Teacher> findAllTeachers() {
-        log.trace("Find all teachers");
-        return teacherDAOImpl.findAllTeachers().orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        List<Teacher> resultList = teacherDAOImpl.findAllTeachers().orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        log.debug("Return list of all teachers - {}", resultList);
+        return resultList;
     }
 
     /**
@@ -144,16 +151,21 @@ public class TeacherServiceImpl implements TeacherService{
      */
     @Override
     public List<Teacher> findTeachersByDepartment(int departmentID) {
-        log.trace("Find teachers by department with id {}", departmentID);
-        return teacherDAOImpl.findTeachersByDepartment(departmentID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        List<Teacher> resultList = teacherDAOImpl.findTeachersByDepartment(departmentID)
+                .orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        log.debug("Find teachers by department with id {} and return a result - {}", departmentID, resultList);
+        return resultList;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public List<Teacher> findTeachersByLessonId(int lessonID) {
-        return teacherDAOImpl.findTeachersByLessonId(lessonID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        List<Teacher> resultList = teacherDAOImpl.findTeachersByLessonId(lessonID)
+                .orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        log.debug("Find teachers by lesson id {} and return a result - {}", lessonID, resultList);
+        return resultList;
     }
 
     /**
@@ -163,11 +175,13 @@ public class TeacherServiceImpl implements TeacherService{
     public int changePassword(int teacherID, String newPassword) {
         log.trace("Change teacher's password");
         log.info("Check is new password is not bigger then 10 symbols");
-        if(newPassword.length() > teacherDAOImpl.getPasswordMaxSize()) {
+        if (newPassword.length() > teacherDAOImpl.getPasswordMaxSize()) {
             log.error("Password can't be more than 10 symbols. Password length {}", newPassword.length());
             throw new StringIndexOutOfBoundsException("Password can't be more than 10 symbols");
         }
-        return teacherDAOImpl.changePassword(teacherID, newPassword);
+        int result = teacherDAOImpl.changePassword(teacherID, newPassword);
+        log.debug("Return a result - {}", result);
+        return result;
     }
 
     /**
@@ -175,7 +189,9 @@ public class TeacherServiceImpl implements TeacherService{
      */
     @Override
     public List<Teacher> showTeacherAbsent(int teacherID) {
-        return teacherDAOImpl.showTeacherAbsent(teacherID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        List<Teacher> resultList = teacherDAOImpl.showTeacherAbsent(teacherID)
+                .orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        log.debug("Return a list with teachers absent days - {}", resultList);
+        return resultList;
     }
-
 }

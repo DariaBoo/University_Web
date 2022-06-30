@@ -15,7 +15,8 @@ import ua.foxminded.university.service.pojo.Teacher;
  *
  *
  */
-public class TeacherMapper implements RowMapper<Teacher>{
+public class TeacherMapper implements RowMapper<Teacher> {
+
     private static final Logger log = LoggerFactory.getLogger(TeacherMapper.class.getName());
 
     /**
@@ -29,7 +30,7 @@ public class TeacherMapper implements RowMapper<Teacher>{
         teacher.setFirstName(rs.getString("first_name"));
         teacher.setLastName(rs.getString("last_name"));
         teacher.setPosition(rs.getString("position"));
-        teacher.setDepartmentID(rs.getInt("department_id")); 
+        teacher.setDepartmentID(rs.getInt("department_id"));
         return teacher;
     }
 }

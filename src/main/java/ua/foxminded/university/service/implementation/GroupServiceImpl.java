@@ -18,11 +18,12 @@ import ua.foxminded.university.service.pojo.Group;
  *
  */
 @Service
-public class GroupServiceImpl implements GroupService{
+public class GroupServiceImpl implements GroupService {
+
     private static final String groupNamePattern = "(\\S+)-(\\d+)";
     private final GroupDAOImpl groupDAOImpl;
     private static final Logger log = LoggerFactory.getLogger(GroupServiceImpl.class.getName());
-    
+
     /**
      * Returns instance of the class
      * 
@@ -40,16 +41,18 @@ public class GroupServiceImpl implements GroupService{
     public int addGroup(Group group) {
         log.trace("Add new group");
         log.trace("Check if group name - {} is not out of bound", group.getName());
-        if(group.getName().length() > groupDAOImpl.getGroupNameMaxSize()) {
+        if (group.getName().length() > groupDAOImpl.getGroupNameMaxSize()) {
             log.error("Group name - {} is out of bound", group.getName());
             throw new StringIndexOutOfBoundsException("Group name is out of bound");
         }
         log.trace("Check if group name - {} matches the pattern {}", group.getName(), groupNamePattern);
-        if(!group.getName().matches(groupNamePattern)) {
+        if (!group.getName().matches(groupNamePattern)) {
             log.error("Group name - {} is not matches the pattern {}", group.getName(), groupNamePattern);
             throw new ServiceException("Group name should contain two letters, dash and two digits");
-        }        
-        return groupDAOImpl.addGroup(group);
+        }
+        int result = groupDAOImpl.addGroup(group);
+        log.debug("Add new group - {} and take a result - {}", group, result);
+        return result;
     }
 
     /**
@@ -57,8 +60,9 @@ public class GroupServiceImpl implements GroupService{
      */
     @Override
     public int deleteGroup(int groupID) {
-        log.trace("Delete group by id {}", groupID);
-        return groupDAOImpl.deleteGroup(groupID);
+        int result = groupDAOImpl.deleteGroup(groupID);
+        log.debug("Delete group with id - {}, and take a result - {}", groupID, result);
+        return result;
     }
 
     /**
@@ -66,8 +70,9 @@ public class GroupServiceImpl implements GroupService{
      */
     @Override
     public int assignLessonToGroup(int groupID, int lessonID) {
-        log.trace("Assign lesson with id {} to group with id {}", lessonID, groupID);
-        return groupDAOImpl.assignLessonToGroup(groupID, lessonID);
+        int result = groupDAOImpl.assignLessonToGroup(groupID, lessonID);
+        log.debug("Assign lesson with id - {} to group with id - {}) and take a result - {}", lessonID, groupID, result);
+        return result;
     }
 
     /**
@@ -75,8 +80,9 @@ public class GroupServiceImpl implements GroupService{
      */
     @Override
     public int deleteLessonFromGroup(int groupID, int lessonID) {
-        log.trace("Delete lesson with id {} from group with id {}", lessonID, groupID);
-        return groupDAOImpl.deleteLessonFromGroup(groupID, lessonID);
+        int result = groupDAOImpl.deleteLessonFromGroup(groupID, lessonID);
+        log.debug("Delete lesson with id - {} from group with id - {} and take a result - {}", lessonID, groupID, result);
+        return result;
     }
 
     /**
@@ -84,24 +90,30 @@ public class GroupServiceImpl implements GroupService{
      */
     @Override
     public List<Group> findAllGroups() {
-        log.trace("Find all groups");
-        return groupDAOImpl.findAllGroups().orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        List<Group> resultList = groupDAOImpl.findAllGroups().orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        log.debug("Find all groups and return a list of groups - {}, otherwise return IllegalArgumentException", resultList);
+        return resultList;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Group findById(int groupID) {
-        return groupDAOImpl.findById(groupID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        Group resultGroup = groupDAOImpl.findById(groupID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        log.debug("Find group by id - {} and return group - {}, otherwise return IllegalArgumentException", groupID, resultGroup);
+        return resultGroup;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public List<Group> findGroupsByLessonId(int lessonID) {
-        return groupDAOImpl.findGroupsByLessonId(lessonID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        List<Group> resultList = groupDAOImpl.findGroupsByLessonId(lessonID)
+                .orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        log.debug("Find groups by lesson id - {} and return a list of groups - {}, otherwise return IllegalArgumentException", lessonID, resultList);
+        return resultList;
     }
 
     /**
@@ -109,8 +121,10 @@ public class GroupServiceImpl implements GroupService{
      */
     @Override
     public List<Group> findGroupsByDepartment(int departmentID) {
-        log.trace("Find groups by department with id {}", departmentID);
-        return groupDAOImpl.findGroupsByDepartment(departmentID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        List<Group> resultList = groupDAOImpl.findGroupsByDepartment(departmentID)
+                .orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        log.debug("Find groups by department with id - {} and return a list of groups - {}, otherwise return IllegalArgumentException", departmentID, resultList);
+        return resultList;
     }
 
     /**
@@ -118,16 +132,19 @@ public class GroupServiceImpl implements GroupService{
      */
     @Override
     public List<Group> findGroupsByTeacherId(int teacherID) {
-        return groupDAOImpl.findGroupsByTeacherId(teacherID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        List<Group> resultList = groupDAOImpl.findGroupsByTeacherId(teacherID)
+                .orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        log.debug("Find groups by teacher id - {} and return a list of groups - {}, otherwise return IllegalArgumentException", teacherID, resultList);
+        return resultList;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public int updateGroup(Group group) {
-        log.trace("Update existed group");        
-        return groupDAOImpl.updateGroup(group);
+        int result = groupDAOImpl.updateGroup(group);
+        log.debug("Update existed group - {}", group);
+        return result;
     }
-    
 }
