@@ -70,7 +70,7 @@ class GroupServiceImplTest {
     
     @Test
     void updateGroup_shouldReturnResult_whenInputCorrectGroupName() throws ServiceException {
-        group = new Group.GroupBuilder().setID(1).setName("ZZ-00").setDepartmentID(1).build();
+        group = new Group.GroupBuilder().setId(1).setName("ZZ-00").setDepartmentID(1).build();
         assertEquals(1, groupServiceImpl.updateGroup(group));
     }
 

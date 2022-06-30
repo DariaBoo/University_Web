@@ -40,7 +40,6 @@ public class HolidayServiceImpl implements HolidayService{
     @Override
     public int deleteHoliday(int holidayID) {
         int result = holidayDAOImpl.deleteHoliday(holidayID);
-        System.out.println(result);
         return result;
     }
 

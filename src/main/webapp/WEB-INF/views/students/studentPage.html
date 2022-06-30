@@ -36,7 +36,7 @@ div.container {
     position: absolute;
     left: 85%;
 }
-.btn {
+.btn_show {
 border: 1px solid black;
     color: white;
     text-align: center;
@@ -48,7 +48,7 @@ border: 1px solid black;
     border-radius: 4px;
 }
 
-.btn:hover {
+.btn_show:hover {
     background-color: #6f6f76;
 }
 </style>
@@ -62,10 +62,11 @@ border: 1px solid black;
 	<div class="container">
 		<div id="from_to">
 			<form id="form" action="/university/student/timetable" method="post">
-				<label for="from">From: </label> <input type="date" id="from"
-					name="from" /> <label for="to"> to: </label> <input type="date"
-					id="to" name="to" />
-				<button type="submit" class="btn">Show</button>
+				<label for="from">From: </label> 
+				<input type="date" id="from" name="from" /> 
+				<label for="to"> to: </label> 
+				<input type="date" id="to" name="to" />
+				<button type="submit" class="btn_show">Show</button>
 			</form>
 		</div>
 			<div id="chg_psw">

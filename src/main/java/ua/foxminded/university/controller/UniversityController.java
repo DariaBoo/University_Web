@@ -69,7 +69,7 @@ public class UniversityController {
         }else{
             message = "Wrong username or password!";
             model.addAttribute("message", message);
-            return "welcome";
+            return "index";
         }
      }
       

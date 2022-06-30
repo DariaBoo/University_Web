@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New student</title>
+<style>
+body, html {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+.form_bg {
+    background-image: url("/university/img/new.png");
+    height: 100%;
+    left: 2%;
+    top: 5%;
+    background-repeat: no-repeat;
+    background-color: white;
+    background-size: 345px, 585px;
+}
+
+.form_container {
+    font-family: "Lucida Handwriting", "Brush Script MT", cursive;
+    font-size: 20px;
+    position: relative;
+    top: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 30%;
+    border: 2px solid #3b3b44;
+    background-color: #ffffe6;
+    border-radius: 5px;
+}
+
+.form_r {
+    margin-bottom: 10px;
+    margin-left: 20%;
+}
+
+.form_r label {
+    display: inline-block;
+    width: 150px;
+    font-weight: bold;
+}
+
+h1 {
+    text-align: center;
+}
+.div_button_back {
+    position: absolute;
+    top: 80%;
+    left: 30%;
+}
+.button_back {
+    border: 1px solid black;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #45454a;
+    border-radius: 4px;
+}
+
+.button_back:hover {
+    background-color: #6f6f76;
+}
+.button_new {
+    border: 1px solid green;
+    color: black;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #009933;
+    border-radius: 4px;
+}
+
+.button_new:hover {
+    background-color: #248f24;
+}
+</style>
+
+
+</head>
+<body>
+	<div class="form_bg">
+		<form th:method="POST" th:action="@{/students}" th:object="${student}">
+			<div class="form_container">
+				<h1>Create New Student:</h1>
+				<br>
+				<div class="form_r">
+					<label for="firstName">First name: </label> 
+					<input
+						type="text" th:field="*{firstName}" id="firstName" placeholder="Enter First Name" required/>
+				</div>
+				<br>
+				<div class="form_r">
+					<label for="lastName">Last name: </label> 
+					<input type="text"
+						th:field="*{lastName}" id="lastName" placeholder="Enter Last Name" required/>
+				</div>
+				<br>
+				<div class="form_r">
+					<label for="groupID">Group: </label> 
+						<select th:field="*{groupID}">
+                        <option value="0">Select group</option>
+                        <option th:each="group : ${groups}" th:value="${group.getID()}" th:text="${group.getName()}">Groups</option>
+                        </select>						
+				</div>
+				<br>
+				<div class="form_r">
+					<label for="idCard">Id card: </label> 
+					<input type="text"
+						th:field="*{idCard}" id="idCard" pattern="[A-Za-z0-9]{5}" title="Five symbols max!" placeholder="Enter Id Card" required/>
+				</div>
+				<br>
+				<div class="form_r">
+					<input type="submit" class="button_new" value="Create!" />
+				</div>
+				<br> <br>
+			</div>
+		</form>
+		<div class="div_button_back">
+			<button class="button_back" onclick="history.back()">Back</button>
+		</div>
+	</div>
+</body>
+</html>

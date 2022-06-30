@@ -40,7 +40,7 @@ class TimetableServiceImplTest {
     void scheduleTimetable_shouldThrowServiceException_whenInputTimetableWithHoliday() {
         day.setDateOne(LocalDate.of(2022, 01, 01));
         lesson = new Lesson.LessonBuilder().setID(5).build();
-        group = new Group.GroupBuilder().setID(1).build();
+        group = new Group.GroupBuilder().setId(1).build();
         dayTimetable = new Timetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
 
         assertThrows(ServiceException.class, () -> timetableServiceImpl.scheduleTimetable(dayTimetable));
@@ -51,7 +51,7 @@ class TimetableServiceImplTest {
             throws ServiceException, DAOException {
         day.setDateOne(LocalDate.of(2022, 01, 03));
         lesson = new Lesson.LessonBuilder().setID(4).build();
-        group = new Group.GroupBuilder().setID(2).build();
+        group = new Group.GroupBuilder().setId(2).build();
         dayTimetable = new Timetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
         assertEquals(1, timetableServiceImpl.scheduleTimetable(dayTimetable));
     }
@@ -60,7 +60,7 @@ class TimetableServiceImplTest {
     void scheduleTimetable_shouldThrowServiceException_whenInputTimetableWithWeekend() {
         day.setDateOne(LocalDate.of(2022, 05, 22));
         lesson = new Lesson.LessonBuilder().setID(5).build();
-        group = new Group.GroupBuilder().setID(1).build();
+        group = new Group.GroupBuilder().setId(1).build();
         dayTimetable = new Timetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
 
         assertThrows(ServiceException.class, () -> timetableServiceImpl.scheduleTimetable(dayTimetable));

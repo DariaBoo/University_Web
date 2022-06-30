@@ -2,8 +2,12 @@ package ua.foxminded.university.service.pojo;
 
 import java.time.LocalDate;
 
-public class Day {    
+import org.springframework.format.annotation.DateTimeFormat;
+
+public class Day {  
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOne;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateTwo;
     private String lessonTimePeriod;
 

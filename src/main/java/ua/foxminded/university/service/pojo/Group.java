@@ -29,7 +29,7 @@ public class Group {
         private int departmentID;
         private List<Student> students;
 
-        public GroupBuilder setID(int id) {
+        public GroupBuilder setId(int id) {
             this.id = id;
             return this;
         }
@@ -54,7 +54,7 @@ public class Group {
         }
     }
 
-    public int getID() {
+    public int getId() {
         return id;
     }
 
@@ -122,6 +122,5 @@ public class Group {
             return false;
         return true;
     }
-
    
 }

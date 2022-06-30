@@ -158,7 +158,7 @@ public class GroupDAOImpl implements GroupDAO {
     @Override
     public int updateGroup(Group group) {
         log.trace("Update group's name to {}", group.getName());
-        result = jdbcTemplate.update(UPDATE_GROUP, group.getName(), group.getID(), group.getName());
+        result = jdbcTemplate.update(UPDATE_GROUP, group.getName(), group.getId(), group.getName());
         log.debug(debugMessage, result);
         return result;
     }

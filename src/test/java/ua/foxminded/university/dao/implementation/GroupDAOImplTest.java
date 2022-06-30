@@ -88,9 +88,9 @@ class GroupDAOImplTest {
     @Test
     void findAllGroups_shouldReturnFirstThreeGroups_whenCallTheMethod() {
         groups.clear();
-        groups.add(new Group.GroupBuilder().setID(1).setName("CO-68").setDepartmentID(1).build());
-        groups.add(new Group.GroupBuilder().setID(2).setName("FW-72").setDepartmentID(1).build());
-        groups.add(new Group.GroupBuilder().setID(3).setName("OQ-07").setDepartmentID(1).build());
+        groups.add(new Group.GroupBuilder().setId(1).setName("CO-68").setDepartmentID(1).build());
+        groups.add(new Group.GroupBuilder().setId(2).setName("FW-72").setDepartmentID(1).build());
+        groups.add(new Group.GroupBuilder().setId(3).setName("OQ-07").setDepartmentID(1).build());
         assertEquals(groups, groupDAOImpl.findAllGroups().get().stream().limit(3).collect(Collectors.toList()));        
     }
     
@@ -102,7 +102,7 @@ class GroupDAOImplTest {
     @Test
     void findGroupsByDepartment_shouldReturnDepartmentsGroups_whenInputExistedDepartmentID() {
         groups.clear();
-        groups.add(new Group.GroupBuilder().setID(6).setName("OB-14").setDepartmentID(2).build());
+        groups.add(new Group.GroupBuilder().setId(6).setName("OB-14").setDepartmentID(2).build());
         assertEquals(groups, groupDAOImpl.findGroupsByDepartment(2).get());
     }
     @Test
@@ -111,11 +111,11 @@ class GroupDAOImplTest {
     }
     @Test
     void updateGroup_shouldReturnOne_whenInputExistedGroupIDAndNewName() {       
-        assertEquals(1, groupDAOImpl.updateGroup(new Group.GroupBuilder().setID(5).setName("AA-00").build()));
+        assertEquals(1, groupDAOImpl.updateGroup(new Group.GroupBuilder().setId(5).setName("AA-00").build()));
     }
     @Test
     void updateGroup_shouldReturnOne_whenInputNotExistedGroupID() {       
-        assertEquals(0, groupDAOImpl.updateGroup(new Group.GroupBuilder().setID(100).setName("AA-00").build()));
+        assertEquals(0, groupDAOImpl.updateGroup(new Group.GroupBuilder().setId(100).setName("AA-00").build()));
     }
     @Test
     void getGroupNameMaxSize_shouldReturnColumnSize_whenCallTheMethod() {

@@ -9,7 +9,6 @@
 body, html {
 	height: 100%;
 	margin: 0;
-	overflow: hidden;
 }
 
 .bg {
@@ -160,11 +159,11 @@ td {
 		<div class="group">
 			<h1>Group details:</h1>
 			<div class="div_btn_edit">
-				<a href="#" th:href="@{/groups/edit/} + ${group.getID()}"><button
+				<a href="#" th:href="@{/groups/edit/} + ${group.getId()}"><button
 						class="button_edit">Update</button></a>
 			</div>
 			<div class="div_btn_delete">
-				<a href="#" th:href="@{/groups/delete/} + ${group.getID()}"><button
+				<a href="#" th:href="@{/groups/delete/} + ${group.getId()}"><button
 						class="button_delete">Delete</button></a>
 			</div>
 			<table>

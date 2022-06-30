@@ -55,13 +55,13 @@
 				</thead>
 				<tbody>
 					<tr th:each="group : ${groups}">
-						<td th:text="${group.getID()} + '.'" />
+						<td th:text="${group.getId()} + '.'" />
 						<td th:text="${group.getName()}" />
 						<td th:text="${group.getDepartmentID()}" />
-						<td><a href="#" th:href="@{/groups/} + ${group.getID()}"><button
+						<td><a href="#" th:href="@{/groups/} + ${group.getId()}"><button
 									class="button_view">View</button></a></td>
 						<td><a href="#"
-							th:href="@{/groups/delete/} + ${group.getID()}"><button
+							th:href="@{/groups/delete/} + ${group.getId()}"><button
 									class="button_delete">Delete</button></a></td>
 					</tr>
 				</tbody>

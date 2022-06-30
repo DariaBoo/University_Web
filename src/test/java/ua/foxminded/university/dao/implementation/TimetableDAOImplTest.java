@@ -52,7 +52,7 @@ class TimetableDAOImplTest {
     @Test
     void scheduleTimetable_shouldReturnCountOfAddedRows_whenInputCorrectData() throws DAOException {
         lesson = new Lesson.LessonBuilder().setID(5).build();
-        group = new Group.GroupBuilder().setID(1).build();
+        group = new Group.GroupBuilder().setId(1).build();
         timetable = new Timetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
 
         assertEquals(1, timetableDAOImpl.scheduleTimetable(timetable));
@@ -62,7 +62,7 @@ class TimetableDAOImplTest {
     @CsvSource({"100,1", "1, 100" })
     void scheduleTimetable_shouldThrowDAOException_whenInputInCorrectData(int lessonID, int groupID) throws DAOException {
         lesson = new Lesson.LessonBuilder().setID(lessonID).build();
-        group = new Group.GroupBuilder().setID(groupID).build();
+        group = new Group.GroupBuilder().setId(groupID).build();
         timetable = new Timetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
 
         assertThrows(DAOException.class, () -> timetableDAOImpl.scheduleTimetable(timetable));
@@ -71,7 +71,7 @@ class TimetableDAOImplTest {
     @Test
     void scheduleTimetable_shouldThrowDAOException_whenInputScheduledLessonAndGroup() throws DAOException {
         lesson = new Lesson.LessonBuilder().setID(1).build();
-        group = new Group.GroupBuilder().setID(1).build();
+        group = new Group.GroupBuilder().setId(1).build();
         timetable = new Timetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
 
         assertThrows(DAOException.class, () -> timetableDAOImpl.scheduleTimetable(timetable));
@@ -82,7 +82,7 @@ class TimetableDAOImplTest {
         day.setDateOne(LocalDate.of(2023, 04, 01));
         day.setDateTwo(LocalDate.of(2023, 04, 02));
         lesson = new Lesson.LessonBuilder().setID(1).build();
-        group = new Group.GroupBuilder().setID(1).build();
+        group = new Group.GroupBuilder().setId(1).build();
         timetable = new Timetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
         teacherDAOImpl.setTeahcerAbsent(1, day);
         teacherDAOImpl.setTeahcerAbsent(2, day);
@@ -94,7 +94,7 @@ class TimetableDAOImplTest {
     void scheduleTimetable_shouldThrowDAOException_whenIsNoAvailableRooms() throws DAOException {
     day.setDateOne(LocalDate.of(2023, 04, 03));
     lesson = new Lesson.LessonBuilder().setID(1).build();
-    group = new Group.GroupBuilder().setID(1).build();
+    group = new Group.GroupBuilder().setId(1).build();
     timetable = new Timetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
     
     assertThrows(DAOException.class, () -> timetableDAOImpl.scheduleTimetable(timetable));
@@ -110,28 +110,6 @@ class TimetableDAOImplTest {
     void deleteTimetable_shouldReturnZero_whenInputCorrectTimetableIDAndPastDate() {
         assertEquals(0, timetableDAOImpl.deleteTimetable(1));
     }
-
-//    @Test
-//    void getDayTimetable_shouldReturnDayTimetable_whenTimetableScheduledForTheTeacherAndTheDay() {
-//        Lesson expectedLesson = new Lesson.LessonBuilder().setName("Alchemy").build();
-//        Teacher expectedTeacher = new Teacher.TeacherBuidler().setFirstName("Albus").setLastName("Dumbledore").build();
-//        Timetable expectedTimetable = new Timetable.TimetableBuilder().setDay(day).setLesson(expectedLesson)
-//                .setGroup(new Group.GroupBuilder().setName("CO-68").build()).setTeacher(expectedTeacher)
-//                .setRoomNumber(201).build();
-//        List<Timetable> expectedList = new ArrayList<>();
-//        expectedList.add(expectedTimetable);
-//        user = new Teacher.TeacherBuidler().setID(1).build();
-//        
-//        assertEquals(Optional.of(expectedList), timetableDAOImpl.getDayTimetable(LocalDate.of(2023, 04, 01), user));
-//    }
-//
-//    @ParameterizedTest(name = "{index}. Input data: teacher id {0}.")
-//    @ValueSource(ints = { 1, 100 })
-//    void getDayTimetable_shouldReturnOptionalEmpty_whenTeacherHasNotLessonsInThisDayOrTeacherIDIsIncorrect(
-//            int teacherID) {
-//        user = new Teacher.TeacherBuidler().setID(teacherID).build();
-//        assertTrue(timetableDAOImpl.getDayTimetable(LocalDate.of(2022, 05, 20), user).get().isEmpty());
-//    }
 
     @Test
     void getMonthTimetable_shouldReturnListOfDayTimetable_whenInputCorrectDateAndTeacherID() {

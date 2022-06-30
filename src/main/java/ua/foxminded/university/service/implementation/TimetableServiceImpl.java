@@ -62,7 +62,7 @@ public class TimetableServiceImpl implements TimetableService {
         log.trace("Check if a day - {} is not a holiday", day);
         if (isHoliday(day)) {
             log.error("Can't schedule timetable for holiday. Try to schedule {}", timetable.getDay());
-            throw new ServiceException("Can't schedule timetable for holiday");
+            throw new ServiceException("Can't schedule timetable for holiday!");
         }
         log.info("Schedule timetable");
         try {
