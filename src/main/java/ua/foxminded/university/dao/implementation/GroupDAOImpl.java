@@ -20,6 +20,7 @@ import ua.foxminded.university.service.pojo.Group;
  */
 @Repository
 public class GroupDAOImpl implements GroupDAO {
+
     private final JdbcTemplate jdbcTemplate;
     private final String ADD_GROUP = "INSERT INTO timetable.groups (group_name, department_id, isActive) SELECT ?, ?, 'true' "
             + "WHERE NOT EXISTS (SELECT group_name FROM timetable.groups WHERE group_name = ?)";
@@ -106,14 +107,15 @@ public class GroupDAOImpl implements GroupDAO {
         log.debug("Return optional list of groups {}", result);
         return result;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Optional<List<Group>> findGroupsByLessonId(int lessonID) {
         log.trace("Find all groups by lesson id {}", lessonID);
-        Optional<List<Group>> result = Optional.of(jdbcTemplate.query(FIND_GROUPS_BY_LESSON_ID, new Object[] { lessonID }, new GroupMapper()));
+        Optional<List<Group>> result = Optional
+                .of(jdbcTemplate.query(FIND_GROUPS_BY_LESSON_ID, new Object[] { lessonID }, new GroupMapper()));
         log.debug("Return optional list of groups {}", result);
         return result;
     }
@@ -124,30 +126,32 @@ public class GroupDAOImpl implements GroupDAO {
     @Override
     public Optional<List<Group>> findGroupsByDepartment(int departmentID) {
         log.trace("Find all groups by department from timetable.groups");
-        Optional<List<Group>> result = Optional.of(jdbcTemplate.query(FIND_GROUPS_BY_DEPARTMENT, new Object[] { departmentID }, new GroupMapper()));
+        Optional<List<Group>> result = Optional
+                .of(jdbcTemplate.query(FIND_GROUPS_BY_DEPARTMENT, new Object[] { departmentID }, new GroupMapper()));
         log.debug("Return optional list of groups {}", result);
         return result;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Optional<List<Group>> findGroupsByTeacherId(int teacherID) {
         log.trace("Find all groups by teacher id");
-        Optional<List<Group>> result = Optional.of(jdbcTemplate.query(FIND_GROUPS_BY_TEACHER_ID, new Object[] { teacherID }, new GroupMapper()));
+        Optional<List<Group>> result = Optional
+                .of(jdbcTemplate.query(FIND_GROUPS_BY_TEACHER_ID, new Object[] { teacherID }, new GroupMapper()));
         log.debug("Return optional list of groups {}", result);
         return result;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Optional<Group> findById(int groupID) {
         log.trace("Find group by id {}", groupID);
-        Optional<Group> resultList = jdbcTemplate
-                .query(FIND_BY_ID, new Object[] { groupID }, new GroupMapper()).stream().findFirst();
+        Optional<Group> resultList = jdbcTemplate.query(FIND_BY_ID, new Object[] { groupID }, new GroupMapper())
+                .stream().findFirst();
         log.debug("Return optional group {}", resultList);
         return resultList;
     }
@@ -170,5 +174,4 @@ public class GroupDAOImpl implements GroupDAO {
     public int getGroupNameMaxSize() {
         return jdbcTemplate.queryForObject(GROUP_NAME_MAX_SIZE, Integer.class);
     }
-
 }

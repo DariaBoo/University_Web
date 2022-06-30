@@ -1,6 +1,5 @@
 package ua.foxminded.university.service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import ua.foxminded.university.dao.exception.DAOException;
@@ -8,7 +7,6 @@ import ua.foxminded.university.service.exception.ServiceException;
 import ua.foxminded.university.service.pojo.Day;
 import ua.foxminded.university.service.pojo.Timetable;
 import ua.foxminded.university.service.pojo.User;
-
 
 /**
  * @version 1.0
@@ -43,12 +41,12 @@ public interface TimetableService {
      *         List of Optional.empty
      */
     List<Timetable> getUserTimetable(Day day, User user);
-     
-     /**
-      * Returns list of DayTimetable for all groups and teachers by period of dates
-      * @param day
-      * @return list of dayTimetable
-      */
-    List<Timetable> showTimetable(Day day);
 
+    /**
+     * Returns list of DayTimetable for all groups and teachers by period of dates
+     * 
+     * @param day
+     * @return list of dayTimetable
+     */
+    List<Timetable> showTimetable(Day day);
 }

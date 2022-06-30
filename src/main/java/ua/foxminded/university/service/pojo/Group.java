@@ -3,13 +3,14 @@ package ua.foxminded.university.service.pojo;
 import java.util.List;
 
 public class Group {
+
     private int id;
     private String name;
     private int departmentID;
     private List<Student> students;
-    
+
     public Group() {
-        
+
     }
 
     public Group(int id, String name, int departmentID, List<Student> students) {
@@ -85,7 +86,7 @@ public class Group {
     public void setStudents(List<Student> students) {
         this.students = students;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -122,5 +123,4 @@ public class Group {
             return false;
         return true;
     }
-   
 }

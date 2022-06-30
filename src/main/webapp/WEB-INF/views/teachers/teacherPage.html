@@ -12,12 +12,13 @@ body, html {
 }
 
 .bg {
-	background-image:url("/university/img/home.png"), url("/university/img/5.png");
-    height:100%; 
-    background-position: center, center;
-    background-repeat: no-repeat;
-    background-size: 600px, 1000px;
-    background-color:white;
+	background-image: url("/university/img/home.png"),
+		url("/university/img/5.png");
+	height: 100%;
+	background-position: center, center;
+	background-repeat: no-repeat;
+	background-size: 600px, 1000px;
+	background-color: white;
 }
 
 div.container {
@@ -38,20 +39,21 @@ div.container {
 	position: absolute;
 	left: 85%;
 }
+
 .btn {
-border: 1px solid black;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    cursor: pointer;
-    background-color: #45454a;
-    border-radius: 4px;
+	border: 1px solid black;
+	color: white;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	cursor: pointer;
+	background-color: #45454a;
+	border-radius: 4px;
 }
 
 .btn:hover {
-    background-color: #6f6f76;
+	background-color: #6f6f76;
 }
 </style>
 <body>
@@ -71,8 +73,8 @@ border: 1px solid black;
 				</form>
 			</div>
 			<div id="chg_psw">
-				<a th:href="@{/teachers/change_password}"><button type="submit" class="btn">Change
-						password</button></a>
+				<a th:href="@{/teachers/change_password}"><button type="submit"
+						class="btn">Change password</button></a>
 			</div>
 			<br> <br> <br>
 			<div th:if="${timetables}" th:switch="${#lists.size(timetables)}"

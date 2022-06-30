@@ -18,11 +18,13 @@ import ua.foxminded.university.service.pojo.Student;
  */
 @Service
 public class StudentServiceImpl implements StudentService {
+
     private final StudentDAOImpl studentDAOImpl;
     private static final Logger log = LoggerFactory.getLogger(StudentServiceImpl.class.getName());
 
     /**
      * Returns instance of the class
+     * 
      * @param studentDAOImpl
      */
     @Autowired
@@ -54,8 +56,8 @@ public class StudentServiceImpl implements StudentService {
         }
         result = studentDAOImpl.addStudent(student);
         log.debug("Took a result {} of adding a new student", result);
-        return result; 
-        }
+        return result;
+    }
 
     /**
      * {@inheritDoc}
@@ -69,7 +71,7 @@ public class StudentServiceImpl implements StudentService {
         log.debug("Took a result {} of updating a student", result);
         return result;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -87,25 +89,25 @@ public class StudentServiceImpl implements StudentService {
         }
         return result;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public int deleteStudent(int studentID) {
-        log.trace("Delete existed student by id {}", studentID);
         int result = studentDAOImpl.deleteStudent(studentID);
         log.debug("Took the result {} of deleting student from the database", result);
         return result;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Student findByID(int studentID) {
-        log.trace("Find student by id {}", studentID);
-        return studentDAOImpl.findByID(studentID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        Student resultStudent = studentDAOImpl.findByID(studentID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        log.debug("Find student by id {} and return student - {}", studentID, resultStudent);
+        return resultStudent;
     }
 
     /**
@@ -113,8 +115,9 @@ public class StudentServiceImpl implements StudentService {
      */
     @Override
     public List<Student> findAllStudents() {
-        log.trace("Find all students");
-        return studentDAOImpl.findAllStudents().orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        List<Student> resultList = studentDAOImpl.findAllStudents().orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        log.debug("Return list of students - {}", resultList);
+        return resultList;
     }
 
     /**
@@ -122,7 +125,9 @@ public class StudentServiceImpl implements StudentService {
      */
     @Override
     public List<Student> findStudentsByGroup(int groupID) {
-        log.trace("Find students by group");
-        return studentDAOImpl.findStudentsByGroup(groupID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        List<Student> resultList = studentDAOImpl.findStudentsByGroup(groupID)
+                .orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        log.debug("Find students by group id - {} and return list of students -{}", groupID, resultList);
+        return resultList;
     }
 }

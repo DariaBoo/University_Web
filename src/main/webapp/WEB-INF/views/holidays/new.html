@@ -48,40 +48,43 @@ body, html {
 h1 {
 	text-align: center;
 }
+
 .div_button_back {
-    position: absolute;
-    top: 80%;
-    left: 30%;
+	position: absolute;
+	top: 80%;
+	left: 30%;
 }
+
 .button_back {
-    border: 1px solid black;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    cursor: pointer;
-    background-color: #45454a;
-    border-radius: 4px;
+	border: 1px solid black;
+	color: white;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	cursor: pointer;
+	background-color: #45454a;
+	border-radius: 4px;
 }
 
 .button_back:hover {
-    background-color: #6f6f76;
+	background-color: #6f6f76;
 }
+
 .button_new {
-    border: 1px solid green;
-    color: black;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    cursor: pointer;
-    background-color: #009933;
-    border-radius: 4px;
+	border: 1px solid green;
+	color: black;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	cursor: pointer;
+	background-color: #009933;
+	border-radius: 4px;
 }
 
 .button_new:hover {
-    background-color: #248f24;
+	background-color: #248f24;
 }
 </style>
 </head>
@@ -92,13 +95,13 @@ h1 {
 				<h1>Create New Holiday:</h1>
 				<br>
 				<div class="form_r">
-					<label for="name">Holiday name: </label> 
-					<input type="text" th:field="*{name}" id="name" required/>
+					<label for="name">Holiday name: </label> <input type="text"
+						th:field="*{name}" id="name" required />
 				</div>
 				<br>
 				<div class="form_r">
-					<label for="date">Date: </label> 
-					<input type="date" th:field="*{date}" id="date" required/>
+					<label for="date">Date: </label> <input type="date"
+						th:field="*{date}" id="date" required />
 				</div>
 				<br>
 				<div class="form_r">

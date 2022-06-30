@@ -21,6 +21,7 @@ import ua.foxminded.university.service.pojo.Holiday;
  */
 @Repository
 public class HolidayDAOImpl implements HolidayDAO {
+    
     private final JdbcTemplate jdbcTemplate;
     private final String ADD_HOLIDAY = "INSERT INTO timetable.holidays (date, holiday) SELECT ?, ?;";
     private final String FIND_ALL_HOLIDAYS = "SELECT * FROM timetable.holidays ORDER BY id;";

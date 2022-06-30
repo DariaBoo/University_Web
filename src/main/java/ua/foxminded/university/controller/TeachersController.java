@@ -17,20 +17,21 @@ public class TeachersController {
     private final TeacherServiceImpl teacherServiceImpl;
     private final GroupServiceImpl groupServiceImpl;
     private final LessonServiceImpl lessonServiceImpl;
-    
+
     @Autowired
-    public TeachersController(TeacherServiceImpl teacherServiceImpl, GroupServiceImpl groupServiceImpl, LessonServiceImpl lessonServiceImpl) {
+    public TeachersController(TeacherServiceImpl teacherServiceImpl, GroupServiceImpl groupServiceImpl,
+            LessonServiceImpl lessonServiceImpl) {
         this.teacherServiceImpl = teacherServiceImpl;
         this.groupServiceImpl = groupServiceImpl;
         this.lessonServiceImpl = lessonServiceImpl;
     }
-    
+
     @GetMapping
     public String listAllTeachers(Model model) {
         model.addAttribute("teachers", teacherServiceImpl.findAllTeachers());
         return "teachers/list";
     }
-    
+
     @RequestMapping("/{id}")
     public String viewTeacherById(@PathVariable Integer id, Model model) {
         model.addAttribute("teacher", teacherServiceImpl.findByID(id));
@@ -39,5 +40,5 @@ public class TeachersController {
         model.addAttribute("absentDays", teacherServiceImpl.showTeacherAbsent(id));
         return "teachers/view";
     }
-    
+
 }

@@ -15,7 +15,8 @@ import ua.foxminded.university.service.pojo.Holiday;
  *
  *
  */
-public class HolidayMapper implements RowMapper<Holiday>{
+public class HolidayMapper implements RowMapper<Holiday> {
+
     private static final Logger log = LoggerFactory.getLogger(HolidayMapper.class.getName());
 
     /**

@@ -23,6 +23,7 @@ import ua.foxminded.university.service.pojo.Teacher;
  */
 @Repository
 public class TeacherDAOImpl implements TeacherDAO {
+
     private final JdbcTemplate jdbcTemplate;
     private final String ADD_TEACHER = "INSERT INTO timetable.teachers (first_name, last_name, position, password, department_id, isActive) SELECT ?, ?, ?, 555, ?, true "
             + "WHERE NOT EXISTS (SELECT first_name, last_name FROM timetable.teachers WHERE first_name = ? AND last_name = ?)";
@@ -41,7 +42,7 @@ public class TeacherDAOImpl implements TeacherDAO {
     private final String FIND_TEACHERS_BY_DEPARTMENT = "SELECT * FROM timetable.teachers WHERE department_id = ? AND isActive = true ORDER BY teacher_id;";
     private final String FIND_TEACHERS_BY_LESSON_ID = "SELECT tt.* FROM timetable.teachers AS tt, timetable.lessons_teachers AS tlt WHERE tt.teacher_id = tlt.teacher_id  AND tlt.lesson_id = ?;";
     private final String UPDATE_TEACHER = "UPDATE timetable.teachers SET first_name = ?, last_name = ?, position = ? WHERE teacher_id = ? AND EXISTS (SELECT teacher_id FROM timetable.teachers);";
-    private final String CHANGE_PASSWORD = "UPDATE timetable.teachers SET password = ? WHERE teacher_id = ?;";    
+    private final String CHANGE_PASSWORD = "UPDATE timetable.teachers SET password = ? WHERE teacher_id = ?;";
     private final String FIRST_NAME_MAX_SIZE = "SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE UPPER (table_schema) = UPPER ('timetable') AND UPPER (table_name) = UPPER ('teachers') AND UPPER (column_name) = UPPER ('first_name');";
     private final String LAST_NAME_MAX_SIZE = "SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE UPPER (table_schema) = UPPER ('timetable') AND UPPER (table_name) = UPPER ('teachers') AND UPPER (column_name) = UPPER ('last_name');";
     private final String POSITION_MAX_SIZE = "SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE UPPER (table_schema) = UPPER ('timetable') AND UPPER (table_name) = UPPER ('teachers') AND UPPER (column_name) = UPPER ('position');";
@@ -139,15 +140,15 @@ public class TeacherDAOImpl implements TeacherDAO {
         log.debug(debugMessage, result);
         return result;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Optional<List<Teacher>> showTeacherAbsent(int teacherID) {
         log.trace("Find all teacher absent days");
-        Optional<List<Teacher>> resultList = Optional.of(
-                jdbcTemplate.query(SHOW_TEACHER_ABSENT, new Object[] { teacherID }, new TeacherAbsentMapper()));
+        Optional<List<Teacher>> resultList = Optional
+                .of(jdbcTemplate.query(SHOW_TEACHER_ABSENT, new Object[] { teacherID }, new TeacherAbsentMapper()));
         log.debug("Returns optional list of teachers {}", resultList);
         return resultList;
     }
@@ -186,15 +187,15 @@ public class TeacherDAOImpl implements TeacherDAO {
         log.debug("Returns optional list of teachers {}", resultList);
         return resultList;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Optional<List<Teacher>> findTeachersByLessonId(int lessonID) {
         log.trace("Find all teachers by lesson id");
-        Optional<List<Teacher>> resultList = Optional.of(
-                jdbcTemplate.query(FIND_TEACHERS_BY_LESSON_ID, new Object[] { lessonID }, new TeacherMapper()));
+        Optional<List<Teacher>> resultList = Optional
+                .of(jdbcTemplate.query(FIND_TEACHERS_BY_LESSON_ID, new Object[] { lessonID }, new TeacherMapper()));
         log.debug("Returns optional list of teachers {}", resultList);
         return resultList;
     }
@@ -209,7 +210,7 @@ public class TeacherDAOImpl implements TeacherDAO {
         log.debug(debugMessage, result);
         return result;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -234,7 +235,6 @@ public class TeacherDAOImpl implements TeacherDAO {
         return jdbcTemplate.queryForObject(POSITION_MAX_SIZE, Integer.class);
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -242,5 +242,4 @@ public class TeacherDAOImpl implements TeacherDAO {
     public int getPasswordMaxSize() {
         return jdbcTemplate.queryForObject(PASSWORD_MAX_SIZE, Integer.class);
     }
-
 }

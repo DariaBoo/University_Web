@@ -1,19 +1,19 @@
 package ua.foxminded.university.service.pojo;
 
 public class Timetable {
+
     private int id;
     private Day day;
     private Group group;
     private int roomNumber;
     private Teacher teacher;
     private Lesson lesson;
-    
+
     public Timetable() {
-        
+
     }
 
-    private Timetable(int id, Day day, Group group, int roomNumber, Teacher teacher,
-            Lesson lesson) {
+    private Timetable(int id, Day day, Group group, int roomNumber, Teacher teacher, Lesson lesson) {
         this.id = id;
         this.day = day;
         this.group = group;
@@ -33,7 +33,7 @@ public class Timetable {
         private int roomNumber;
         private Teacher teacher;
         private Lesson lesson;
-        
+
         public TimetableBuilder setId(int id) {
             this.id = id;
             return this;
@@ -43,7 +43,7 @@ public class Timetable {
             this.day = day;
             return this;
         }
-       
+
         public TimetableBuilder setGroup(Group group) {
             this.group = group;
             return this;
@@ -76,7 +76,7 @@ public class Timetable {
             return new Timetable(id, day, group, roomNumber, teacher, lesson);
         }
     }
-    
+
     public int getId() {
         return id;
     }
@@ -99,6 +99,30 @@ public class Timetable {
 
     public Lesson getLesson() {
         return lesson;
+    }    
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setDay(Day day) {
+        this.day = day;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
+    public void setRoomNumber(int roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
+
+    public void setLesson(Lesson lesson) {
+        this.lesson = lesson;
     }
 
     @Override
@@ -149,29 +173,4 @@ public class Timetable {
             return false;
         return true;
     }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setDay(Day day) {
-        this.day = day;
-    }
-
-    public void setGroup(Group group) {
-        this.group = group;
-    }
-
-    public void setRoomNumber(int roomNumber) {
-        this.roomNumber = roomNumber;
-    }
-
-    public void setTeacher(Teacher teacher) {
-        this.teacher = teacher;
-    }
-
-    public void setLesson(Lesson lesson) {
-        this.lesson = lesson;
-    }
-    
 }

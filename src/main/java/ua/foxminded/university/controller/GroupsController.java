@@ -14,7 +14,6 @@ import ua.foxminded.university.service.implementation.StudentServiceImpl;
 @Controller
 @RequestMapping("/groups")
 public class GroupsController {
-
     private final GroupServiceImpl groupServiceImpl;
     private final StudentServiceImpl studentServiceImpl;
     private final LessonServiceImpl lessonServiceImpl;

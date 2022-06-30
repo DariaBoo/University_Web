@@ -3,6 +3,7 @@ package ua.foxminded.university.service.pojo;
 import java.util.List;
 
 public class Department {
+
     private int id;
     private String name;
     private List<Teacher> teachers;
@@ -79,5 +80,4 @@ public class Department {
             return false;
         return true;
     }
-
 }

@@ -58,11 +58,11 @@ public class TimetableController {
     }
 
     @GetMapping("/timetable/schedule")
-    public String scheduleTimetable(Model model) {    
+    public String scheduleTimetable(Model model) {
         model.addAttribute("groups", groupServiceImpl.findAllGroups());
         return "timetable/new";
     }
-    
+
     @GetMapping("/timetable/schedule/{id}")
     public String showLessonsToSelectedGroup(@PathVariable("id") int id, Model model) {
         model.addAttribute("day", new Day());
@@ -72,14 +72,14 @@ public class TimetableController {
         model.addAttribute("lessons", lessonServiceImpl.findLessonsByGroupId(id));
         model.addAttribute("groups", groupServiceImpl.findAllGroups());
         return "timetable/new";
-    }  
-    
+    }
+
     @RequestMapping(value = "/timetable/schedule", method = RequestMethod.POST)
-    public String saveTimetable(@ModelAttribute("timetable") Timetable timetable, RedirectAttributes redirectAtt, Model model) {        
+    public String saveTimetable(@ModelAttribute("timetable") Timetable timetable, RedirectAttributes redirectAtt,
+            Model model) {
         Day day = new Day();
         day.setDateOne(timetable.getDay().getDateOne());
         day.setDateTwo(timetable.getDay().getDateOne());
-       
         try {
             int result = timetableServiceImpl.scheduleTimetable(timetable);
             if (result == 0) {
@@ -94,7 +94,7 @@ public class TimetableController {
         }
         return "redirect:/timetable/schedule";
     }
-    
+
     @RequestMapping("timetable/delete/{id}")
     public String deleteTimetable(@PathVariable Integer id, RedirectAttributes redirectAtt) {
         int result = timetableServiceImpl.deleteTimetable(id);
@@ -103,7 +103,6 @@ public class TimetableController {
         } else {
             redirectAtt.addFlashAttribute("message", "Timetable was deleted!");
         }
-
         return "redirect:/timetable";
     }
 

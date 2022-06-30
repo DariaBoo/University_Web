@@ -20,6 +20,7 @@ import ua.foxminded.university.service.pojo.Teacher;
  *
  */
 public class TimetableMapper implements RowMapper<Timetable> {
+
     private static final Logger log = LoggerFactory.getLogger(TimetableMapper.class.getName());
 
     /**

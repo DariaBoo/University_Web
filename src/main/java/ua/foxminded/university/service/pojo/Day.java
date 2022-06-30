@@ -4,19 +4,22 @@ import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-public class Day {  
+public class Day {
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOne;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateTwo;
     private String lessonTimePeriod;
 
     public Day(LocalDate dateOne, LocalDate dateTwo) {
         this.dateOne = dateOne;
-        this.dateTwo = dateTwo;        
+        this.dateTwo = dateTwo;
     }
+
     public Day() {
-        
+
     }
 
     public LocalDate getDateOne() {
@@ -42,6 +45,7 @@ public class Day {
     public void setLessonTimePeriod(String lessonTimePeriod) {
         this.lessonTimePeriod = lessonTimePeriod;
     }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -51,6 +55,7 @@ public class Day {
         result = prime * result + ((lessonTimePeriod == null) ? 0 : lessonTimePeriod.hashCode());
         return result;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -76,7 +81,5 @@ public class Day {
         } else if (!lessonTimePeriod.equals(other.lessonTimePeriod))
             return false;
         return true;
-    }  
-
-    
+    }
 }

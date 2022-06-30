@@ -44,51 +44,52 @@ input, label {
 </style>
 </head>
 <body>
-<div class="bg">
-	<div id="nav-placeholder"></div>
-	<script>
-		$(function() {
-			$("#nav-placeholder").load("/university/navbar/navbar.html");
-		});
-	</script>
+	<div class="bg">
+		<div id="nav-placeholder"></div>
+		<script>
+			$(function() {
+				$("#nav-placeholder").load("/university/navbar/navbar.html");
+			});
+		</script>
 
-	<div class="table-responsive">
-		<h1>The lessons of Hogwarts:</h1>
-		<br>
-		<table id="university" class="table table-striped" style="width: 100%">
-			<thead>
-				<tr>
-					<th>Id</th>
-					<th>Lesson</th>
-					<th>View</th>
-					<th>Delete</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="lesson : ${lessons}">
-					<td th:text="${lesson.getId()} + '.'" />
-					<td th:text="${lesson.getName()}" />
-					<td><a href="#" th:href="@{/lessons/} + ${lesson.getId()}"><button
-								class="button_view">View</button></a></td>
-					<td><a href="#"
-						th:href="@{/lessons/delete/} + ${lesson.getId()}"><button
-								class="button_delete">Delete</button></a></td>
-				</tr>
-			</tbody>
-		</table>
-		<div class="div_button_new">
-			<a th:href="@{students/create}"><button class="button_new">New</button></a>
+		<div class="table-responsive">
+			<h1>The lessons of Hogwarts:</h1>
+			<br>
+			<table id="university" class="table table-striped"
+				style="width: 100%">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Lesson</th>
+						<th>View</th>
+						<th>Delete</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="lesson : ${lessons}">
+						<td th:text="${lesson.getId()} + '.'" />
+						<td th:text="${lesson.getName()}" />
+						<td><a href="#" th:href="@{/lessons/} + ${lesson.getId()}"><button
+									class="button_view">View</button></a></td>
+						<td><a href="#"
+							th:href="@{/lessons/delete/} + ${lesson.getId()}"><button
+									class="button_delete">Delete</button></a></td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="div_button_new">
+				<a th:href="@{students/create}"><button class="button_new">New</button></a>
+			</div>
 		</div>
-	</div>
 
 
-	<script>
-        $(document).ready(function() {
-            $('#university').DataTable();
-        });
-    </script>
+		<script>
+			$(document).ready(function() {
+				$('#university').DataTable();
+			});
+		</script>
 
-	<a id="button" th:href="@{/home}"><button>Back</button></a>
+		<a id="button" th:href="@{/home}"><button>Back</button></a>
 	</div>
 </body>
 </html>

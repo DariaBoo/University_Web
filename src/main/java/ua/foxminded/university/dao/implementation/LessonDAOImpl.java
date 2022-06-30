@@ -22,12 +22,13 @@ import ua.foxminded.university.service.pojo.Lesson;
  */
 @Repository
 public class LessonDAOImpl implements LessonDAO {
+
     private final JdbcTemplate jdbcTemplate;
     private final String ADD_LESSON = "INSERT INTO timetable.lessons (lesson_name, description, isActive) SELECT ?, ?, 'true' "
             + "WHERE NOT EXISTS (SELECT lesson_name FROM timetable.lessons WHERE lesson_name = ?)";
     private final String DELETE_LESSON = "UPDATE timetable.lessons SET isActive = false WHERE lesson_id = ?";
     private final String FIND_BY_ID = "SELECT * FROM timetable.lessons WHERE lesson_id = ?;";
-    private final String FIND_ALL_LESSONS = "SELECT * FROM timetable.lessons WHERE isActive = true ORDER BY lesson_id;";   
+    private final String FIND_ALL_LESSONS = "SELECT * FROM timetable.lessons WHERE isActive = true ORDER BY lesson_id;";
     private final String UPDATE_LESSON = "UPDATE timetable.lessons SET lesson_name = ?, description = ? WHERE lesson_id = ? AND NOT EXISTS (SELECT lesson_name FROM timetable.lessons WHERE lesson_name = ?) AND EXISTS (SELECT lesson_id FROM timetable.lessons);";
     private final String FIND_BY_TEACHER_ID = "SELECT tl.* FROM timetable.lessons AS tl LEFT JOIN timetable.lessons_teachers AS tlt ON tlt.lesson_id = tl.lesson_id WHERE tlt.teacher_id = ?;";
     private final String FIND_BY_GROUP_ID = "SELECT tl.* FROM timetable.lessons AS tl LEFT JOIN timetable.groups_lessons AS tgl ON tgl.lesson_id = tl.lesson_id WHERE tgl.group_id = ?;";
@@ -76,7 +77,8 @@ public class LessonDAOImpl implements LessonDAO {
     @Override
     public int updateLesson(Lesson lesson) {
         log.trace("Update lesson name and description");
-        result = jdbcTemplate.update(UPDATE_LESSON, lesson.getName(), lesson.getDescription(), lesson.getId(), lesson.getName());
+        result = jdbcTemplate.update(UPDATE_LESSON, lesson.getName(), lesson.getDescription(), lesson.getId(),
+                lesson.getName());
         log.debug("Took a result {}, if the result equals 1 lesson was updated, if 0 - not updated", result);
         return result;
     }
@@ -141,5 +143,4 @@ public class LessonDAOImpl implements LessonDAO {
     public int getDescriptionMaxSize() {
         return jdbcTemplate.queryForObject(DESCRIPTION_MAX_SIZE, Integer.class);
     }
-
 }

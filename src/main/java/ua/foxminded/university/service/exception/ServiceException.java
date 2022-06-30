@@ -1,6 +1,6 @@
 package ua.foxminded.university.service.exception;
 
-public class ServiceException extends RuntimeException{
+public class ServiceException extends RuntimeException {
     /**
      * Constructs a new exception with the specified detail message.
      * 

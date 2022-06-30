@@ -5,29 +5,37 @@ import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 public class Holiday {
+
     private int id;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
     private String name;
-    
+
     public LocalDate getDate() {
         return date;
     }
+
     public void setDate(LocalDate date) {
         this.date = date;
     }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -37,6 +45,7 @@ public class Holiday {
         result = prime * result + id;
         return result;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -59,5 +68,5 @@ public class Holiday {
         if (id != other.id)
             return false;
         return true;
-    }    
+    }
 }

@@ -39,22 +39,25 @@ public class HolidaysController {
         }
         return "redirect:/holidays";
     }
+
     @GetMapping("/new")
     public String createNewHoliday(@ModelAttribute("holiday") Holiday holiday) {
         return "holidays/new";
     }
+
     @RequestMapping("/timetable")
-    public String chooseDatePeriod() {     
+    public String chooseDatePeriod() {
         return "timetable/index";
     }
+
     @PostMapping()
     public String saveHoliday(@ModelAttribute("holiday") Holiday holiday, RedirectAttributes redirectAtt) {
         int result = holidayServiceImpl.addHoliday(holiday);
-        if(result == 0) {
+        if (result == 0) {
             redirectAtt.addFlashAttribute("message", "Error occured while added a holiday!");
         } else {
             redirectAtt.addFlashAttribute("message", "Holiday was added!");
         }
         return "redirect:/timetable";
-    }  
+    }
 }
