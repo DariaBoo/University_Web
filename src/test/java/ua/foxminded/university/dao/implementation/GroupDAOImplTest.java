@@ -35,7 +35,7 @@ class GroupDAOImplTest {
 
     @Test
     void addGroup_shouldReturnCountOfAddedRows_whenInputNewGroup() {
-        assertEquals(1, groupDAOImpl.addGroup(new Group.GroupBuilder().setName("AA-00").setDepartmentID(0).build()));//TODO add department entity????
+        assertEquals(1, groupDAOImpl.addGroup(new Group.GroupBuilder().setName("AA-00").setDepartmentID(0).build()));
     }
 
     @Test
