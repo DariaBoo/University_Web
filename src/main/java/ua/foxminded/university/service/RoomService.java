@@ -2,7 +2,7 @@ package ua.foxminded.university.service;
 
 import java.util.List;
 
-import ua.foxminded.university.service.pojo.Room;
+import ua.foxminded.university.service.entities.Room;
 
 public interface RoomService {
     /**
@@ -10,4 +10,10 @@ public interface RoomService {
      * @return list of rooms
      */
     List<Room> findAll();
+
+    /**
+     * Shows all rooms
+     * @return list of suitable rooms
+     */
+    List<Room> findSuitableRooms(int groupID);
 }

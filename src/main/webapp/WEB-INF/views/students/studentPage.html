@@ -92,12 +92,12 @@ div.container {
 							<th>Room</th>
 						</tr>
 						<tr th:each="timetable : ${timetables}">
-							<td th:text="${timetable.getDay().getDateOne()}" />
-							<td th:text="${timetable.getDay().getLessonTimePeriod()}" />
+							<td th:text="${timetable.getDate()}" />
+							<td th:text="${timetable.getLessonTimePeriod()}" />
 							<td th:text="${timetable.getLesson().getName()}" />
 							<td
 								th:text="${timetable.getTeacher().getFirstName()} + ' ' + ${timetable.getTeacher().getLastName()}" />
-							<td th:text="${timetable.getRoomNumber()}" />
+							<td th:text="${timetable.getRoom().getNumber()}" />
 					</table>
 				</div>
 			</div>

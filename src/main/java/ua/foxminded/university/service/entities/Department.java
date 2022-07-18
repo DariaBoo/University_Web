@@ -1,4 +1,4 @@
-package ua.foxminded.university.service.pojo;
+package ua.foxminded.university.service.entities;
 
 import java.util.List;
 

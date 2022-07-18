@@ -1,5 +1,7 @@
 package ua.foxminded.university.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,78 +13,81 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import ua.foxminded.university.service.implementation.GroupServiceImpl;
-import ua.foxminded.university.service.implementation.StudentServiceImpl;
-import ua.foxminded.university.service.pojo.Student;
+import ua.foxminded.university.service.GroupService;
+import ua.foxminded.university.service.StudentService;
+import ua.foxminded.university.service.entities.Student;
+import ua.foxminded.university.service.exception.ServiceException;
 
 @Controller
 @RequestMapping("/students")
 public class StudentsController {
 
-    private final StudentServiceImpl studentServiceImpl;
-    private final GroupServiceImpl groupServiceImpl;
+    private static final Logger log = LoggerFactory.getLogger(StudentsController.class.getName());
+    private static final String message = "message";
+    private static final String students = "redirect:/students";
 
     @Autowired
-    public StudentsController(StudentServiceImpl studentServiceImpl, GroupServiceImpl groupServiceImpl) {
-        this.studentServiceImpl = studentServiceImpl;
-        this.groupServiceImpl = groupServiceImpl;
-    }
+    private StudentService studentService;
+    @Autowired
+    private GroupService groupService;
 
     @GetMapping()
     public String listAllStudents(Model model) {
-        model.addAttribute("students", studentServiceImpl.findAllStudents());
+            model.addAttribute("students", studentService.findAllStudents());
         return "students/list";
     }
 
     @RequestMapping("/{id}")
     public String viewStudentById(@PathVariable Integer id, Model model) {
-        model.addAttribute("student", studentServiceImpl.findByID(id));
+        model.addAttribute("student", studentService.findByID(id));
         return "students/view";
     }
 
     @GetMapping("/new")
     public String createNewStudent(@ModelAttribute("student") Student student, Model model) {
-        model.addAttribute("groups", groupServiceImpl.findAllGroups());
+        model.addAttribute("groups", groupService.findAllGroups());
         return "students/new";
     }
 
     @PostMapping()
     public String saveNewStudent(@ModelAttribute("student") Student student, RedirectAttributes redirectAtt) {
-        int result = studentServiceImpl.addStudent(student);
-        if (result == 0) {
-            redirectAtt.addFlashAttribute("message", "Error occured while added a student or student already exists!");
-        } else {
-            redirectAtt.addFlashAttribute("message", "Student was added!");
+        try {
+            int studentID = studentService.addStudent(student);
+            redirectAtt.addFlashAttribute(message, "Student was added with id " + studentID + "!");
+        } catch (ServiceException e) {
+            log.error(e.getMessage());
+            redirectAtt.addFlashAttribute(message, e.getMessage());
         }
-        return "redirect:/students";
+        return students;
     }
 
     @RequestMapping("/delete/{id}")
     public String deleteStudent(@PathVariable Integer id, RedirectAttributes redirectAtt) {
-        int result = studentServiceImpl.deleteStudent(id);
-        if (result == 0) {
-            redirectAtt.addFlashAttribute("message", "Error occured while deleted a student!");
+        boolean isDeleted = studentService.deleteStudent(id);
+        if(isDeleted) {
+            redirectAtt.addFlashAttribute(message, "Student was deleted!");
         } else {
-            redirectAtt.addFlashAttribute("message", "Student was deleted!");
+            redirectAtt.addFlashAttribute(message, "Error to delete!");
         }
-        return "redirect:/students";
+        return students;
     }
 
     @GetMapping("/edit/{id}")
-    public String edit(Model model, @PathVariable("id") int id) {
-        model.addAttribute("student", studentServiceImpl.findByID(id));
-        model.addAttribute("groups", groupServiceImpl.findAllGroups());
+    public String edit(Model model, @PathVariable("id") int id, RedirectAttributes redirectAtt) {
+            model.addAttribute("student", studentService.findByID(id));
+            model.addAttribute("groups", groupService.findAllGroups());
         return "students/edit";
     }
 
     @PatchMapping("/{id}")
     public String update(@ModelAttribute("student") Student student, RedirectAttributes redirectAtt) {
-        int result = studentServiceImpl.updateStudent(student);
-        if (result == 0) {
-            redirectAtt.addFlashAttribute("message", "Error occured while updated a student!");
-        } else {
-            redirectAtt.addFlashAttribute("message", "Student was updated!");
+        try {
+            studentService.updateStudent(student);
+            redirectAtt.addFlashAttribute(message, "Student was updated!");
+        } catch (ServiceException e) {
+            log.error(e.getMessage());
+            redirectAtt.addFlashAttribute(message, e.getMessage());
         }
-        return "redirect:/students";
+        return students;
     }
 }

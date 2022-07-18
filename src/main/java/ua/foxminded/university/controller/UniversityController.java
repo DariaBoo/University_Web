@@ -8,18 +8,18 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import ua.foxminded.university.service.implementation.StudentServiceImpl;
-import ua.foxminded.university.service.implementation.TeacherServiceImpl;
+import ua.foxminded.university.service.StudentService;
+import ua.foxminded.university.service.TeacherService;
 
 @Controller
 public class UniversityController {
-    private final StudentServiceImpl studentServiceImpl;
-    private final TeacherServiceImpl teacherServiceImpl;
+    private final StudentService studentService;
+    private final TeacherService teacherService;
 
     @Autowired
-    public UniversityController(StudentServiceImpl studentServiceImpl, TeacherServiceImpl teacherServiceImpl) {
-        this.studentServiceImpl = studentServiceImpl;
-        this.teacherServiceImpl = teacherServiceImpl;
+    public UniversityController(StudentService studentService, TeacherService teacherService) {
+        this.studentService = studentService;
+        this.teacherService = teacherService;
     }
 
     @GetMapping("/")
@@ -45,13 +45,13 @@ public class UniversityController {
                 && !password.equals("") && password.equals("555")) {
             int id = Integer.parseInt(userName.split("#")[1]);
             TimetableController.teacherId = id;
-            model.addAttribute("teacher", teacherServiceImpl.findByID(id));
+            model.addAttribute("teacher", teacherService.findByID(id));
             return "teachers/teacherPage";
         } else if (userName != null && !userName.equals("") && userName.matches("[a-zA-Z]+_\\d+") && password != null
                 && !password.equals("") && password.equals("1234")) {
             int id = Integer.parseInt(userName.split("_")[1]);
             TimetableController.studentId = id;
-            model.addAttribute("student", studentServiceImpl.findByID(id));
+            model.addAttribute("student", studentService.findByID(id));
             return "students/studentPage";
         } else {
             message = "Wrong username or password!";
@@ -59,5 +59,4 @@ public class UniversityController {
             return "index";
         }
     }
-
 }

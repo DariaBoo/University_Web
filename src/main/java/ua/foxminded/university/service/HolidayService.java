@@ -2,7 +2,7 @@ package ua.foxminded.university.service;
 
 import java.util.List;
 
-import ua.foxminded.university.service.pojo.Holiday;
+import ua.foxminded.university.service.entities.Holiday;
 
 public interface HolidayService {
     /**
@@ -23,5 +23,5 @@ public interface HolidayService {
      * @param holidayID
      * @return 1 or 0
      */
-    int deleteHoliday(int holidayID);
+    boolean deleteHoliday(int holidayID);
 }

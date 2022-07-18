@@ -1,21 +1,31 @@
-package ua.foxminded.university.service.pojo;
+package ua.foxminded.university.service.entities;
 
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
+
+@MappedSuperclass
 public class User {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private int id;
+    @Column(name = "first_name", length = 30)
     private String firstName;
+    @Column(name = "last_name", length = 30)
     private String lastName;
+    @Column(name = "password", length = 10)
     private String password;
-    private List<Lesson> lessons;
 
-    public User(int id, String firstName, String lastName, String password, List<Lesson> lessons) {
+    public User(int id, String firstName, String lastName, String password) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
-        this.lessons = lessons;
     }
 
     public User() {
@@ -54,24 +64,9 @@ public class User {
         this.password = password;
     }
 
-    public List<Lesson> getLessons() {
-        return lessons;
-    }
-
-    public void setLessons(List<Lesson> lessons) {
-        this.lessons = lessons;
-    }
-
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
-        result = prime * result + id;
-        result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
-        result = prime * result + ((lessons == null) ? 0 : lessons.hashCode());
-        result = prime * result + ((password == null) ? 0 : password.hashCode());
-        return result;
+        return 10;
     }
 
     @Override
@@ -94,11 +89,6 @@ public class User {
             if (other.lastName != null)
                 return false;
         } else if (!lastName.equals(other.lastName))
-            return false;
-        if (lessons == null) {
-            if (other.lessons != null)
-                return false;
-        } else if (!lessons.equals(other.lessons))
             return false;
         if (password == null) {
             if (other.password != null)

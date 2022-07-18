@@ -1,8 +1,9 @@
 package ua.foxminded.university.service;
 
 import java.util.List;
+import java.util.Set;
 
-import ua.foxminded.university.service.pojo.Group;
+import ua.foxminded.university.service.entities.Group;
 
 /**
  * @version 1.0
@@ -24,7 +25,7 @@ public interface GroupService {
      * @param groupID
      * @return count of deleted rows or zero if nothing was deleted
      */
-    int deleteGroup(int groupID);
+    boolean deleteGroup(int groupID);
 
     /**
      * The method assigns lesson to group to the database
@@ -33,7 +34,7 @@ public interface GroupService {
      * @param lessonID existed lesson id
      * @return count of added rows or -1 if nothing was added
      */
-    int assignLessonToGroup(int groupID, int lessonID);
+    void assignLessonToGroup(int groupID, int lessonID);
 
     /**
      * The method deletes lesson from group
@@ -42,7 +43,7 @@ public interface GroupService {
      * @param lessonID existed lesson id
      * @return count of added rows or -1 if nothing was added
      */
-    int deleteLessonFromGroup(int groupID, int lessonID);
+    void deleteLessonFromGroup(int groupID, int lessonID);
 
     /**
      * The method finds all groups and returns optional list of groups
@@ -62,13 +63,7 @@ public interface GroupService {
      * @param lessonID
      * @return list of groups
      */
-    List<Group> findGroupsByLessonId(int lessonID);
-    
-    /**
-     * The method finds all groups by department and returns optional list of groups
-     * @return optional list of groups
-     */
-    List<Group> findGroupsByDepartment(int departmentID);
+    Set<Group> findGroupsByLessonId(int lessonID);
     
     /**
      * The method finds all groups by teacher id and returns list of groups
@@ -81,5 +76,5 @@ public interface GroupService {
      * @param group
      * @return count of updated rows or 0 if nothing was updated
      */
-    int updateGroup(Group group);
+    void updateGroup(Group group);
 }

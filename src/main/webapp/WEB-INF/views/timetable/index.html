@@ -188,13 +188,13 @@ th {
 
 						<tbody>
 							<tr th:each="timetable : ${timetables}">
-								<td th:text="${timetable.getDay().getDateOne()}" />
-								<td th:text="${timetable.getDay().getLessonTimePeriod()}" />
+								<td th:text="${timetable.getDate()}" />
+								<td th:text="${timetable.getLessonTimePeriod()}" />
 								<td th:text="${timetable.getLesson().getName()}" />
 								<td th:text="${timetable.getGroup().getName()}" />
 								<td
 									th:text="${timetable.getTeacher().getFirstName()} + ' ' + ${timetable.getTeacher().getLastName()}" />
-								<td th:text="${timetable.getRoomNumber()}" />
+								<td th:text="${timetable.getRoom().getNumber()}" />
 								<td><a href="#"
 									th:href="@{/timetable/delete/} + ${timetable.getId()}"><button
 											class="button_delete">Delete</button></a></td>

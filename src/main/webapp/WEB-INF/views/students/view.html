@@ -48,6 +48,9 @@ td {
 <body>
 	<div class="bg">
 		<div class="container">
+		<div class="message" th:if="${message}">
+            <p th:text="${message}">success message</p>
+        </div>
 			<h1>Student information:</h1>
 			<table>
 				<tr>

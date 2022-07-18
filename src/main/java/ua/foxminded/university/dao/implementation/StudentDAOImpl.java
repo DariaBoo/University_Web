@@ -3,15 +3,23 @@ package ua.foxminded.university.dao.implementation;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.persistence.Query;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import ua.foxminded.university.dao.StudentDAO;
-import ua.foxminded.university.dao.implementation.mappers.StudentMapper;
-import ua.foxminded.university.service.pojo.Student;
+import ua.foxminded.university.dao.exception.DAOException;
+import ua.foxminded.university.service.entities.Group;
+import ua.foxminded.university.service.entities.Student;
+
 
 /**
  * @version 1.0
@@ -22,78 +30,88 @@ import ua.foxminded.university.service.pojo.Student;
 @Repository
 public class StudentDAOImpl implements StudentDAO {
 
-    private final JdbcTemplate jdbcTemplate;
-    private final String ADD_STUDENT = "INSERT INTO timetable.students (first_name, last_name, group_id, password, id_card, isActive) SELECT ?, ?, ?, 1234, ?, true "
-            + "WHERE NOT EXISTS (SELECT first_name, last_name FROM timetable.students WHERE first_name = ? AND last_name = ?) "
-            + "AND EXISTS (SELECT group_id FROM timetable.groups WHERE group_id = ?)";
-    private final String DELETE_STUDENT = "UPDATE timetable.students SET isActive = false WHERE student_id = ?;";
-    private final String UPDATE_STUDENT = "UPDATE timetable.students SET first_name = ?, last_name = ?, group_id = ?, id_card = ? WHERE student_id = ?;";
-    private final String FIND_STUDENT_BY_ID = "SELECT * FROM timetable.students WHERE student_id = ? AND isActive = true;";
-    private final String FIND_ALL_STUDENTS = "SELECT * FROM timetable.students WHERE isActive = true ORDER BY student_id;";
-    private final String FIND_STUDENTS_BY_GROUP = "SELECT * FROM timetable.students WHERE group_id = ? AND isActive = true ORDER BY student_id;";
-    private final String CHANGE_PASSWORD = "UPDATE timetable.students SET password = ? WHERE student_id = ?;";
-    private final String FIRST_NAME_MAX_SIZE = "SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE UPPER (table_schema) = UPPER ('timetable') AND UPPER (table_name) = UPPER ('students') AND UPPER (column_name) = UPPER ('first_name');";
-    private final String LAST_NAME_MAX_SIZE = "SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE UPPER (table_schema) = UPPER ('timetable') AND UPPER (table_name) = UPPER ('students') AND UPPER (column_name) = UPPER ('last_name');";
-    private final String ID_CARD_MAX_SIZE = "SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE UPPER (table_schema) = UPPER ('timetable') AND UPPER (table_name) = UPPER ('students') AND UPPER (column_name) = UPPER ('id_card');";
-    private final String PASSWORD_MAX_SIZE = "SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE UPPER (table_schema) = UPPER ('timetable') AND UPPER (table_name) = UPPER ('students') AND UPPER (column_name) = UPPER ('password');";
     private static final Logger log = LoggerFactory.getLogger(StudentDAOImpl.class.getName());
-    private final String debugMessage = "Return count of rows otherwise returns zero. The result is {}";
+    private static final String debugMessage = "Get current session - {}";
     private int result;
 
-    /**
-     * Returns instance of the class
-     * 
-     * @param jdbcTemplate
-     */
     @Autowired
-    public StudentDAOImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    private SessionFactory sessionFactory;
 
     /**
      * {@inheritDoc}
+     * @throws DAOException 
      */
     @Override
     public int addStudent(Student student) {
-        log.trace("Add new student to timetable.students");
-        result = jdbcTemplate.update(ADD_STUDENT, student.getFirstName(), student.getLastName(), student.getGroupID(),
-                student.getIdCard(), student.getFirstName(), student.getLastName(), student.getGroupID());
-        log.debug(debugMessage, result);
+        Session currentSession = sessionFactory.getCurrentSession();
+        log.info(debugMessage, currentSession);
+        try {
+        result = (int) currentSession.save(student);
+        log.debug("Add a new student - {} with id - {}", student, result);   
+        } catch (org.hibernate.exception.ConstraintViolationException e) {
+            log.error(
+                    "ConstraintViolationException while adding student - {} (name - {}, surname - {} and id card - {} violate the unique primary keys condition  or student id card is not unique",
+                    student, student.getFirstName(), student.getLastName(), student.getIdCard());
+            throw new DAOException("Student with name " + student.getFirstName() + ", surname "
+                    + student.getLastName() + " and id card " + student.getIdCard() + " already exists or student id card is not unique!");
+        }
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @throws DAOException 
+     */
+    @Override
+    public void updateStudent(Student student) {
+        Session currentSession = sessionFactory.getCurrentSession();  
+        log.info(debugMessage, currentSession);
+        try {
+        currentSession.update(student);
+        log.debug("Update the student - {}", student);
+        } catch (org.hibernate.exception.ConstraintViolationException e) {
+        log.error(
+                "ConstraintViolationException while updating student - {} (name - {}, surname - {} and id card - {} violate the unique primary keys condition  or student id card is not unique",
+                student, student.getFirstName(), student.getLastName(), student.getIdCard());
+        throw new DAOException("Student with name " + student.getFirstName() + ", surname "
+                    + student.getLastName() + " and id card " + student.getIdCard() + " already exists or student id card is not unique!");
+        }       
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int updateStudent(Student student) {
-        log.trace("Change student's name and surname and return count of updated rows otherwise zero");
-        result = jdbcTemplate.update(UPDATE_STUDENT, student.getFirstName(), student.getLastName(),
-                student.getGroupID(), student.getIdCard(), student.getId());
-        log.debug("Took a result - {}, if the result equals 1 student was updated, if 0 - not updated", result);
-        return result;
+    public boolean deleteStudent(int studentID) {
+        boolean isDeleted = false;
+        Session currentSession = sessionFactory.getCurrentSession();
+        log.info(debugMessage, currentSession);
+        Optional<Student> studentToDelete = Optional.ofNullable(currentSession.byId(Student.class).load(studentID));
+        if(studentToDelete.isPresent()) {
+        currentSession.delete(studentToDelete.get());
+        isDeleted = true;
+        log.debug("Delete student with id - {} from the database", studentID);
+        }
+        return isDeleted;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int deleteStudent(int studentID) {
-        log.trace("Delete student from the database");
-        result = jdbcTemplate.update(DELETE_STUDENT, studentID);
-        log.debug(debugMessage, result);
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int changePassword(int studentID, String newPassword) {
-        log.trace("Change password in the timetable.students for student {}", studentID);
-        result = jdbcTemplate.update(CHANGE_PASSWORD, newPassword, studentID);
-        log.debug(debugMessage, result);
-        return result;
+    public boolean changePassword(int studentID, String newPassword) {
+        boolean isChanged = false;
+        Session currentSession = sessionFactory.getCurrentSession();
+        log.info(debugMessage, currentSession); 
+        if(findByID(studentID).isPresent()) {
+        currentSession.createNamedQuery("Student_changePassword")
+                .setParameter("newPassword", newPassword)
+                .setParameter("id", studentID)
+                .executeUpdate();
+        isChanged = true;
+        log.debug("Change password for student with id - {}", studentID);
+        }
+        return isChanged;
     }
 
     /**
@@ -101,11 +119,11 @@ public class StudentDAOImpl implements StudentDAO {
      */
     @Override
     public Optional<Student> findByID(int studentID) {
-        log.trace("Find a student by id");
-        Optional<Student> result = jdbcTemplate
-                .query(FIND_STUDENT_BY_ID, new Object[] { studentID }, new StudentMapper()).stream().findFirst();
-        log.debug("Return optional student {}", result);
-        return result;
+        Session currentSession = sessionFactory.getCurrentSession();
+        log.info(debugMessage, currentSession);
+        Optional<Student> resultStudent = Optional.ofNullable(currentSession.get(Student.class, studentID));
+        log.debug("Find student by id {} and return optional student - {}", studentID, resultStudent);
+        return resultStudent;
     }
 
     /**
@@ -113,10 +131,12 @@ public class StudentDAOImpl implements StudentDAO {
      */
     @Override
     public Optional<List<Student>> findAllStudents() {
-        log.trace("Find all students and return optional list of students");
-        Optional<List<Student>> result = Optional.of(jdbcTemplate.query(FIND_ALL_STUDENTS, new StudentMapper()));
-        log.debug("Return optional list of students {}", result);
-        return result;
+        Session currentSession = sessionFactory.getCurrentSession();
+        log.info(debugMessage, currentSession);
+        Optional<List<Student>> resultList = Optional
+                .of(currentSession.createQuery("from Student", Student.class).getResultList());
+        log.debug("Find all students and return optional list of students {}", resultList);
+        return resultList;
     }
 
     /**
@@ -124,42 +144,20 @@ public class StudentDAOImpl implements StudentDAO {
      */
     @Override
     public Optional<List<Student>> findStudentsByGroup(int groupID) {
-        log.trace("Find all students by group id");
-        Optional<List<Student>> result = Optional
-                .of(jdbcTemplate.query(FIND_STUDENTS_BY_GROUP, new Object[] { groupID }, new StudentMapper()));
-        log.debug("Return optional list of students {}", result);
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getFirstNameMaxSize() {
-        return jdbcTemplate.queryForObject(FIRST_NAME_MAX_SIZE, Integer.class);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getLastNameMaxSize() {
-        return jdbcTemplate.queryForObject(LAST_NAME_MAX_SIZE, Integer.class);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getIdCardMaxSize() {
-        return jdbcTemplate.queryForObject(ID_CARD_MAX_SIZE, Integer.class);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getPasswordMaxSize() {
-        return jdbcTemplate.queryForObject(PASSWORD_MAX_SIZE, Integer.class);
+        Session currentSession = sessionFactory.getCurrentSession();
+        log.info(debugMessage, currentSession);
+        CriteriaBuilder criteriaBuilder = currentSession.getCriteriaBuilder();
+        CriteriaQuery<Student> criteriaQuery = criteriaBuilder.createQuery(Student.class);
+        log.info("Create criteriaQuery - {} for student class", criteriaQuery);
+        Root<Student> root = criteriaQuery.from(Student.class);
+        log.info("Create root -{} for student class", root);
+        Group group = new Group();
+        group.setId(groupID);
+        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("group"), group));
+        Query query = currentSession.createQuery(criteriaQuery);
+        log.info("Create query by criteriaQuery - {}", criteriaQuery);
+        Optional<List<Student>> resultList = Optional.ofNullable(query.getResultList());
+        log.debug("Find all students by group id and return optional list of students {}", resultList);
+        return resultList;
     }
 }

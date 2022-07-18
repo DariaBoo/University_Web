@@ -1,17 +1,39 @@
-package ua.foxminded.university.service.pojo;
+package ua.foxminded.university.service.entities;
 
 import java.time.LocalDate;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
+@Entity
+@Table(name = "timetable.teacherAbsent", uniqueConstraints = { @UniqueConstraint(name = "unique_dates", columnNames = {"teacher_id", "date_start", "date_end"})})
 public class Day {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    
+    @Column(name = "date_start", table = "timetable.teacherAbsent")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOne;
 
+    @Column(name = "date_end", table = "timetable.teacherAbsent")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateTwo;
-    private String lessonTimePeriod;
+    
+    @ManyToOne(targetEntity = Teacher.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "teacher_id",  referencedColumnName = "id")
+    private Teacher teacher;
 
     public Day(LocalDate dateOne, LocalDate dateTwo) {
         this.dateOne = dateOne;
@@ -38,22 +60,25 @@ public class Day {
         this.dateTwo = dateTwo;
     }
 
-    public String getLessonTimePeriod() {
-        return lessonTimePeriod;
+    public int getId() {
+        return id;
     }
 
-    public void setLessonTimePeriod(String lessonTimePeriod) {
-        this.lessonTimePeriod = lessonTimePeriod;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((dateOne == null) ? 0 : dateOne.hashCode());
-        result = prime * result + ((dateTwo == null) ? 0 : dateTwo.hashCode());
-        result = prime * result + ((lessonTimePeriod == null) ? 0 : lessonTimePeriod.hashCode());
-        return result;
+        return 16;
     }
 
     @Override
@@ -75,10 +100,7 @@ public class Day {
                 return false;
         } else if (!dateTwo.equals(other.dateTwo))
             return false;
-        if (lessonTimePeriod == null) {
-            if (other.lessonTimePeriod != null)
-                return false;
-        } else if (!lessonTimePeriod.equals(other.lessonTimePeriod))
+        if (id != other.id)
             return false;
         return true;
     }

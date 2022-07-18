@@ -1,9 +1,10 @@
 package ua.foxminded.university.service;
 
 import java.util.List;
+import java.util.Set;
 
-import ua.foxminded.university.service.pojo.Day;
-import ua.foxminded.university.service.pojo.Teacher;
+import ua.foxminded.university.service.entities.Day;
+import ua.foxminded.university.service.entities.Teacher;
 
 /**
  * @version 1.0
@@ -22,27 +23,27 @@ public interface TeacherService {
      * Deletes teacher from the timetable.teachers
      * 
      * @param teacherID
-     * @return count of deleted rows otherwise zero
+     * @return true or false
      */
-    int deleteTeacher(int teacherID);
+    boolean deleteTeacher(int teacherID);
 
     /**
      * Assigns lesson to teacher to the timetable.lessons_teachers
      * 
      * @param lessonID  existed lesson id
      * @param teacherID existed teacher id
-     * @return count of updated rows otherwise -1
+     * @return c
      */
-    int assignLessonToTeacher(int lessonID, int teacherID);
+    boolean assignLessonToTeacher(int lessonID, int teacherID);
 
     /**
      * Deletes lesson from teacher from the timetable.lessons_teachers
      * 
      * @param lessonID  existed lesson id
      * @param teacherID existed teacher id
-     * @return count of deleted rows otherwise zero
+     * @return true or false
      */
-    int deleteLessonFromTeacher(int lessonID, int teacherID);
+    boolean deleteLessonFromTeacher(int lessonID, int teacherID);
 
     /**
      * The method set date start and date end of teacher's absent
@@ -60,7 +61,7 @@ public interface TeacherService {
      * @param day
      * @return count of deleted rows otherwise zero
      */
-    int deleteTeacherAbsent(int teacherID, Day day);
+    void deleteTeacherAbsent(int teacherID, Day day);
 
     /**
      * The method finds all teachers absent days by teacher id
@@ -68,7 +69,7 @@ public interface TeacherService {
      * @param teacherID
      * @return list of teachers
      */
-    List<Teacher> showTeacherAbsent(int teacherID);
+    List<Day> showTeacherAbsent(int teacherID);
 
     /**
      * The method finds a teacher by id from the timetable.teachers
@@ -86,22 +87,13 @@ public interface TeacherService {
     List<Teacher> findAllTeachers();
 
     /**
-     * The method finds all teachers by department id and returns optional list of
-     * teachers
-     * 
-     * @param departmentID
-     * @return list of teachers
-     */
-    List<Teacher> findTeachersByDepartment(int departmentID);
-
-    /**
      * The method finds all teachers by lesson id and returns optional list of
      * teachers
      * 
      * @param lessonID
      * @return optional list of teachers
      */
-    List<Teacher> findTeachersByLessonId(int lessonID);
+    Set<Teacher> findTeachersByLessonId(int lessonID);
 
     /**
      * The method changes password by teacher id
@@ -119,5 +111,5 @@ public interface TeacherService {
      * @param teacher
      * @return count of updated rows otherwise zero
      */
-    int updateTeacher(Teacher teacher);
+    void updateTeacher(Teacher teacher);
 }

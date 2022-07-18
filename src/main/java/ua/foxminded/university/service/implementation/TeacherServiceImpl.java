@@ -1,16 +1,20 @@
 package ua.foxminded.university.service.implementation;
 
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import ua.foxminded.university.dao.implementation.TeacherDAOImpl;
+import ua.foxminded.university.dao.TeacherDAO;
+import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.service.TeacherService;
-import ua.foxminded.university.service.pojo.Day;
-import ua.foxminded.university.service.pojo.Teacher;
+import ua.foxminded.university.service.entities.Day;
+import ua.foxminded.university.service.entities.Teacher;
+import ua.foxminded.university.service.exception.ServiceException;
 
 /**
  * @version 1.0
@@ -21,117 +25,95 @@ import ua.foxminded.university.service.pojo.Teacher;
 @Service
 public class TeacherServiceImpl implements TeacherService {
 
-    private final TeacherDAOImpl teacherDAOImpl;
     private static final Logger log = LoggerFactory.getLogger(TeacherServiceImpl.class.getName());
+    int result = 0;
 
-    /**
-     * Returns instance of the class
-     * 
-     * @param teacherDAOImpl
-     */
     @Autowired
-    public TeacherServiceImpl(TeacherDAOImpl teacherDAOImpl) {
-        this.teacherDAOImpl = teacherDAOImpl;
-    }
+    private TeacherDAO teacherDAO;
 
     /**
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public int addTeacher(Teacher teacher) {
-        log.trace("Add new teacher {}", teacher);
-        int result = 0;
-        log.trace("Check if teacher's first name is not out of bound");
-        if (teacher.getFirstName().length() > teacherDAOImpl.getFirstNameMaxSize()) {
-            log.error("Teacher's first name - {} is out of bound.", teacher.getFirstName());
-            throw new StringIndexOutOfBoundsException("Teacher's first name is out of bound.");
+        try {
+            result = teacherDAO.addTeacher(teacher);
+        } catch (DAOException e) {
+            log.error(e.getMessage(), e.getCause());
+            throw new ServiceException(e.getMessage());
         }
-        log.trace("Check if teacher's last name is not out of bound");
-        if (teacher.getLastName().length() > teacherDAOImpl.getLastNameMaxSize()) {
-            log.error("Teacher's last name -{} is out of bound.", teacher.getLastName());
-            throw new StringIndexOutOfBoundsException("Teacher's last name is out of bound.");
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void updateTeacher(Teacher teacher) {
+        try {
+            teacherDAO.updateTeacher(teacher);
+        } catch (DAOException e) {
+            log.error(e.getMessage(), e.getCause());
+            throw new ServiceException(e.getMessage());
         }
-        log.trace("Check if teacher's position is not out of bound");
-        if (teacher.getPosition().length() > teacherDAOImpl.getPositionMaxSize()) {
-            log.error("Teacher's position - {} is out of bound.", teacher.getPosition());
-            throw new StringIndexOutOfBoundsException("Teacher's position is out of bound.");
-        }
-        log.trace("Check if teacher's password is not out of bound");
-        if (teacher.getPassword().length() > teacherDAOImpl.getPasswordMaxSize()) {
-            log.error("Teacher's password is out of bound.");
-            throw new StringIndexOutOfBoundsException("Teacher's password is out of bound.");
-        }
-        result = teacherDAOImpl.addTeacher(teacher);
-        log.debug("Took a result {} of adding a new teacher", result);
-        return result;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int updateTeacher(Teacher teacher) {
-        int result = teacherDAOImpl.updateTeacher(teacher);
-        log.debug("Took a result {} of updating a teacher", result);
-        return result;
+    @Transactional
+    public boolean deleteTeacher(int teacherID) {
+        return teacherDAO.deleteTeacher(teacherID);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int deleteTeacher(int teacherID) {
-        int result = teacherDAOImpl.deleteTeacher(teacherID);
-        log.debug("Delete existed teacher by id {} and return a result - {}", teacherID, result);
-        return result;
+    @Transactional
+    public boolean assignLessonToTeacher(int lessonID, int teacherID) {
+        return teacherDAO.assignLessonToTeacher(lessonID, teacherID);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int assignLessonToTeacher(int lessonID, int teacherID) {
-        int result = teacherDAOImpl.assignLessonToTeacher(lessonID, teacherID);
-        log.debug("Assign lesson with id {} to teacher with id {} and return a result - {}", lessonID, teacherID, result);
-        return result;
+    @Transactional
+    public boolean deleteLessonFromTeacher(int lessonID, int teacherID) {
+        return teacherDAO.deleteLessonFromTeacher(lessonID, teacherID);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int deleteLessonFromTeacher(int lessonID, int teacherID) {
-        int result = teacherDAOImpl.deleteLessonFromTeacher(lessonID, teacherID);
-        log.debug("Delete lesson with id {} from teacher with id {} and return a result - {}", lessonID, teacherID, result);
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
+    @Transactional
     public int setTeacherAbsent(int teacherID, Day day) {
-        int result = teacherDAOImpl.setTeahcerAbsent(teacherID, day);
-        log.debug("Set teacher with id {} absent in a day - {} and return a result - {}", teacherID, day, result);
-        return result;
+        return teacherDAO.setTeahcerAbsent(teacherID, day);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int deleteTeacherAbsent(int teacherID, Day day) {
-        int result = teacherDAOImpl.deleteTeahcerAbsent(teacherID, day);
-        log.debug("Delete teacher with id {} absent in a day - {} and return a result - {}", teacherID, day, result);
-        return result;
+    @Transactional
+    public void deleteTeacherAbsent(int teacherID, Day day) {
+        teacherDAO.deleteTeahcerAbsent(teacherID, day);
+        log.debug("Delete teacher with id {} absent in a day - {} and return a result - {}", teacherID, day);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public Teacher findByID(int teacherID) {
-        Teacher resultTeacher = teacherDAOImpl.findByID(teacherID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        Teacher resultTeacher = teacherDAO.findByID(teacherID)
+                .orElseThrow(() -> new IllegalArgumentException("Error occured while searching by id"));
         log.debug("Find teacher by id {}  and return a result - {}", teacherID, resultTeacher);
         return resultTeacher;
     }
@@ -140,8 +122,10 @@ public class TeacherServiceImpl implements TeacherService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public List<Teacher> findAllTeachers() {
-        List<Teacher> resultList = teacherDAOImpl.findAllTeachers().orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        List<Teacher> resultList = teacherDAO.findAllTeachers()
+                .orElseThrow(() -> new IllegalArgumentException("Error occured"));
         log.debug("Return list of all teachers - {}", resultList);
         return resultList;
     }
@@ -150,36 +134,21 @@ public class TeacherServiceImpl implements TeacherService {
      * {@inheritDoc}
      */
     @Override
-    public List<Teacher> findTeachersByDepartment(int departmentID) {
-        List<Teacher> resultList = teacherDAOImpl.findTeachersByDepartment(departmentID)
+    @Transactional
+    public Set<Teacher> findTeachersByLessonId(int lessonID) {
+        Set<Teacher> resultSet = teacherDAO.findTeachersByLessonId(lessonID)
                 .orElseThrow(() -> new IllegalArgumentException("Error occured"));
-        log.debug("Find teachers by department with id {} and return a result - {}", departmentID, resultList);
-        return resultList;
+        log.debug("Find teachers by lesson id {} and return a result - {}", lessonID, resultSet);
+        return resultSet;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Teacher> findTeachersByLessonId(int lessonID) {
-        List<Teacher> resultList = teacherDAOImpl.findTeachersByLessonId(lessonID)
-                .orElseThrow(() -> new IllegalArgumentException("Error occured"));
-        log.debug("Find teachers by lesson id {} and return a result - {}", lessonID, resultList);
-        return resultList;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
+    @Transactional
     public int changePassword(int teacherID, String newPassword) {
-        log.trace("Change teacher's password");
-        log.info("Check is new password is not bigger then 10 symbols");
-        if (newPassword.length() > teacherDAOImpl.getPasswordMaxSize()) {
-            log.error("Password can't be more than 10 symbols. Password length {}", newPassword.length());
-            throw new StringIndexOutOfBoundsException("Password can't be more than 10 symbols");
-        }
-        int result = teacherDAOImpl.changePassword(teacherID, newPassword);
+        result = teacherDAO.changePassword(teacherID, newPassword);
         log.debug("Return a result - {}", result);
         return result;
     }
@@ -188,9 +157,10 @@ public class TeacherServiceImpl implements TeacherService {
      * {@inheritDoc}
      */
     @Override
-    public List<Teacher> showTeacherAbsent(int teacherID) {
-        List<Teacher> resultList = teacherDAOImpl.showTeacherAbsent(teacherID)
-                .orElseThrow(() -> new IllegalArgumentException("Error occured"));
+    @Transactional
+    public List<Day> showTeacherAbsent(int teacherID) {
+        List<Day> resultList = teacherDAO.showTeacherAbsent(teacherID)
+                .orElseThrow(() -> new IllegalArgumentException("Error occured while displaying teacher absent"));
         log.debug("Return a list with teachers absent days - {}", resultList);
         return resultList;
     }

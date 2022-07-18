@@ -280,8 +280,8 @@ h3 {
 						</thead>
 						<tbody>
 							<tr th:each="absent : ${absentDays}">
-								<td th:text="${absent.getAbsentPeriod().getDateOne()}" />
-								<td th:text="${absent.getAbsentPeriod().getDateTwo()}" />
+								<td th:text="${absent.getDateOne()}" />
+								<td th:text="${absent.getDateTwo()}" />
 							</tr>
 						</tbody>
 					</table>

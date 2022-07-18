@@ -1,30 +1,49 @@
 package ua.foxminded.university.dao.implementation;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.BeforeAll;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import ua.foxminded.university.config.SpringConfigTest;
-import ua.foxminded.university.service.pojo.Holiday;
+import ua.foxminded.university.config.HibernateConfigTest;
+import ua.foxminded.university.dao.HolidayDAO;
+import ua.foxminded.university.dao.exception.DAOException;
+import ua.foxminded.university.service.entities.Holiday;
 
-@TestInstance(Lifecycle.PER_CLASS)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = { HibernateConfigTest.class }, loader = AnnotationConfigContextLoader.class)
+@Transactional
 class HolidayDAOImplTest {
-    private HolidayDAOImpl holidayDAOImpl;
-    private AnnotationConfigApplicationContext context;
+    @Autowired
+    private HolidayDAO holidayDAO;
+
     private Holiday futureHoliday = new Holiday();
     private Holiday pastHoliday = new Holiday();
+    private Holiday uniqueDate = new Holiday();
     
-    @BeforeAll
+    @BeforeEach
     void init() {
-        context = new AnnotationConfigApplicationContext(SpringConfigTest.class);
-        holidayDAOImpl = context.getBean("holidayDAOImpl", HolidayDAOImpl.class);
+        new EmbeddedDatabaseBuilder().setName("test").setType(EmbeddedDatabaseType.H2)
+        .addScript("classpath:tablesTest.sql").build();  
+        uniqueDate.setDate(LocalDate.now());
+        uniqueDate.setName("HolidayTest");
         futureHoliday.setDate(LocalDate.now().plusDays(1));
         futureHoliday.setName("Holiday");
         pastHoliday.setDate(LocalDate.now().minusDays(1));
@@ -32,29 +51,37 @@ class HolidayDAOImplTest {
     }
     
     @Test
-    void addHoliday_shouldReturnOne_whenInputCorrectHolidayData() {
-        assertEquals(1, holidayDAOImpl.addHoliday(futureHoliday));
+    void addHoliday_shouldReturnOne_whenInputCorrectHolidayData() {    
+        assertEquals(holidayDAO.findAllHolidays().get().size() + 1, holidayDAO.addHoliday(uniqueDate));
+    }
+    @Test
+    void addHoliday_shouldThrowDAOException_whenInputHolidayWithNotUniqueDate() {
+        holidayDAO.addHoliday(uniqueDate);
+        Holiday notUniqueDate = new Holiday();
+        notUniqueDate.setDate(LocalDate.now());
+        notUniqueDate.setName("HolidayTest");
+        assertThrows(DAOException.class, () -> holidayDAO.addHoliday(notUniqueDate));
     }
     
     @Test
-    void deleteHoliday_shouldReturnOne_whenInputHolidayIdAfterNow() {
-        holidayDAOImpl.addHoliday(futureHoliday);
-        int lastId = (int)holidayDAOImpl.findAllHolidays().get().stream().count();        
-        assertEquals(1, holidayDAOImpl.deleteHoliday(lastId));
+    void deleteHoliday_shouldReturnTrue_whenInputHolidayIdAfterNow() {
+        int id = holidayDAO.addHoliday(futureHoliday);       
+        boolean isTrue = holidayDAO.deleteHoliday(id);
+        assertTrue(isTrue);
     }
     @Test
-    void deleteHoliday_shouldReturnZero_whenInputHolidayIdBeforeNow() {
-        holidayDAOImpl.addHoliday(pastHoliday);
-        int lastId = (int)holidayDAOImpl.findAllHolidays().get().stream().count();        
-        assertEquals(0, holidayDAOImpl.deleteHoliday(lastId));
+    void deleteHoliday_shouldReturnFalse_whenInputHolidayIdBeforeNow() {
+        int id = holidayDAO.addHoliday(pastHoliday);       
+        assertFalse(holidayDAO.deleteHoliday(id));
     }
-    @Test
-    void deleteHoliday_shouldReturnZero_whenInputIncorrectId() {       
-        assertEquals(0, holidayDAOImpl.deleteHoliday(-1));
+    @ParameterizedTest(name = "{index}. When input not existed id or negative number or zero will return false.")
+    @ValueSource(ints = { 1000, -1, 0 })
+    void deleteHoliday_shouldReturnZero_whenInputIncorrectId(int incorrectId) {       
+        assertFalse(holidayDAO.deleteHoliday(incorrectId));
     }
     @Test
     void findAllHolidays_shouldReturnCountOfHolidays_whenCallTheMethod() {
-        assertEquals(8, (int)holidayDAOImpl.findAllHolidays().get().stream().count());
+        assertEquals(7, (int)holidayDAO.findAllHolidays().get().stream().count());
     }
     
     @Test
@@ -63,7 +90,6 @@ class HolidayDAOImplTest {
         result.setId(1);
         result.setName("NEW YEAR");
         result.setDate(LocalDate.of(2022, 01, 01));
-        assertEquals(result, holidayDAOImpl.findAllHolidays().get().stream().limit(1).collect(Collectors.toList()).get(0));
+        assertEquals(result, holidayDAO.findAllHolidays().get().stream().limit(1).collect(Collectors.toList()).get(0));
     }
-
 }

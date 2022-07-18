@@ -2,11 +2,10 @@ package ua.foxminded.university.service;
 
 import java.util.List;
 
-import ua.foxminded.university.dao.exception.DAOException;
-import ua.foxminded.university.service.exception.ServiceException;
-import ua.foxminded.university.service.pojo.Day;
-import ua.foxminded.university.service.pojo.Timetable;
-import ua.foxminded.university.service.pojo.User;
+import ua.foxminded.university.service.entities.Day;
+import ua.foxminded.university.service.entities.Student;
+import ua.foxminded.university.service.entities.Teacher;
+import ua.foxminded.university.service.entities.Timetable;
 
 /**
  * @version 1.0
@@ -19,28 +18,10 @@ public interface TimetableService {
      * The method schedules lesson, group, teacher and room for the day and lesson
      * time period
      * 
-     * @param timetable includes lesson id, group id, date and lesson time period
-     * @return count of added rows otherwise -1
+     * @param timetable 
+     * @return count of added rows otherwise 0
      */
-    int scheduleTimetable(Timetable timetable) throws DAOException, ServiceException;
-
-    /**
-     * Deletes scheduled timetable by timetable id
-     * 
-     * @param timetableID
-     * @return count of deleted rows otherwise zero
-     */
-    int deleteTimetable(int timetableID);
-
-    /**
-     * Returns list of Optional DayTimetable by date and user
-     * 
-     * @param day
-     * @param user
-     * @return list of dayTimetable if this user has lessons at this date otherwise
-     *         List of Optional.empty
-     */
-    List<Timetable> getUserTimetable(Day day, User user);
+    int scheduleTimetable(Timetable timetable);
 
     /**
      * Returns list of DayTimetable for all groups and teachers by period of dates
@@ -49,4 +30,32 @@ public interface TimetableService {
      * @return list of dayTimetable
      */
     List<Timetable> showTimetable(Day day);
+    
+    /**
+     * Deletes scheduled timetable by timetable id
+     * 
+     * @param timetableID
+     * @return true is deleted otherwise false
+     */
+    boolean deleteTimetable(int timetableID);
+
+    /**
+     * Returns list of Optional DayTimetable by date and teacher
+     * 
+     * @param day
+     * @param teacher
+     * @return list of dayTimetable if this user has lessons at this date otherwise
+     *         List of Optional.empty
+     */
+    List<Timetable> getTeacherTimetable(Day day, Teacher teacher);
+
+    /**
+     * Returns list of Optional DayTimetable by date and student
+     * 
+     * @param day
+     * @param student
+     * @return list of dayTimetable if this user has lessons at this date otherwise
+     *         List of Optional.empty
+     */
+    List<Timetable> getStudentTimetable(Day day, Student student);
 }

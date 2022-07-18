@@ -1,15 +1,30 @@
-package ua.foxminded.university.service.pojo;
+package ua.foxminded.university.service.entities;
 
 import java.time.LocalDate;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
+@Entity
+@Table(name = "timetable.holidays")
 public class Holiday {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
 
+    @Column(name = "date", unique = true)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
+    
+    @Column(name = "holiday", length = 20)
     private String name;
 
     public LocalDate getDate() {
@@ -38,12 +53,7 @@ public class Holiday {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((date == null) ? 0 : date.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + id;
-        return result;
+        return 22;
     }
 
     @Override

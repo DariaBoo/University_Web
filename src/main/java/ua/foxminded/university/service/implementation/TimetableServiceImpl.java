@@ -4,22 +4,24 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import ua.foxminded.university.dao.HolidayDAO;
+import ua.foxminded.university.dao.TimetableDAO;
 import ua.foxminded.university.dao.exception.DAOException;
-import ua.foxminded.university.dao.implementation.HolidayDAOImpl;
-import ua.foxminded.university.dao.implementation.TimetableDAOImpl;
+import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.TimetableService;
+import ua.foxminded.university.service.entities.Day;
+import ua.foxminded.university.service.entities.Student;
+import ua.foxminded.university.service.entities.Teacher;
+import ua.foxminded.university.service.entities.Timetable;
 import ua.foxminded.university.service.exception.ServiceException;
-import ua.foxminded.university.service.pojo.Day;
-import ua.foxminded.university.service.pojo.Timetable;
-import ua.foxminded.university.service.pojo.User;
 
 /**
  * @version 1.0
@@ -30,48 +32,38 @@ import ua.foxminded.university.service.pojo.User;
 @Service
 public class TimetableServiceImpl implements TimetableService {
 
-    private final TimetableDAOImpl timetableDAOImpl;
-    private final HolidayDAOImpl holidayDAOImpl;
+    @Autowired
+    private TimetableDAO timetableDAO;
+    @Autowired
+    private HolidayDAO holidayDAO;
+    
     private static final Logger log = LoggerFactory.getLogger(TimetableServiceImpl.class.getName());
     private final String illegalArgumentExceptionMessage = "No timetable for ";
 
     /**
-     * Returns instance of the class
-     * 
-     * @param timetableDAOImpl
-     * @param holidayDAOImpl
-     */
-    @Autowired
-    public TimetableServiceImpl(TimetableDAOImpl timetableDAOImpl, HolidayDAOImpl holidayDAOImpl) {
-        this.timetableDAOImpl = timetableDAOImpl;
-        this.holidayDAOImpl = holidayDAOImpl;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public int scheduleTimetable(Timetable timetable) {
-        log.trace("Schedule day timetable");
-        LocalDate day = timetable.getDay().getDateOne();
+        LocalDate day = timetable.getDate();
         int result = 0;
         log.trace("Check if a day - {} is not a weekend", day);
-        if (isWeekend(timetable.getDay().getDateOne())) {
-            log.error("Can't schedule timetable for weekend. Try to schedule {}.", timetable.getDay());
-            throw new ServiceException("Can't schedule timetable for weekend");
+        if (isWeekend(day)) {
+            log.error("Can't schedule timetable for weekend. Attempt to schedule {}.", day);
+            throw new ServiceException("Can't schedule timetable for weekend! Attempt to schedule (" + day + ")");
         }
         log.trace("Check if a day - {} is not a holiday", day);
         if (isHoliday(day)) {
-            log.error("Can't schedule timetable for holiday. Try to schedule {}", timetable.getDay());
-            throw new ServiceException("Can't schedule timetable for holiday!");
+            log.error("Can't schedule timetable for holiday. Attempt to schedule {}", day);
+            throw new ServiceException("Can't schedule timetable for holiday! Attempt to schedule (" + day + ")");
         }
-        log.info("Schedule timetable");
         try {
-            result = timetableDAOImpl.scheduleTimetable(timetable);
+            result = timetableDAO.scheduleTimetable(timetable);
             log.debug("Took the result - {} of shceduling timetable.", result);
-        } catch (DAOException e) {
-            log.error("No available rooms or teachers. {}", e.getMessage());
-            throw new NoSuchElementException(e.getMessage());
+        } catch (UniqueConstraintViolationException | NoSuchElementException | DAOException e) {
+            log.error(e.getMessage(), e.getCause());
+            throw new ServiceException(e.getMessage());
         }
         return result;
     }
@@ -80,20 +72,20 @@ public class TimetableServiceImpl implements TimetableService {
      * {@inheritDoc}
      */
     @Override
-    public int deleteTimetable(int timetableID) {
-        int result = timetableDAOImpl.deleteTimetable(timetableID);
-        log.debug("Delete timetable by id -{} and return a result - {}", timetableID, result);
-        return result;
+    @Transactional
+    public boolean deleteTimetable(int timetableID) {
+        return timetableDAO.deleteTimetable(timetableID);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Timetable> getUserTimetable(Day day, User user) {
-        List<Timetable> resultList = timetableDAOImpl.getUserTimetable(day, user).orElseThrow(() -> new IllegalArgumentException(
+    @Transactional
+    public List<Timetable> getTeacherTimetable(Day day, Teacher teacher) {
+        List<Timetable> resultList = timetableDAO.getTeacherTimetable(day, teacher).orElseThrow(() -> new IllegalArgumentException(
                 illegalArgumentExceptionMessage + day.getDateOne() + " - " + day.getDateTwo()));
-        log.debug("Get month timetable for user {} and return a list of timetable - {}", user, resultList);
+        log.debug("Get month timetable for user {} and return a list of timetable - {}", teacher, resultList);
         return resultList;
     }
 
@@ -101,8 +93,21 @@ public class TimetableServiceImpl implements TimetableService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
+    public List<Timetable> getStudentTimetable(Day day, Student student) {
+        List<Timetable> resultList = timetableDAO.getStudentTimetable(day, student).orElseThrow(() -> new IllegalArgumentException(
+                illegalArgumentExceptionMessage + day.getDateOne() + " - " + day.getDateTwo()));
+        log.debug("Get month timetable for user {} and return a list of timetable - {}", student, resultList);
+        return resultList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
     public List<Timetable> showTimetable(Day day) {
-        List<Timetable> resultList = timetableDAOImpl.showTimetable(day).orElseThrow(() -> new IllegalArgumentException(
+        List<Timetable> resultList = timetableDAO.showTimetable(day).orElseThrow(() -> new IllegalArgumentException(
                 illegalArgumentExceptionMessage + day.getDateOne() + " - " + day.getDateTwo()));
         log.debug("Return a list of timetable - {}", resultList);
         return resultList;
@@ -125,8 +130,8 @@ public class TimetableServiceImpl implements TimetableService {
     private boolean isHoliday(LocalDate day) {
         boolean result = false;
         log.debug("Take a list of holidays from the database");
-        if (holidayDAOImpl.findAllHolidays().isPresent()) {
-            result = holidayDAOImpl.findAllHolidays().get().stream()
+        if (holidayDAO.findAllHolidays().isPresent()) {
+            result = holidayDAO.findAllHolidays().get().stream()
                     .anyMatch(holiday -> holiday.getDate().isEqual(day));
             log.info("Input day - {} is a holiday", day);
         }

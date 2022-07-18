@@ -6,39 +6,48 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import ua.foxminded.university.dao.implementation.HolidayDAOImpl;
+import ua.foxminded.university.dao.HolidayDAO;
+import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.service.HolidayService;
-import ua.foxminded.university.service.pojo.Holiday;
+import ua.foxminded.university.service.entities.Holiday;
+import ua.foxminded.university.service.exception.ServiceException;
 
 @Service
-public class HolidayServiceImpl implements HolidayService {
+public class HolidayServiceImpl implements HolidayService {    
     
-    private final HolidayDAOImpl holidayDAOImpl;
     private static final Logger log = LoggerFactory.getLogger(HolidayServiceImpl.class);
 
     @Autowired
-    public HolidayServiceImpl(HolidayDAOImpl holidayDAOImpl) {
-        this.holidayDAOImpl = holidayDAOImpl;
-    }
+    private HolidayDAO holidayDAO;
 
     /**
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public List<Holiday> findAllHolidays() {
-        List<Holiday> resultList = holidayDAOImpl.findAllHolidays().orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        List<Holiday> resultList = holidayDAO.findAllHolidays().orElseThrow(() -> new IllegalArgumentException("Error occured"));
         log.debug("Take list of holidays - {}, otherwise return IllegalArgumentException", resultList);
         return resultList;
     }
 
     /**
      * {@inheritDoc}
+     * @return 
      */
     @Override
+    @Transactional
     public int addHoliday(Holiday holiday) {
-        int result = holidayDAOImpl.addHoliday(holiday);
-        log.debug("Add new holiday - {} and return a result - {}", holiday, result);
+        int result = 0;
+        try {
+            result = holidayDAO.addHoliday(holiday);
+            log.debug("Add a new holiday and return an id - {}", result);
+        } catch(DAOException e) {
+            log.error(e.getMessage(), e.getCause());
+            throw new ServiceException(e.getMessage());
+        }
         return result;
     }
 
@@ -46,9 +55,8 @@ public class HolidayServiceImpl implements HolidayService {
      * {@inheritDoc}
      */
     @Override
-    public int deleteHoliday(int holidayID) {
-        int result = holidayDAOImpl.deleteHoliday(holidayID);
-        log.debug("Delete holiday with id - {} and return a result - {}", holidayID, result);
-        return result;
+    @Transactional
+    public boolean deleteHoliday(int holidayID) {
+        return holidayDAO.deleteHoliday(holidayID);
     }
 }

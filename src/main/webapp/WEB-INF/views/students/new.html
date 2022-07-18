@@ -109,7 +109,7 @@ h1 {
 				</div>
 				<br>
 				<div class="form_r">
-					<label for="groupID">Group: </label> <select th:field="*{groupID}">
+					<label for="groupID">Group: </label> <select th:field="*{group.id}">
 						<option value="0">Select group</option>
 						<option th:each="group : ${groups}" th:value="${group.getId()}"
 							th:text="${group.getName()}">Groups</option>
@@ -121,6 +121,12 @@ h1 {
 						th:field="*{idCard}" id="idCard" maxlength="5"
 						placeholder="Enter Id Card" required />
 				</div>
+				<br>
+                <div class="form_r">
+                    <input type="hidden"
+                        th:field="*{password}" id="password" maxlength="5"
+                        value="1234"/>
+                </div>				
 				<br>
 				<div class="form_r">
 					<input type="submit" class="button_new" value="Create!" />

@@ -1,21 +1,38 @@
-package ua.foxminded.university.service.pojo;
+package ua.foxminded.university.service.entities;
 
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.DynamicUpdate;
+
+@Entity
+@Table(name = "timetable.students", uniqueConstraints = { @UniqueConstraint(name = "unique_name_surname_idCard", columnNames = {"first_name", "last_name", "id_card"}),
+        @UniqueConstraint(name = "unique_group", columnNames = {"first_name", "last_name", "id_card", "group_id"})})
+@org.hibernate.annotations.NamedQuery(name = "Student_changePassword", query = "UPDATE Student s SET s.password = :newPassword WHERE s.id = :id")
+@DynamicUpdate
 public class Student extends User {
 
+    @Column(name = "id_card", unique = true)
     private String idCard;
-    private int groupID;
+    
+    @ManyToOne(targetEntity = Group.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "group_id", nullable = false) 
+    private Group group;      
 
     public Student() {
 
     }
 
-    public Student(int id, String firstName, String lastName, String password, List<Lesson> lessons, String idCard,
-            int groupID) {
-        super(id, firstName, lastName, password, lessons);
+    public Student(int id, String firstName, String lastName, String password, String idCard,
+            Group group) {
+        super(id, firstName, lastName, password);
         this.idCard = idCard;
-        this.groupID = groupID;
+        this.group = group;
     }
 
     public static StudentBuilder builder() {
@@ -27,9 +44,8 @@ public class Student extends User {
         private String firstName;
         private String lastName;
         private String password;
-        private List<Lesson> lessons;
         private String idCard;
-        private int groupID;
+        private Group group;
 
         public StudentBuilder setID(int studentID) {
             id = studentID;
@@ -51,18 +67,13 @@ public class Student extends User {
             return this;
         }
 
-        public StudentBuilder setLessons(List<Lesson> lessons) {
-            this.lessons = lessons;
-            return this;
-        }
-
         public StudentBuilder setIdCard(String idCard) {
             this.idCard = idCard;
             return this;
         }
 
-        public StudentBuilder setGroupID(int groupID) {
-            this.groupID = groupID;
+        public StudentBuilder setGroup(Group group) {
+            this.group = group;
             return this;
         }
 
@@ -75,7 +86,7 @@ public class Student extends User {
         }
 
         public Student build() {
-            return new Student(id, firstName, lastName, password, lessons, idCard, groupID);
+            return new Student(id, firstName, lastName, password, idCard, group);
         }
     }
 
@@ -83,25 +94,24 @@ public class Student extends User {
         return idCard;
     }
 
-    public int getGroupID() {
-        return groupID;
+    public Group getGroup() {
+        return group;
     }
 
     public void setIdCard(String idCard) {
         this.idCard = idCard;
     }
 
-    public void setGroupID(int groupID) {
-        this.groupID = groupID;
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+    public int getGroupID() {
+        return this.group.getId();
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + groupID;
-        result = prime * result + ((idCard == null) ? 0 : idCard.hashCode());
-        return result;
+        return 14;
     }
 
     @Override
@@ -113,13 +123,11 @@ public class Student extends User {
         if (getClass() != obj.getClass())
             return false;
         Student other = (Student) obj;
-        if (groupID != other.groupID)
-            return false;
         if (idCard == null) {
             if (other.idCard != null)
                 return false;
         } else if (!idCard.equals(other.idCard))
             return false;
         return true;
-    }
+    } 
 }

@@ -1,16 +1,19 @@
 package ua.foxminded.university.service.implementation;
 
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import ua.foxminded.university.dao.implementation.GroupDAOImpl;
+import ua.foxminded.university.dao.GroupDAO;
+import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.service.GroupService;
+import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.exception.ServiceException;
-import ua.foxminded.university.service.pojo.Group;
 
 /**
  * @version 1.0
@@ -20,38 +23,25 @@ import ua.foxminded.university.service.pojo.Group;
 @Service
 public class GroupServiceImpl implements GroupService {
 
-    private static final String groupNamePattern = "(\\S+)-(\\d+)";
-    private final GroupDAOImpl groupDAOImpl;
-    private static final Logger log = LoggerFactory.getLogger(GroupServiceImpl.class.getName());
-
-    /**
-     * Returns instance of the class
-     * 
-     * @param groupDAOImpl
-     */
     @Autowired
-    public GroupServiceImpl(GroupDAOImpl groupDAOImpl) {
-        this.groupDAOImpl = groupDAOImpl;
-    }
+    private GroupDAO groupDAO;
+
+    private static final Logger log = LoggerFactory.getLogger(GroupServiceImpl.class.getName());
+    int result = 0;
 
     /**
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public int addGroup(Group group) {
-        log.trace("Add new group");
-        log.trace("Check if group name - {} is not out of bound", group.getName());
-        if (group.getName().length() > groupDAOImpl.getGroupNameMaxSize()) {
-            log.error("Group name - {} is out of bound", group.getName());
-            throw new StringIndexOutOfBoundsException("Group name is out of bound");
+        try {
+            result = groupDAO.addGroup(group);
+            log.debug("Add a new group - {} and take an id - {}", group, result);
+        } catch (DAOException e) {
+            log.error(e.getMessage(), e.getCause());
+            throw new ServiceException(e.getMessage());
         }
-        log.trace("Check if group name - {} matches the pattern {}", group.getName(), groupNamePattern);
-        if (!group.getName().matches(groupNamePattern)) {
-            log.error("Group name - {} is not matches the pattern {}", group.getName(), groupNamePattern);
-            throw new ServiceException("Group name should contain two letters, dash and two digits");
-        }
-        int result = groupDAOImpl.addGroup(group);
-        log.debug("Add new group - {} and take a result - {}", group, result);
         return result;
     }
 
@@ -59,39 +49,38 @@ public class GroupServiceImpl implements GroupService {
      * {@inheritDoc}
      */
     @Override
-    public int deleteGroup(int groupID) {
-        int result = groupDAOImpl.deleteGroup(groupID);
-        log.debug("Delete group with id - {}, and take a result - {}", groupID, result);
-        return result;
+    @Transactional
+    public boolean deleteGroup(int groupID) {
+        return groupDAO.deleteGroup(groupID);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int assignLessonToGroup(int groupID, int lessonID) {
-        int result = groupDAOImpl.assignLessonToGroup(groupID, lessonID);
-        log.debug("Assign lesson with id - {} to group with id - {}) and take a result - {}", lessonID, groupID, result);
-        return result;
+    @Transactional
+    public void assignLessonToGroup(int groupID, int lessonID) {
+        groupDAO.assignLessonToGroup(groupID, lessonID);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int deleteLessonFromGroup(int groupID, int lessonID) {
-        int result = groupDAOImpl.deleteLessonFromGroup(groupID, lessonID);
-        log.debug("Delete lesson with id - {} from group with id - {} and take a result - {}", lessonID, groupID, result);
-        return result;
+    @Transactional
+    public void deleteLessonFromGroup(int groupID, int lessonID) {
+        groupDAO.deleteLessonFromGroup(groupID, lessonID);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public List<Group> findAllGroups() {
-        List<Group> resultList = groupDAOImpl.findAllGroups().orElseThrow(() -> new IllegalArgumentException("Error occured"));
-        log.debug("Find all groups and return a list of groups - {}, otherwise return IllegalArgumentException", resultList);
+        List<Group> resultList = groupDAO.findAllGroups()
+                .orElseThrow(() -> new IllegalArgumentException("Error occured while searching all groups"));
+        log.debug("Find all groups and return a list of groups - {}", resultList);
         return resultList;
     }
 
@@ -99,9 +88,11 @@ public class GroupServiceImpl implements GroupService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public Group findById(int groupID) {
-        Group resultGroup = groupDAOImpl.findById(groupID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
-        log.debug("Find group by id - {} and return group - {}, otherwise return IllegalArgumentException", groupID, resultGroup);
+        Group resultGroup = groupDAO.findById(groupID).orElseThrow(
+                () -> new IllegalArgumentException("Error occured while searching group by id: " + groupID));
+        log.debug("Find group by id - {} and return group - {}", groupID, resultGroup);
         return resultGroup;
     }
 
@@ -109,32 +100,24 @@ public class GroupServiceImpl implements GroupService {
      * {@inheritDoc}
      */
     @Override
-    public List<Group> findGroupsByLessonId(int lessonID) {
-        List<Group> resultList = groupDAOImpl.findGroupsByLessonId(lessonID)
-                .orElseThrow(() -> new IllegalArgumentException("Error occured"));
-        log.debug("Find groups by lesson id - {} and return a list of groups - {}, otherwise return IllegalArgumentException", lessonID, resultList);
-        return resultList;
+    @Transactional
+    public Set<Group> findGroupsByLessonId(int lessonID) {
+        Set<Group> resultSet = groupDAO.findGroupsByLessonId(lessonID).orElseThrow(
+                () -> new IllegalArgumentException("Error occured while searching group by lesson id " + lessonID));
+        log.debug("Find groups by lesson id - {} and return a list of groups - {}", lessonID, resultSet);
+        return resultSet;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Group> findGroupsByDepartment(int departmentID) {
-        List<Group> resultList = groupDAOImpl.findGroupsByDepartment(departmentID)
-                .orElseThrow(() -> new IllegalArgumentException("Error occured"));
-        log.debug("Find groups by department with id - {} and return a list of groups - {}, otherwise return IllegalArgumentException", departmentID, resultList);
-        return resultList;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
+    @Transactional
     public List<Group> findGroupsByTeacherId(int teacherID) {
-        List<Group> resultList = groupDAOImpl.findGroupsByTeacherId(teacherID)
-                .orElseThrow(() -> new IllegalArgumentException("Error occured"));
-        log.debug("Find groups by teacher id - {} and return a list of groups - {}, otherwise return IllegalArgumentException", teacherID, resultList);
+        List<Group> resultList = groupDAO.findGroupsByTeacherId(teacherID)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Error occured while searching group by teacher id - {} " + teacherID));
+        log.debug("Find groups by teacher id - {} and return a list of groups - {}", teacherID, resultList);
         return resultList;
     }
 
@@ -142,9 +125,14 @@ public class GroupServiceImpl implements GroupService {
      * {@inheritDoc}
      */
     @Override
-    public int updateGroup(Group group) {
-        int result = groupDAOImpl.updateGroup(group);
-        log.debug("Update existed group - {}", group);
-        return result;
+    @Transactional
+    public void updateGroup(Group group) {
+        try {
+            groupDAO.updateGroup(group);
+            log.debug("Update the group - {}", group);
+        } catch (DAOException e) {
+            log.error(e.getMessage(), e.getCause());
+            throw new ServiceException(e.getMessage());
+        }
     }
 }

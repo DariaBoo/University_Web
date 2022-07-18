@@ -2,8 +2,10 @@ package ua.foxminded.university.dao;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-import ua.foxminded.university.service.pojo.*;
+import ua.foxminded.university.dao.exception.DAOException;
+import ua.foxminded.university.service.entities.*;
 
 /**
  * @version 1.0
@@ -12,12 +14,13 @@ import ua.foxminded.university.service.pojo.*;
 public interface GroupDAO {
 
     /**
-     * The method returns count of added rows or -1 if nothing was added.
+     * The method returns group id.
      * 
      * @param group
      * @return
+     * @throws DAOException 
      */
-    int addGroup(Group group);
+    int addGroup(Group group) throws DAOException;
 
     /**
      * The method deletes group from the database by group id
@@ -25,25 +28,25 @@ public interface GroupDAO {
      * @param groupID
      * @return count of deleted rows or zero if nothing was deleted
      */
-    int deleteGroup(int groupID);
+    boolean deleteGroup(int groupID);
 
     /**
      * The method assigns lesson to group to the database
      * 
      * @param groupID  existed group id
      * @param lessonID existed lesson id
-     * @return count of added rows or -1 if nothing was added
+     * @return true is assigned otherwise false
      */
-    int assignLessonToGroup(int groupID, int lessonID);
+    boolean assignLessonToGroup(int groupID, int lessonID);
 
     /**
      * The method deletes lesson from group
      * 
      * @param groupID  existed group id
      * @param lessonID existed lesson id
-     * @return count of added rows or -1 if nothing was added
+     * @return true is deleted otherwise false
      */
-    int deleteLessonFromGroup(int groupID, int lessonID);
+    boolean deleteLessonFromGroup(int groupID, int lessonID);
 
     /**
      * The method finds all groups and returns optional list of groups
@@ -63,32 +66,25 @@ public interface GroupDAO {
      * @param lessonID
      * @return optional list of groups
      */
-    Optional<List<Group>> findGroupsByLessonId(int lessonID);
-    
-    /**
-     * The method finds all groups by department and returns optional list of groups
-     * @return optional list of groups
-     */
-    Optional<List<Group>> findGroupsByDepartment(int departmentID);
+    Optional<Set<Group>> findGroupsByLessonId(int lessonID);
     
     /**
      * The method finds all groups by teacher id and returns optional list of groups
      * @return optional list of groups
      */
-    Optional<List<Group>> findGroupsByTeacherId(int teacherID);
-    
-    
+    Optional<List<Group>> findGroupsByTeacherId(int teacherID);    
     
     /**
      * The method updated existed group and returns count of updated rows
      * @param group
-     * @return count of updated rows or 0 if nothing was updated
+     * @throws DAOException 
      */
-    int updateGroup(Group group);
-    
+    void updateGroup(Group group) throws DAOException;
+
     /**
-     * Returns a size of column 'group_name' from the timetable.groups
-     * @return column's size
+     * The method return count of students by group id
+     * @param groupID
+     * @return count of students
      */
-    int getGroupNameMaxSize();
+    int getCountOfStudents(int groupID);
 }

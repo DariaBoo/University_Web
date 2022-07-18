@@ -130,8 +130,8 @@
 					</thead>
 					<tbody>
 						<tr th:each="timetable : ${timetables}">
-							<td th:text="${timetable.getDay().getDateOne()}" />
-							<td th:text="${timetable.getDay().getLessonTimePeriod()}" />
+							<td th:text="${timetable.getDate()}" />
+							<td th:text="${timetable.getLessonTimePeriod()}" />
 							<td th:text="${timetable.getLesson().getName()}" />
 							<td th:text="${timetable.getGroup().getName()}" />
 							<td
