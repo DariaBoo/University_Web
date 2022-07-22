@@ -11,11 +11,10 @@ import javax.persistence.NoResultException;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.GroupDAO;
 import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.service.entities.Group;
@@ -27,23 +26,21 @@ import ua.foxminded.university.service.entities.Teacher;
  * @author Bogush Daria
  *
  */
+@Slf4j
 @Repository
 public class GroupDAOImpl implements GroupDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
 
-    private static final Logger log = LoggerFactory.getLogger(GroupDAOImpl.class.getName());
     private static final String debugMessage = "Get current session - {}";
     private int result = 0;
 
     /**
      * {@inheritDoc}
-     * 
-     * @throws DAOException
      */
     @Override
-    public int addGroup(Group group) throws DAOException {
+    public int addGroup(Group group) {
         Session currentSession = sessionFactory.getCurrentSession();
         log.info(debugMessage, currentSession);
         try {
@@ -51,7 +48,7 @@ public class GroupDAOImpl implements GroupDAO {
             log.debug("Save a group - {} to the database", group);
         } catch (org.hibernate.exception.ConstraintViolationException e) {
             log.error(
-                    "ConstraintViolationException while adding new group - {} (name - {} violates the unique primary keys condition",
+                    "ConstraintViolationException while adding Group - {} (name - {} violates the unique primary keys condition",
                     group, group.getName());
             throw new DAOException("Group with name " + group.getName() + " already exists!", e);
         }
@@ -60,11 +57,9 @@ public class GroupDAOImpl implements GroupDAO {
 
     /**
      * {@inheritDoc}
-     * 
-     * @throws DAOException
      */
     @Override
-    public void updateGroup(Group group) throws DAOException {
+    public void updateGroup(Group group) {
         Session currentSession = sessionFactory.getCurrentSession();
         log.info(debugMessage, currentSession);
         try {

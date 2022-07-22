@@ -16,7 +16,7 @@ import ua.foxminded.university.service.entities.Teacher;
  */
 public interface TeacherDAO {
     /**
-     * The method adds new teacher to the timetable.teachers
+     * The method adds Teacher to the timetable.teachers
      * 
      * @param teacher
      * @return count of added rows otherwise -1

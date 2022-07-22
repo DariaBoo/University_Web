@@ -14,11 +14,10 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.TeacherDAO;
 import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.service.entities.Day;
@@ -31,10 +30,10 @@ import ua.foxminded.university.service.entities.Teacher;
  *
  *
  */
+@Slf4j
 @Repository
 public class TeacherDAOImpl implements TeacherDAO {
 
-    private static final Logger log = LoggerFactory.getLogger(TeacherDAOImpl.class.getName());
     private static final String debugMessage = "Get current session - {}";
     private int result;
 
@@ -50,7 +49,7 @@ public class TeacherDAOImpl implements TeacherDAO {
         log.info(debugMessage, currentSession);
         try {
             result = (int) currentSession.save(teacher);
-            log.debug("Add a new teacher to the timetable.teachers and returns id - {}", result);
+            log.debug("Add a Teacher to the timetable.teachers and returns id - {}", result);
         } catch (org.hibernate.exception.ConstraintViolationException e) {
             log.error(
                     "ConstraintViolationException while adding student - {} (name - {}, surname - {}  violate the unique primary keys condition",
@@ -147,7 +146,7 @@ public class TeacherDAOImpl implements TeacherDAO {
     public int setTeahcerAbsent(int teacherID, Day day) {
         Session currentSession = sessionFactory.getCurrentSession();
         log.info(debugMessage, currentSession);        
-        day.setTeacher(new Teacher.TeacherBuidler().setID(teacherID).build());
+        day.setTeacher(Teacher.builder().id(teacherID).build());
         result = (int) currentSession.save(day);
         log.debug("Set dates when teacher is absent and returns count of added rows - {} otherwise returns zero", result);
         return result;
@@ -161,7 +160,7 @@ public class TeacherDAOImpl implements TeacherDAO {
         boolean isDeleted = false;
         Session currentSession = sessionFactory.getCurrentSession();
         log.info(debugMessage, currentSession);
-        day.setTeacher(new Teacher.TeacherBuidler().setID(teacherID).build());
+        day.setTeacher(Teacher.builder().id(teacherID).build());
         if(findByID(teacherID).isPresent()) {
         currentSession.delete(day);
         isDeleted = true;

@@ -46,22 +46,22 @@ class GroupDAOImplTest {
     }
 
     @Test
-    void addGroup_shouldReturnGroupID_whenInputCorrectGroup() throws DAOException {
+    void addGroup_shouldReturnGroupID_whenInputCorrectGroup() {
         int countOfGroups = groupDAO.findAllGroups().get().size();
-        assertEquals(countOfGroups + 1, groupDAO.addGroup(new Group.GroupBuilder().setName("AA-00").setDepartmentID(8).build()));
+        assertEquals(countOfGroups + 1, groupDAO.addGroup(Group.builder().name("AA-00").departmentID(8).build()));
     }
 
     @Test
     void addGroup_shouldThrowException_whenInputExistedGroup() {
-        group = new Group.GroupBuilder().setName("AA-00").setDepartmentID(1).build();
+        group = Group.builder().name("AA-00").departmentID(1).build();
         groupDAO.addGroup(group);
-        Group group2 = new Group.GroupBuilder().setName("AA-00").setDepartmentID(1).build();        
+        Group group2 = Group.builder().name("AA-00").departmentID(1).build();  
         assertThrows(DAOException.class, () -> groupDAO.addGroup(group2));
     }
 
     @Test
-    void deleteGroup_shouldReturnCountOfDeletedGroups_whenInputID() throws DAOException {
-        group = new Group.GroupBuilder().setName("AA-11").setDepartmentID(0).build();
+    void deleteGroup_shouldReturnCountOfDeletedGroups_whenInputID()  {
+        group = Group.builder().name("AA-11").departmentID(0).build();
         int id = groupDAO.addGroup(group);
         int countOfGroups = groupDAO.findAllGroups().get().size();
         groupDAO.deleteGroup(id);
@@ -110,15 +110,15 @@ class GroupDAOImplTest {
     @Test
     void findAllGroups_shouldReturnFirstThreeGroups_whenCallTheMethod() {
         groups.clear();
-        groups.add(new Group.GroupBuilder().setId(1).setName("CO-68").setDepartmentID(1).build());
-        groups.add(new Group.GroupBuilder().setId(2).setName("FW-72").setDepartmentID(1).build());
-        groups.add(new Group.GroupBuilder().setId(3).setName("OQ-07").setDepartmentID(1).build());
+        groups.add(Group.builder().id(1).name("CO-68").departmentID(1).build());
+        groups.add(Group.builder().id(2).name("FW-72").departmentID(1).build());
+        groups.add(Group.builder().id(3).name("OQ-07").departmentID(1).build());
         assertEquals(groups, groupDAO.findAllGroups().get().stream().limit(3).collect(Collectors.toList()));        
     }
 
     @Test
     void updateGroup_shouldReturnOne_whenInputExistedGroupIDAndNewName() {     
-        group = new Group.GroupBuilder().setId(1).setName("00-AA").setDepartmentID(1).build();
+        group = Group.builder().id(1).name("00-AA").departmentID(1).build();
         int groupID = groupDAO.addGroup(group);
         group.setName("AA-00");
         groupDAO.updateGroup(group);        
@@ -126,7 +126,7 @@ class GroupDAOImplTest {
     }
     @Test
     void updateGroup_whenInputNotExistedGroupID() {   
-        group = new Group.GroupBuilder().setId(100).setName("AA-00").build();
+        group = Group.builder().id(100).name("AA-00").build();
         groupDAO.updateGroup(group);        
         assertEquals("AA-00", groupDAO.findById(100).get().getName());
     }

@@ -2,22 +2,25 @@ package ua.foxminded.university.service.implementation;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.HolidayDAO;
 import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.service.HolidayService;
 import ua.foxminded.university.service.entities.Holiday;
 import ua.foxminded.university.service.exception.ServiceException;
 
+/**
+ * @version 1.0
+ * @author Bogush Daria
+ *
+ */
+@Slf4j
 @Service
 public class HolidayServiceImpl implements HolidayService {    
-    
-    private static final Logger log = LoggerFactory.getLogger(HolidayServiceImpl.class);
 
     @Autowired
     private HolidayDAO holidayDAO;

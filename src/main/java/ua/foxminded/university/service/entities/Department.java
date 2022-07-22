@@ -13,7 +13,7 @@ public class Department {
         return id;
     }
 
-    public void setId(int id) {
+    public void id(int id) {
         this.id = id;
     }
 
@@ -29,7 +29,7 @@ public class Department {
         return teachers;
     }
 
-    public void setTeachers(List<Teacher> teachers) {
+    public void teachers(List<Teacher> teachers) {
         this.teachers = teachers;
     }
 
@@ -37,7 +37,7 @@ public class Department {
         return groups;
     }
 
-    public void setGroups(List<Group> groups) {
+    public void groups(List<Group> groups) {
         this.groups = groups;
     }
 

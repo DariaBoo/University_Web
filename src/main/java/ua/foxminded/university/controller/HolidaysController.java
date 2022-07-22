@@ -58,6 +58,6 @@ public class HolidaysController {
         } catch (ServiceException e) {
             redirectAtt.addFlashAttribute(message, e.getMessage());
         }
-        return "redirect:/timetable";
+        return "redirect:/holidays";
     }
 }

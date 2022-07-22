@@ -48,8 +48,8 @@ class StudentDAOImplTest {
     @Test
     @Transactional
     void addStudent_shouldReturnAddedStudentId_whenInputNewStudent() {
-        student = new Student.StudentBuilder().setFirstName("Test").setLastName("Test").setGroup(group).setIdCard("A0")
-                .setPassword("1234").build();
+        student = Student.builder().firstName("Test").lastName("Test").group(group).idCard("A0")
+                .password("1234").build();
         int countOfStudents = studentDAO.findAllStudents().get().size();
         assertEquals(countOfStudents + 1, studentDAO.addStudent(student));
     }
@@ -58,16 +58,16 @@ class StudentDAOImplTest {
     @Transactional
     void addStudent_shouldThrowConstraintViolationException_whenInputNewStudentWithWrongGroupID() {
         group.setId(15);
-        student = new Student.StudentBuilder().setFirstName("Aaaaa").setLastName("Bbbbb").setIdCard("A0")
-                .setGroup(group).setPassword("1234").build();
+        student = Student.builder().firstName("Aaaaa").lastName("Bbbbb").idCard("A0")
+                .group(group).password("1234").build();
         assertThrows(DAOException.class, () -> studentDAO.addStudent(student));
     }
 
     @Test
     @Transactional
     void addStudent_shouldThrowDataException_whenStudentNameIsOutOfBound() {
-        student = new Student.StudentBuilder().setFirstName("Aaaaaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
-                .setLastName("Bbbbb").setIdCard("A0").setGroup(group).setPassword("1234").build();
+        student = Student.builder().firstName("Aaaaaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
+                .lastName("Bbbbb").idCard("A0").group(group).password("1234").build();
         assertThrows(org.hibernate.exception.DataException.class, () -> studentDAO.addStudent(student));
     }
 
@@ -75,12 +75,12 @@ class StudentDAOImplTest {
     @Transactional
     void addStudent_shouldThrowConstraintViolationException_whenInputExistedStudent() {
         group.setId(1);
-        student = new Student.StudentBuilder().setFirstName("Test").setLastName("Test").setGroup(group).setIdCard("A0")
-                .setPassword("1234").build();
+        student = Student.builder().firstName("Test").lastName("Test").group(group).idCard("A0")
+                .password("1234").build();
         studentDAO.addStudent(student);
         group.setId(2);      
-        Student student2 = new Student.StudentBuilder().setFirstName("Test").setLastName("Test").setGroup(group)
-                .setIdCard("A0").setPassword("1234").build();
+        Student student2 = Student.builder().firstName("Test").lastName("Test").group(group)
+                .idCard("A0").password("1234").build();
 
         assertThrows(DAOException.class, () -> studentDAO.addStudent(student2));
     }
@@ -88,10 +88,10 @@ class StudentDAOImplTest {
     @Test
     @Transactional
     void addStudent_shouldThrowConstraintViolationException_whenInputNotUniqueIdCard() {
-        student = new Student.StudentBuilder().setFirstName("Test").setLastName("Test").setGroup(group).setIdCard("A0")
-                .setPassword("1234").build();
-        Student student2 = new Student.StudentBuilder().setFirstName("Test2").setLastName("Test2").setGroup(group)
-                .setIdCard("A0").setPassword("1234").build();
+        student = Student.builder().firstName("Test").lastName("Test").group(group).idCard("A0")
+                .password("1234").build();
+        Student student2 = Student.builder().firstName("Test2").lastName("Test2").group(group)
+                .idCard("A0").password("1234").build();
         studentDAO.addStudent(student);
         assertThrows(DAOException.class, () -> studentDAO.addStudent(student2));
     }
@@ -99,8 +99,8 @@ class StudentDAOImplTest {
     @Test
     @Transactional
     void deleteStudent_shouldDeleteAStudent_whenInputID() {
-        student = new Student.StudentBuilder().setFirstName("Test").setLastName("Test").setGroup(group).setIdCard("A0")
-                .setPassword("1234").build();
+        student = Student.builder().firstName("Test").lastName("Test").group(group).idCard("A0")
+                .password("1234").build();
         int studentID = studentDAO.addStudent(student);
         int sizeBeforeDeletingAStudent = studentDAO.findAllStudents().get().size();
         studentDAO.deleteStudent(studentID);
@@ -118,8 +118,8 @@ class StudentDAOImplTest {
     @Test
     @Transactional
     void findByID_shouldReturnStudent_whenInputExistedID() {
-        student = new Student.StudentBuilder().setFirstName("Test").setLastName("Test").setGroup(group).setIdCard("A0")
-                .setPassword("1234").build();
+        student = Student.builder().firstName("Test").lastName("Test").group(group).idCard("A0")
+                .password("1234").build();
         int studentID = studentDAO.addStudent(student);
         assertEquals(Optional.of(student), studentDAO.findByID(studentID));
     }
@@ -146,12 +146,12 @@ class StudentDAOImplTest {
     @Test
     @Transactional
     void findAllStudents_shouldReturnFirstThreeStudents_whenCallTheMethodWithLimitThree() {
-        students.add(new Student.StudentBuilder().setID(1).setFirstName("Harry").setLastName("Potter").setGroup(group)
-                .setIdCard("1IE").setPassword("1234").build());
-        students.add(new Student.StudentBuilder().setID(2).setFirstName("Mandy").setLastName("Finch-Fletchley")
-                .setGroup(group).setIdCard("2WC").setPassword("1234").build());
-        students.add(new Student.StudentBuilder().setID(3).setFirstName("Pansy").setLastName("Brocklehurst")
-                .setGroup(group).setIdCard("3SN").setPassword("1234").build());
+        students.add(Student.builder().id(1).firstName("Harry").lastName("Potter").group(group)
+                .idCard("1IE").password("1234").build());
+        students.add(Student.builder().id(2).firstName("Mandy").lastName("Finch-Fletchley")
+                .group(group).idCard("2WC").password("1234").build());
+        students.add(Student.builder().id(3).firstName("Pansy").lastName("Brocklehurst")
+                .group(group).idCard("3SN").password("1234").build());
         assertEquals(students, studentDAO.findAllStudents().get().stream().limit(3).collect(Collectors.toList()));
     }
 
@@ -207,8 +207,8 @@ class StudentDAOImplTest {
     @Test
     @Transactional
     void updateStudent_shouldUpdateStudent_whenInputCorrectStudent() {
-        student = new Student.StudentBuilder().setFirstName("Test").setLastName("Test").setGroup(group).setIdCard("W2")
-                .setPassword("1234").build();
+        student = Student.builder().firstName("Test").lastName("Test").group(group).idCard("W2")
+                .password("1234").build();
         int studentID = studentDAO.addStudent(student);
         student.setFirstName("Test2");
         studentDAO.updateStudent(student);
@@ -218,13 +218,13 @@ class StudentDAOImplTest {
 //    @Test
 //    @Transactional
 //    void updateStudent_shouldReturnOne_whenInputUpdatedStudentData() {
-//        student = new Student.StudentBuilder().setFirstName("Test").setLastName("Test").setGroup(group)
-//                .setIdCard("W2").setPassword("1234").build();
+//        student = Student.builder().setFirstName("Test").setLastName("Test").group(group)
+//                .idCard("W2").setPassword("1234").build();
 //        int id = studentDAO.addStudent(student);
-//        Student student2 = new Student.StudentBuilder().setFirstName("Test").setLastName("Test").setGroup(group)
-//                .setIdCard("A0").setPassword("1234").build();        
+//        Student student2 = Student.builder().setFirstName("Test").setLastName("Test").group(group)
+//                .idCard("A0").setPassword("1234").build();        
 //        int id2 = studentDAO.addStudent(student2);
-//        student2.setIdCard("W2");
+//        student2.idCard("W2");
 //        assertThrows(DAOException.class, () -> studentDAO.updateStudent(student2));
 //    }
 }

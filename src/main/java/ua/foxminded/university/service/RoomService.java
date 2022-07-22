@@ -4,6 +4,11 @@ import java.util.List;
 
 import ua.foxminded.university.service.entities.Room;
 
+/**
+ * @version 1.0
+ * @author Bogush Daria
+ *
+ */
 public interface RoomService {
     /**
      * Shows all rooms

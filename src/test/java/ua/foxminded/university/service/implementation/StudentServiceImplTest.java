@@ -45,20 +45,20 @@ class StudentServiceImplTest {
     
     @Test
     void addStudent_shouldReturnResult_whenInputCorrectData() {
-        student = new Student.StudentBuilder().setFirstName("Test").setLastName("Test").setGroup(group).setIdCard("A0")
-                .setPassword("1234").build();
+        student = Student.builder().firstName("Test").lastName("Test").group(group).idCard("A0")
+                .password("1234").build();
         int countOfStudents = studentService.findAllStudents().size();
         assertEquals(countOfStudents + 1, studentService.addStudent(student));
     }
 
     @Test
     void updateStudent_shouldReturnResult_whenInputNotUniqueStudent() {
-        student = new Student.StudentBuilder().setFirstName("Test").setLastName("Test").setGroup(group)
-              .setIdCard("W2").setPassword("1234").build();
+        student = Student.builder().firstName("Test").lastName("Test").group(group)
+              .idCard("W2").password("1234").build();
         studentService.addStudent(student);
         studentService.addStudent(student);
-      Student student2 = new Student.StudentBuilder().setFirstName("Test").setLastName("Test").setGroup(group)
-              .setIdCard("W2").setPassword("1234").build();     
+      Student student2 = Student.builder().firstName("Test").lastName("Test").group(group)
+              .idCard("W2").password("1234").build();     
       exception = assertThrows(ServiceException.class, () -> studentService.addStudent(student2));
       expectedMessage = "Student with name Test, surname Test and id card W2 already exists or student id card is not unique!";
       actualMessage = exception.getMessage();

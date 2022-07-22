@@ -8,11 +8,10 @@ import javax.persistence.EntityGraph;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.LessonDAO;
 import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.service.entities.Group;
@@ -25,10 +24,10 @@ import ua.foxminded.university.service.entities.Teacher;
  *
  *
  */
+@Slf4j
 @Repository
 public class LessonDAOImpl implements LessonDAO {
 
-    private static final Logger log = LoggerFactory.getLogger(LessonDAOImpl.class.getName());
     private static final String debugMessage = "Get current session - {}";
     private int result = 0;
 
@@ -44,7 +43,7 @@ public class LessonDAOImpl implements LessonDAO {
         log.info(debugMessage, currentSession);
         try {
             result = (int) currentSession.save(lesson);
-            log.debug("Add a new lesson to the timetable.lessons and return id  - {}", result);
+            log.debug("Add a Lesson to the timetable.lessons and return id  - {}", result);
         } catch (org.hibernate.exception.ConstraintViolationException e) {
             log.error(
                     "ConstraintViolationException while adding lesson - {} (name - {} violates the unique primary keys condition",

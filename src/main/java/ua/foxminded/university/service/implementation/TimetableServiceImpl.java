@@ -6,12 +6,11 @@ import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.HolidayDAO;
 import ua.foxminded.university.dao.TimetableDAO;
 import ua.foxminded.university.dao.exception.DAOException;
@@ -29,6 +28,7 @@ import ua.foxminded.university.service.exception.ServiceException;
  *
  *
  */
+@Slf4j
 @Service
 public class TimetableServiceImpl implements TimetableService {
 
@@ -37,7 +37,6 @@ public class TimetableServiceImpl implements TimetableService {
     @Autowired
     private HolidayDAO holidayDAO;
     
-    private static final Logger log = LoggerFactory.getLogger(TimetableServiceImpl.class.getName());
     private final String illegalArgumentExceptionMessage = "No timetable for ";
 
     /**

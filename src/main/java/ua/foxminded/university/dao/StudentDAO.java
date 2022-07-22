@@ -12,7 +12,7 @@ import ua.foxminded.university.service.entities.Student;
 public interface StudentDAO {
 
     /**
-     * The method adds new student to the timetable.studetns
+     * The method adds Student to the timetable.studetns
      * 
      * @param student
      * @return count of added rows otherwise 0

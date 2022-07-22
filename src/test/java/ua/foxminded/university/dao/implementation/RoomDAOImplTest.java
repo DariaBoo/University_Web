@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ua.foxminded.university.config.HibernateConfigTest;
 import ua.foxminded.university.dao.RoomDAO;
+import ua.foxminded.university.service.entities.Room;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(SpringExtension.class)
@@ -36,5 +37,18 @@ class RoomDAOImplTest {
     @Transactional
     void findAll_shouldReturnCountOfRooms() {
         assertEquals(10, roomDAO.findAll().get().stream().count());
+    }
+    
+    @Test
+    @Transactional
+    void findAll_shouldReturnFirstRoom() {
+        Room room = new Room();
+        room.setNumber(101);
+        room.setCapacity(21);
+        System.out.println(room.hashCode());
+        Room room2 = roomDAO.findAll().get().stream().limit(1).findFirst().get();
+        System.out.println(room2.getNumber() + " " + room2.getCapacity() + " " + room2.getTimetable());
+        System.out.println(room2.hashCode());
+        assertEquals(room, roomDAO.findAll().get().stream().limit(1).findFirst().get());
     }
 }

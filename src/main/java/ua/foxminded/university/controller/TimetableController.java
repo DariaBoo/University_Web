@@ -54,9 +54,9 @@ public class TimetableController {
 
     @RequestMapping("/timetable/show")
     public String showTimetable(HttpServletRequest request, Model model) {
-        LocalDate dateOne = LocalDate.parse(request.getParameter("from"));
-        LocalDate dateTwo = LocalDate.parse(request.getParameter("to"));
-        Day day = new Day(dateOne, dateTwo);
+        LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
+        LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
+        Day day = new Day(setDateOne, setDateTwo);
         try {
             model.addAttribute("timetables", timetableService.showTimetable(day));
         } catch (IllegalArgumentException e) {
@@ -81,7 +81,7 @@ public class TimetableController {
 
     @GetMapping("/timetable/schedule/{groupId}/{lessonId}")
     public String scheduleTimetableForLesson(@PathVariable("lessonId") int lessonId, @PathVariable("groupId") int groupId,  Model model) {
-        model.addAttribute("timetable", new Timetable());        
+        model.addAttribute("timetable",  new Timetable());        
         model.addAttribute("lesson", lessonService.findByID(lessonId));        
         model.addAttribute("group", groupService.findById(groupId));
         model.addAttribute("teacher", new Teacher());
@@ -127,10 +127,10 @@ public class TimetableController {
 
     @RequestMapping("/student/timetable")
     public String showStudentTimetable(HttpServletRequest request, Model model) {
-        LocalDate dateOne = LocalDate.parse(request.getParameter("from"));
-        LocalDate dateTwo = LocalDate.parse(request.getParameter("to"));
+        LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
+        LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
         Student student = studentService.findByID(studentId);
-        Day day = new Day(dateOne, dateTwo);
+        Day day = new Day(setDateOne, setDateTwo);
         try {
             model.addAttribute("timetables", timetableService.getStudentTimetable(day, student));
         } catch (IllegalArgumentException e) {
@@ -141,10 +141,10 @@ public class TimetableController {
 
     @RequestMapping("/teacher/timetable")
     public String showTeacherTimetable(HttpServletRequest request, Model model) {
-        LocalDate dateOne = LocalDate.parse(request.getParameter("from"));
-        LocalDate dateTwo = LocalDate.parse(request.getParameter("to"));
-        Teacher teacher = new Teacher.TeacherBuidler().setID(teacherId).build();
-        Day day = new Day(dateOne, dateTwo);
+        LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
+        LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
+        Teacher teacher = Teacher.builder().id(teacherId).build();
+        Day day = new Day(setDateOne, setDateTwo);
         try {
             model.addAttribute("timetables", timetableService.getTeacherTimetable(day, teacher));
         } catch (IllegalArgumentException e) {

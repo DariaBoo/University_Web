@@ -40,14 +40,14 @@ class GroupServiceImplTest {
 
     @Test
     void addGroup_shouldReturnResult_whenInputCorrectGroupName() throws ServiceException {
-        group = new Group.GroupBuilder().setName("AA-00").setDepartmentID(1).build();
+        group = Group.builder().name("AA-00").departmentID(1).build();
         assertEquals(7, groupService.addGroup(group));
     }
     @Test
     void addGroup_shouldThrowServiceExceptionMessage_whenInputNotUniqueName() {
-        group = new Group.GroupBuilder().setName("AA-00").setDepartmentID(1).build();
+        group = Group.builder().name("AA-00").departmentID(1).build();
         groupService.addGroup(group);
-        Group group2 = new Group.GroupBuilder().setName("AA-00").setDepartmentID(1).build();
+        Group group2 = Group.builder().name("AA-00").departmentID(1).build();
         exception = assertThrows(ServiceException.class, () -> groupService.addGroup(group2));
         expectedMessage = "Group with name AA-00 already exists!";
         actualMessage = exception.getMessage();

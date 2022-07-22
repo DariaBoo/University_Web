@@ -196,7 +196,7 @@ th {
 									th:text="${timetable.getTeacher().getFirstName()} + ' ' + ${timetable.getTeacher().getLastName()}" />
 								<td th:text="${timetable.getRoom().getNumber()}" />
 								<td><a href="#"
-									th:href="@{/timetable/delete/} + ${timetable.getId()}"><button
+									th:href="@{/timetable/delete/} + ${timetable.getTimetableId()}"><button
 											class="button_delete">Delete</button></a></td>
 							</tr>
 						</tbody>

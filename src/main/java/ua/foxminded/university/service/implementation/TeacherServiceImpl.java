@@ -3,12 +3,11 @@ package ua.foxminded.university.service.implementation;
 import java.util.List;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.TeacherDAO;
 import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.service.TeacherService;
@@ -22,10 +21,10 @@ import ua.foxminded.university.service.exception.ServiceException;
  *
  *
  */
+@Slf4j
 @Service
 public class TeacherServiceImpl implements TeacherService {
 
-    private static final Logger log = LoggerFactory.getLogger(TeacherServiceImpl.class.getName());
     int result = 0;
 
     @Autowired
@@ -92,7 +91,7 @@ public class TeacherServiceImpl implements TeacherService {
      */
     @Override
     @Transactional
-    public int setTeacherAbsent(int teacherID, Day day) {
+    public int teacherAbsent(int teacherID, Day day) {
         return teacherDAO.setTeahcerAbsent(teacherID, day);
     }
 

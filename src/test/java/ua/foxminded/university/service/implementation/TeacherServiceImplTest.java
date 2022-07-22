@@ -40,8 +40,8 @@ class TeacherServiceImplTest {
 
     @Test
     void addTeacher_shouldReturnResult_whenInputCorrectTeacherData() {
-        teacher = new Teacher.TeacherBuidler().setFirstName("test").setLastName("test")
-                .setPosition("test").setPassword("555").build();
+        teacher = Teacher.builder().firstName("test").lastName("test")
+                .position("test").password("555").build();
         assertEquals(11, teacherService.addTeacher(teacher));
     }
  
@@ -52,7 +52,7 @@ class TeacherServiceImplTest {
     
     @Test
     void updateTeacher_shouldReturnResult_whenInputCorrectData() {
-        teacher = new Teacher.TeacherBuidler().setID(1).setFirstName("test").setLastName("test").setPosition("test").setDepartmentID(1).setPassword("555").build();
+        teacher = Teacher.builder().id(1).firstName("test").lastName("test").position("test").departmentID(1).password("555").build();
         int id = teacherService.addTeacher(teacher);
         teacher.setFirstName("test2");
         teacherService.updateTeacher(teacher);
@@ -61,9 +61,9 @@ class TeacherServiceImplTest {
     
     @Test
     void updateTeacher_shouldThrowServiceExceptionMessage_whenInputIncorrectTeacherData() {
-        teacher = new Teacher.TeacherBuidler().setID(1).setFirstName("test").setLastName("test").setPosition("test").setDepartmentID(1).setPassword("555").build();
+        teacher = Teacher.builder().id(1).firstName("test").lastName("test").position("test").departmentID(1).password("555").build();
         teacherService.addTeacher(teacher);
-        Teacher teacher2 = new Teacher.TeacherBuidler().setID(1).setFirstName("test").setLastName("test").setPosition("test").setDepartmentID(1).setPassword("555").build();
+        Teacher teacher2 = Teacher.builder().id(1).firstName("test").lastName("test").position("test").departmentID(1).password("555").build();
         exception = assertThrows(ServiceException.class, () -> teacherService.addTeacher(teacher2));
         expectedMessage = "Teacher with name test, surname test already exists!";
         actualMessage = exception.getMessage();

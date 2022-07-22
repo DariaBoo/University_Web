@@ -50,7 +50,7 @@ class TeacherDAOImplTest {
 
     @BeforeAll
     void setValues() {
-        teacher = new Teacher.TeacherBuidler().setFirstName("test").setLastName("test").setPosition("test").setPassword("555").build();
+        teacher = Teacher.builder().firstName("test").lastName("test").position("test").password("555").build();
         day = new Day(LocalDate.of(2023, 01, 01), LocalDate.of(2023, 01, 01));
     }
 
@@ -62,9 +62,9 @@ class TeacherDAOImplTest {
 
     @Test
     void addTeacher_shouldThrowDAOException_whenInputExistedTeacher() { 
-        teacher = new Teacher.TeacherBuidler().setFirstName("test").setLastName("test").setPosition("test").setPassword("555").build();
+        teacher = Teacher.builder().firstName("test").lastName("test").position("test").password("555").build();
         int id = teacherDAO.addTeacher(teacher);
-        Teacher notUniqueNameAndSurname = new Teacher.TeacherBuidler().setFirstName("test").setLastName("test").setPosition("professor").setPassword("555").build();
+        Teacher notUniqueNameAndSurname = Teacher.builder().firstName("test").lastName("test").position("professor").password("555").build();
         assertThrows(DAOException.class, () -> teacherDAO.addTeacher(notUniqueNameAndSurname));
         teacherDAO.deleteTeacher(id);
     }
@@ -72,7 +72,7 @@ class TeacherDAOImplTest {
     @Test
     void addTeacher_shouldReturnAddedTeacherID_whenInputNewTeacher() {
         int countOfTeachers = teacherDAO.findAllTeachers().get().size();
-        teacher = new Teacher.TeacherBuidler().setFirstName("test2").setLastName("test2").setPosition("test").setPassword("555").build();
+        teacher = Teacher.builder().firstName("test2").lastName("test2").position("test").password("555").build();
         int id = teacherDAO.addTeacher(teacher);
         assertEquals(countOfTeachers + 1, id);
         teacherDAO.deleteTeacher(id);
@@ -109,7 +109,6 @@ class TeacherDAOImplTest {
 
     @Test
     void deleteLessonFromTeacher_shouldReturnTrue_whenInputExistedLessonIDAndTeacherID() {
-        System.out.println("isassigned: " + teacherDAO.assignLessonToTeacher(1, 3));
         assertTrue(teacherDAO.deleteLessonFromTeacher(1, 3));
     }
 
@@ -120,12 +119,12 @@ class TeacherDAOImplTest {
     }
 
     @Test
-    void setTeacherAbsent_shouldReturnCountOfSetRows_whenInputExistedTeacher() {
+    void teacherAbsent_shouldReturnCountOfSetRows_whenInputExistedTeacher() {
         assertEquals(12, teacherDAO.setTeahcerAbsent(1, day));
     }
 
     @Test
-    void setTeacherAbsent_shouldReturnZero_whenInputNotExistedTeacher() {
+    void teacherAbsent_shouldReturnZero_whenInputNotExistedTeacher() {
         assertThrows(ConstraintViolationException.class, () -> teacherDAO.setTeahcerAbsent(12, day));
     }
 
@@ -142,8 +141,8 @@ class TeacherDAOImplTest {
 
     @Test
     void findByID_shouldReturnTeacher_whenInputExistedTeacherID() {
-        teacher = new Teacher.TeacherBuidler().setID(1).setFirstName("Albus").setLastName("Dumbledore")
-                .setPosition("professor").setDepartmentID(1).setPassword("555").build();
+        teacher = Teacher.builder().id(1).firstName("Albus").lastName("Dumbledore")
+                .position("professor").departmentID(1).password("555").build();
         assertEquals(Optional.of(teacher), teacherDAO.findByID(1));
     }
 
@@ -160,12 +159,12 @@ class TeacherDAOImplTest {
     @Test
     void findAllTeachers_shouldReturnFirstThreeTeachers_whenCallTheMethod() {
         teachers.clear();
-        teachers.add(new Teacher.TeacherBuidler().setID(1).setFirstName("Albus").setLastName("Dumbledore")
-                .setPosition("professor").setDepartmentID(1).setPassword("555").build());
-        teachers.add(new Teacher.TeacherBuidler().setID(2).setFirstName("Minerva").setLastName("McGonagall")
-                .setPosition("lecturer").setDepartmentID(1).setPassword("555").build());
-        teachers.add(new Teacher.TeacherBuidler().setID(3).setFirstName("Severus").setLastName("Snape")
-                .setPosition("professor").setDepartmentID(1).setPassword("555").build());
+        teachers.add(Teacher.builder().id(1).firstName("Albus").lastName("Dumbledore")
+                .position("professor").departmentID(1).password("555").build());
+        teachers.add(Teacher.builder().id(2).firstName("Minerva").lastName("McGonagall")
+                .position("lecturer").departmentID(1).password("555").build());
+        teachers.add(Teacher.builder().id(3).firstName("Severus").lastName("Snape")
+                .position("professor").departmentID(1).password("555").build());
         assertEquals(teachers, teacherDAO.findAllTeachers().get().stream().limit(3).collect(Collectors.toList()));
     }
 
@@ -218,7 +217,7 @@ class TeacherDAOImplTest {
         dayAbsent.setDateOne(LocalDate.of(2022, 06, 19));
         dayAbsent.setDateTwo(LocalDate.of(2022, 06, 20));
         teacherDAO.setTeahcerAbsent(1, dayAbsent);
-        teacher = new Teacher.TeacherBuidler().setID(1).build();
+        teacher = Teacher.builder().id(1).build();
         LocalDate checkedDate = LocalDate.of(2022,06,19);
         assertTrue(teacherDAO.checkIsAbsent(teacher, checkedDate));
     }

@@ -12,7 +12,7 @@ import ua.foxminded.university.service.entities.Teacher;
  */
 public interface TeacherService {
     /**
-     * The method adds new teacher to the timetable.teachers
+     * The method adds Teacher to the timetable.teachers
      * 
      * @param teacher
      * @return count of added rows otherwise -1
@@ -52,7 +52,7 @@ public interface TeacherService {
      * @param day
      * @return count of updated rows otherwise -1
      */
-    int setTeacherAbsent(int teacherID, Day day);
+    int teacherAbsent(int teacherID, Day day);
 
     /**
      * Deletes teacher absent from the timetable.teacherabsent

@@ -40,15 +40,15 @@ class LessonServiceImplTest {
 
     @Test
     void addLesson_shouldReturnResult_whenInputCorrectLessonData() {
-        lesson = new Lesson.LessonBuilder().setName("Test").setDescription("test").build();
+        lesson = Lesson.builder().name("Test").description("test").build();
         assertEquals(lessonService.findAllLessons().size() + 1, lessonService.addLesson(lesson));
     }
 
     @Test
     void addLesson_shouldReturnResult_whenInputNotUniqueLessonName() {
-        lesson = new Lesson.LessonBuilder().setName("Test").setDescription("test").build();
+        lesson = Lesson.builder().name("Test").description("test").build();
         lessonService.addLesson(lesson);
-        Lesson notUniqueName = new Lesson.LessonBuilder().setName("Test").setDescription("test").build();
+        Lesson notUniqueName = Lesson.builder().name("Test").description("test").build();
         exception = assertThrows(ServiceException.class, () -> lessonService.addLesson(notUniqueName));
         expectedMessage = "Lesson with name Test already exists!";
         actualMessage = exception.getMessage();

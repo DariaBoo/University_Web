@@ -1,6 +1,5 @@
 package ua.foxminded.university.dao.implementation;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.SQLException;
@@ -46,8 +45,8 @@ class LessonDAOImplTest {
     private List<Lesson> lessons = new ArrayList<Lesson>();
 
     @BeforeAll
-    void setLesson() {
-        lesson = new Lesson.LessonBuilder().setName("Test").setDescription("test").build();
+    void lesson() {
+        lesson = Lesson.builder().name("Test").description("test").build();
     }
 
     @BeforeEach
@@ -70,9 +69,9 @@ class LessonDAOImplTest {
 
     @Test
     void addLesson_shouldThrowDAOException_whenInputNotUniqueLessonName() {
-        lesson = new Lesson.LessonBuilder().setName("Test").setDescription("test").build();
+        lesson = Lesson.builder().name("Test").description("test").build();
         lessonDAO.addLesson(lesson);
-        Lesson notUniqueName = new Lesson.LessonBuilder().setName("Test").setDescription("test").build();
+        Lesson notUniqueName = Lesson.builder().name("Test").description("test").build();
         assertThrows(DAOException.class, () -> lessonDAO.addLesson(notUniqueName));
     }
 
@@ -111,13 +110,13 @@ class LessonDAOImplTest {
 
     @Test
     void findAllLessons_shouldReturnFirstThreeLessons_whenCallTheMethod() {
-        lessons.add(new Lesson.LessonBuilder().setID(1).setName("Alchemy")
-                .setDescription("the study of transmutation of substances into other forms.").build());
-        lessons.add(new Lesson.LessonBuilder().setID(2).setName("Herbology")
-                .setDescription("the study of magical plants and how to take care of, utilise and combat them.")
+        lessons.add(Lesson.builder().id(1).name("Alchemy")
+                .description("the study of transmutation of substances into other forms.").build());
+        lessons.add(Lesson.builder().id(2).name("Herbology")
+                .description("the study of magical plants and how to take care of, utilise and combat them.")
                 .build());
-        lessons.add(new Lesson.LessonBuilder().setID(3).setName("History of Magic")
-                .setDescription("the study of magical history.").build());
+        lessons.add(Lesson.builder().id(3).name("History of Magic")
+                .description("the study of magical history.").build());
         assertEquals(lessons, lessonDAO.findAllLessons().get().stream().limit(3).collect(Collectors.toList()));
     }
 

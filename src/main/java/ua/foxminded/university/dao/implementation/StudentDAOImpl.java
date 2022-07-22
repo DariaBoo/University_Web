@@ -3,18 +3,17 @@ package ua.foxminded.university.dao.implementation;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.persistence.Query;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.StudentDAO;
 import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.service.entities.Group;
@@ -27,10 +26,10 @@ import ua.foxminded.university.service.entities.Student;
  *
  *
  */
+@Slf4j
 @Repository
 public class StudentDAOImpl implements StudentDAO {
 
-    private static final Logger log = LoggerFactory.getLogger(StudentDAOImpl.class.getName());
     private static final String debugMessage = "Get current session - {}";
     private int result;
 
@@ -47,7 +46,7 @@ public class StudentDAOImpl implements StudentDAO {
         log.info(debugMessage, currentSession);
         try {
         result = (int) currentSession.save(student);
-        log.debug("Add a new student - {} with id - {}", student, result);   
+        log.debug("Add a Student - {} with id - {}", student, result);   
         } catch (org.hibernate.exception.ConstraintViolationException e) {
             log.error(
                     "ConstraintViolationException while adding student - {} (name - {}, surname - {} and id card - {} violate the unique primary keys condition  or student id card is not unique",

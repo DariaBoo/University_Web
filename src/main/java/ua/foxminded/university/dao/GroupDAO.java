@@ -18,9 +18,8 @@ public interface GroupDAO {
      * 
      * @param group
      * @return
-     * @throws DAOException 
      */
-    int addGroup(Group group) throws DAOException;
+    int addGroup(Group group);
 
     /**
      * The method deletes group from the database by group id

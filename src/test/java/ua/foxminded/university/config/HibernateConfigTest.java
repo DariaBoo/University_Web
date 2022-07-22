@@ -31,8 +31,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 public class HibernateConfigTest {
 
-    @Autowired
-    private ApplicationContext applicationContext;
+//    @Autowired
+//    private ApplicationContext applicationContext;
     
     @Bean
     public LocalSessionFactoryBean getSessionFactory() throws NamingException, SQLException {

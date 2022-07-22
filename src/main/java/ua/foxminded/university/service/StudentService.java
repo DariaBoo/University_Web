@@ -12,7 +12,7 @@ import ua.foxminded.university.service.entities.Student;
 public interface StudentService {
 
     /**
-     * Add new student to the timetable.students, if student was added returns 1
+     * Add Student to the timetable.students, if student was added returns 1
      * otherwise returns 0
      * 
      * @param student

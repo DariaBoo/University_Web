@@ -44,29 +44,29 @@ class TimetableServiceImplTest {
     void init() {
         new EmbeddedDatabaseBuilder().setName("test").setType(EmbeddedDatabaseType.H2)
                 .addScript("classpath:tablesTest.sql").build();
-        lesson = new Lesson.LessonBuilder().setID(1).build();
-        group = new Group.GroupBuilder().setId(1).build();
-        teacher = new Teacher.TeacherBuidler().setID(1).build();
+        lesson = Lesson.builder().id(1).build();
+        group = Group.builder().id(1).build();
+        teacher = Teacher.builder().id(1).build();
         room = new Room();
         room.setNumber(101);
     }
 
     @Test
     void scheduleTimetable_shouldThrowServiceException_whenInputTimetableWithHoliday() {
-        lesson = new Lesson.LessonBuilder().setID(5).build();
-        group = new Group.GroupBuilder().setId(1).build();
-        timetable = new Timetable.TimetableBuilder().setDate(LocalDate.of(2022, 01, 01))
-                .setLessonTimePeriod("08:00 - 09:20").setLesson(lesson).setGroup(group).setTeacher(teacher)
-                .setRoom(room).build();
+        lesson = Lesson.builder().id(5).build();
+        group = Group.builder().id(1).build();
+        timetable = Timetable.builder().date(LocalDate.of(2022, 01, 01))
+                .lessonTimePeriod("08:00 - 09:20").lesson(lesson).group(group).teacher(teacher)
+                .room(room).build();
 
         assertThrows(ServiceException.class, () -> timetableService.scheduleTimetable(timetable));
     }
 
     @Test
     void scheduleTimetable_shouldThrowServiceException_whenInputTimetableWithWeekDay() {
-        timetable = new Timetable.TimetableBuilder().setDate(LocalDate.of(2022, 07, 10))
-                .setLessonTimePeriod("08:00 - 09:20").setLesson(lesson).setGroup(group).setTeacher(teacher)
-                .setRoom(room).build();
+        timetable = Timetable.builder().date(LocalDate.of(2022, 07, 10))
+                .lessonTimePeriod("08:00 - 09:20").lesson(lesson).group(group).teacher(teacher)
+                .room(room).build();
         assertThrows(ServiceException.class, () -> timetableService.scheduleTimetable(timetable));
     }
 }

@@ -58,33 +58,33 @@ class TimetableDAOImplTest {
     void init() {
         new EmbeddedDatabaseBuilder().setName("test").setType(EmbeddedDatabaseType.H2)
         .addScript("classpath:tablesTest.sql").build();
-        lesson = new Lesson.LessonBuilder().setID(1).build();
-        group = new Group.GroupBuilder().setId(1).build();
-        teacher = new Teacher.TeacherBuidler().setID(1).build();
+        lesson = Lesson.builder().id(1).build();
+        group = Group.builder().id(1).build();
+        teacher = Teacher.builder().id(1).build();
         room = new Room();
         room.setNumber(101);
     }
 
     @Test
     void scheduleTimetable_shouldReturnCountOfAddedRows_whenInputCorrectData() {       
-        timetable = new Timetable.TimetableBuilder().setDate(LocalDate.of(2022, 06, 16)).setLessonTimePeriod("08:00 - 09:20").setLesson(lesson).setGroup(group).setTeacher(teacher).setRoom(room).build();
+        timetable = Timetable.builder().date(LocalDate.of(2022, 06, 16)).lessonTimePeriod("08:00 - 09:20").lesson(lesson).group(group).teacher(teacher).room(room).build();
         assertEquals(8, timetableDAO.scheduleTimetable(timetable));
     }
     
     @Test()
     void scheduleTimetable_shouldThrowConstrainViolationException_whenInputScheduledGroup() {
-        timetable = new Timetable.TimetableBuilder().setDate(LocalDate.of(2022, 06, 16)).setLessonTimePeriod("8:00-9:20").setLesson(lesson).setGroup(group).setTeacher(teacher).setRoom(room).build();
+        timetable = Timetable.builder().date(LocalDate.of(2022, 06, 16)).lessonTimePeriod("8:00-9:20").lesson(lesson).group(group).teacher(teacher).room(room).build();
         timetableDAO.scheduleTimetable(timetable);
-        Timetable t = new Timetable.TimetableBuilder().setDate(LocalDate.of(2022, 06, 16)).setLessonTimePeriod("8:00-9:20").setLesson(lesson).setGroup(group).setTeacher(teacher).setRoom(room).build();
+        Timetable t = Timetable.builder().date(LocalDate.of(2022, 06, 16)).lessonTimePeriod("8:00-9:20").lesson(lesson).group(group).teacher(teacher).room(room).build();
         assertThrows(DAOException.class, () -> timetableDAO.scheduleTimetable(t));         
     }
 
     @ParameterizedTest(name = "{index}. Input data: lessonID {0}, groupID {1}.")
     @CsvSource({"100,1", "1, 100" })
     void scheduleTimetable_shouldThrowDAOException_whenInputInCorrectData(int lessonID, int groupID) {
-        lesson = new Lesson.LessonBuilder().setID(lessonID).build();
-        group = new Group.GroupBuilder().setId(groupID).build();
-        timetable = new Timetable.TimetableBuilder().setDate(LocalDate.of(2022, 06, 19)).setLessonTimePeriod("8:00-9:20").setLesson(lesson).setGroup(group).setTeacher(teacher).setRoom(room).build();
+        lesson = Lesson.builder().id(lessonID).build();
+        group = Group.builder().id(groupID).build();
+        timetable = Timetable.builder().date(LocalDate.of(2022, 06, 19)).lessonTimePeriod("8:00-9:20").lesson(lesson).group(group).teacher(teacher).room(room).build();
 
         assertThrows(DAOException.class, () -> timetableDAO.scheduleTimetable(timetable));
     }
@@ -95,26 +95,26 @@ class TimetableDAOImplTest {
         dayAbsent.setDateOne(LocalDate.of(2022, 06, 19));
         dayAbsent.setDateTwo(LocalDate.of(2022, 06, 20));
         teacherDAO.setTeahcerAbsent(1, dayAbsent);
-        lesson = new Lesson.LessonBuilder().setID(1).build();
-        group = new Group.GroupBuilder().setId(1).build();
-        timetable = new Timetable.TimetableBuilder().setDate(LocalDate.of(2022, 06, 19)).setLessonTimePeriod("8:00-9:20").setLesson(lesson).setGroup(group).setTeacher(teacher).setRoom(room).build();
+        lesson = Lesson.builder().id(1).build();
+        group = Group.builder().id(1).build();
+        timetable = Timetable.builder().date(LocalDate.of(2022, 06, 19)).lessonTimePeriod("8:00-9:20").lesson(lesson).group(group).teacher(teacher).room(room).build();
         assertThrows(NoSuchElementException.class, () -> timetableDAO.scheduleTimetable(timetable));
     }
     
     @Test
     void scheduleTimetable_shouldThrowDAOException_whenIsNoAvailableRooms() throws DAOException {
-    timetable = new Timetable.TimetableBuilder().setDate(LocalDate.of(2022, 06, 19)).setLessonTimePeriod("8:00-9:20").setLesson(lesson).setGroup(group).setTeacher(teacher).setRoom(room).build();
+    timetable = Timetable.builder().date(LocalDate.of(2022, 06, 19)).lessonTimePeriod("8:00-9:20").lesson(lesson).group(group).teacher(teacher).room(room).build();
     timetableDAO.scheduleTimetable(timetable);
-    lesson = new Lesson.LessonBuilder().setID(2).build();
-    group = new Group.GroupBuilder().setId(2).build();
-    teacher = new Teacher.TeacherBuidler().setID(2).build();
-    Timetable timetable2 = new Timetable.TimetableBuilder().setDate(LocalDate.of(2022, 06, 19)).setLessonTimePeriod("8:00-9:20").setLesson(lesson).setGroup(group).setTeacher(teacher).setRoom(room).build();
+    lesson = Lesson.builder().id(2).build();
+    group = Group.builder().id(2).build();
+    teacher = Teacher.builder().id(2).build();
+    Timetable timetable2 = Timetable.builder().date(LocalDate.of(2022, 06, 19)).lessonTimePeriod("8:00-9:20").lesson(lesson).group(group).teacher(teacher).room(room).build();
     assertThrows(DAOException.class, () -> timetableDAO.scheduleTimetable(timetable2));
     }
 
     @Test
     void deleteTimetable_shouldReturnTrue_whenInputCorrectTimetableIDAndNotPastDate() {
-        timetable = new Timetable.TimetableBuilder().setDate(LocalDate.now().plusDays(1)).setLessonTimePeriod("8:00-9:20").setLesson(lesson).setGroup(group).setTeacher(teacher).setRoom(room).build();
+        timetable = Timetable.builder().date(LocalDate.now().plusDays(1)).lessonTimePeriod("8:00-9:20").lesson(lesson).group(group).teacher(teacher).room(room).build();
         int id = timetableDAO.scheduleTimetable(timetable);
         assertTrue(timetableDAO.deleteTimetable(id));
     }
@@ -122,7 +122,7 @@ class TimetableDAOImplTest {
     @DisplayName("It's impossible to delete past timetable")
     @Test
     void deleteTimetable_shouldReturnZero_whenInputCorrectTimetableIDAndPastDate() {
-        timetable = new Timetable.TimetableBuilder().setDate(LocalDate.now().minusDays(1)).setLessonTimePeriod("8:00-9:20").setLesson(lesson).setGroup(group).setTeacher(teacher).setRoom(room).build();
+        timetable = Timetable.builder().date(LocalDate.now().minusDays(1)).lessonTimePeriod("8:00-9:20").lesson(lesson).group(group).teacher(teacher).room(room).build();
         int id = timetableDAO.scheduleTimetable(timetable);
         assertFalse(timetableDAO.deleteTimetable(id));
     }
@@ -131,7 +131,7 @@ class TimetableDAOImplTest {
     void getMonthTimetable_shouldReturnListOfTimetable_whenInputCorrectDateAndTeacherID() {
         day.setDateOne(LocalDate.of(2023, 04, 01));
         day.setDateTwo(LocalDate.of(2023, 04, 02));         
-        Teacher teacher = new Teacher.TeacherBuidler().setID(1).build();
+        Teacher teacher = Teacher.builder().id(1).build();
         assertEquals(2, timetableDAO.getTeacherTimetable(day, teacher).get().size());
     }
 
@@ -139,7 +139,7 @@ class TimetableDAOImplTest {
     void getMonthTimetable_shouldReturnEmptyList_whenInputInCorrectDateAndTeacherID() {
         day.setDateOne(LocalDate.of(2021, 04, 01));
         day.setDateTwo(LocalDate.of(2021, 04, 02));
-        Teacher teacher = new Teacher.TeacherBuidler().setID(1).build();
+        Teacher teacher = Teacher.builder().id(1).build();
         assertEquals(Optional.of(new ArrayList<Timetable>()), timetableDAO.getTeacherTimetable(day, teacher));
     }
 
@@ -147,7 +147,7 @@ class TimetableDAOImplTest {
     void getMonthTimetable_shouldReturnListOfDayTimetable_whenInputCorrectDateAndStudentID() {
         day.setDateOne(LocalDate.of(2023, 04, 01));
         day.setDateTwo(LocalDate.of(2023, 04, 02));
-        Student student = new Student.StudentBuilder().setID(1).build();
+        Student student = Student.builder().id(1).build();
         assertEquals(0, timetableDAO.getStudentTimetable(day, student).get().size());
     }
 
@@ -155,7 +155,7 @@ class TimetableDAOImplTest {
     void getMonthTimetable_shouldReturnMapWithEmptyList_whenInputInCorrectDateAndStudentID() {
         day.setDateOne(LocalDate.of(2021, 04, 01));
         day.setDateTwo(LocalDate.of(2021, 04, 02));
-        Student student = new Student.StudentBuilder().setID(1).build();
+        Student student = Student.builder().id(1).build();
         assertEquals(Optional.of(new ArrayList<Timetable>()), timetableDAO.getStudentTimetable(day, student));
     }
     

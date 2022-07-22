@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.TeacherDAO;
 import ua.foxminded.university.dao.TimetableDAO;
 import ua.foxminded.university.dao.exception.DAOException;
@@ -29,13 +30,15 @@ import ua.foxminded.university.service.entities.Timetable;
  *
  *
  */
+//@Slf4j
 @Repository
 public class TimetableDAOImpl implements TimetableDAO {
+    
+    private static final Logger log = LoggerFactory.getLogger(TimetableDAOImpl.class);
 
     private static final String debugMessage = "Get current session - {}";
     private static final String dateStart = "dateStart";
     private static final String dateEnd = "dateEnd";
-    private static final Logger log = LoggerFactory.getLogger(TimetableDAOImpl.class.getName());
     private static final String uniqueGroupDateTime = "unique_group_date_time";
     private static final String uniqueTeacherDateTime = "unique_teacher_date_time";
     private static final String uniqueRoomDateTime = "unique_room_date_time";

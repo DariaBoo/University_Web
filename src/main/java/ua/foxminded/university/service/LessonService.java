@@ -14,7 +14,7 @@ public interface LessonService {
      * The method adds lesson to the timetable.lessons table
      * 
      * @param lesson
-     * @return new lesson id
+     * @return Lesson id
      */
     int addLesson(Lesson lesson);
 

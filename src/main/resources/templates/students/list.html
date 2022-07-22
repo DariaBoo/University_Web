@@ -67,7 +67,7 @@
 						<td th:text="${student.getId()} + '.'" />
 						<td th:text="${student.getFirstName()}" />
 						<td th:text="${student.getLastName()}" />
-						<td th:text="${student.getGroupID()}" />
+						<td th:text="${student.getGroup().getId()}" />
 						<td><a href="#" th:href="@{/students/} + ${student.getId()}"><button
 									class="button_view">View</button></a></td>
 						<td><a href="#"

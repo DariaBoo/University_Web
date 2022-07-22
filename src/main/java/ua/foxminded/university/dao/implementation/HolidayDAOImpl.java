@@ -6,11 +6,10 @@ import java.util.Optional;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.HolidayDAO;
 import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.service.entities.Holiday;
@@ -21,10 +20,10 @@ import ua.foxminded.university.service.entities.Holiday;
  *
  *
  */
+@Slf4j
 @Repository
 public class HolidayDAOImpl implements HolidayDAO {
     
-    private static final Logger log = LoggerFactory.getLogger(HolidayDAOImpl.class.getName());
     private static final String debugMessage = "Get current session - {}";
         
     @Autowired
