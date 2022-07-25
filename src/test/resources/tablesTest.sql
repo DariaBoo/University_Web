@@ -23,27 +23,30 @@ CREATE TABLE timetable.lessons
 DROP TABLE IF EXISTS timetable.students CASCADE;
 CREATE TABLE timetable.students
 (
-    student_id SERIAL,    
+    id SERIAL NOT NULL,    
     first_name VARCHAR(30)  NOT NULL,
     last_name VARCHAR(30)  NOT NULL,
     group_id INT references timetable.groups(group_id),
     password VARCHAR(10) NOT NULL,
-    id_card VARCHAR(5) NOT NULL,
+    id_card VARCHAR(5) UNIQUE NOT NULL,
     isActive BOOLEAN,
-    CONSTRAINT students_pkey PRIMARY KEY (student_id)
+    CONSTRAINT students_pkey PRIMARY KEY (id),  
+    CONSTRAINT report_unique_constraint
+    UNIQUE (first_name, last_name, id_card)
 );
 
 DROP TABLE IF EXISTS timetable.teachers CASCADE;
 CREATE TABLE timetable.teachers
 (
-     teacher_id SERIAL,
+     id SERIAL,
      first_name VARCHAR(30)  NOT NULL,
      last_name VARCHAR(30)  NOT NULL,
      position VARCHAR(30) NOT NULL,
      password VARCHAR(10) NOT NULL,
      department_id INT,
      isActive BOOLEAN,
-     CONSTRAINT teachers_pkey PRIMARY KEY (teacher_id)
+     CONSTRAINT teachers_pkey PRIMARY KEY (id),
+     UNIQUE (first_name, last_name)
 );
 
 DROP TABLE IF EXISTS timetable.rooms CASCADE;
@@ -66,7 +69,7 @@ DROP TABLE IF EXISTS timetable.lessons_teachers CASCADE;
 CREATE TABLE IF NOT EXISTS timetable.lessons_teachers
 (    
     lesson_id INT REFERENCES timetable.lessons (lesson_id) ON UPDATE CASCADE ON DELETE CASCADE,
-    teacher_id INT REFERENCES timetable.teachers (teacher_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    teacher_id INT REFERENCES timetable.teachers (id) ON UPDATE CASCADE ON DELETE CASCADE,
     PRIMARY KEY (lesson_id, teacher_id)  
 );
 
@@ -74,7 +77,7 @@ DROP TABLE IF EXISTS timetable.teacherAbsent CASCADE;
 CREATE TABLE timetable.teacherAbsent
 (
     id SERIAL,
-    teacher_id INT REFERENCES timetable.teachers (teacher_id) ON UPDATE CASCADE,
+    teacher_id INT REFERENCES timetable.teachers (id) ON UPDATE CASCADE,
     date_start DATE NOT NULL,
     date_end DATE NOT NULL,
     reason VARCHAR(30) ,
@@ -89,9 +92,12 @@ CREATE TABLE timetable.timetable
     time_period VARCHAR(13) NOT NULL,
     lesson_id INT REFERENCES timetable.lessons (lesson_id),
     group_id INT REFERENCES timetable.groups (group_id),
-    teacher_id INT REFERENCES timetable.teachers (teacher_id),
+    teacher_id INT REFERENCES timetable.teachers (id),
     room_id INT REFERENCES timetable.rooms (room_id),
-    CONSTRAINT timetable_pkey PRIMARY KEY (id)
+    CONSTRAINT timetable_pkey PRIMARY KEY (id),
+    UNIQUE(date, time_period, lesson_id, group_id),
+    UNIQUE(date, time_period, teacher_id),
+    UNIQUE(date, time_period, room_id)
 );
 
 DROP TABLE IF EXISTS timetable.holidays;
@@ -99,7 +105,7 @@ CREATE TABLE timetable.holidays
 (
     id SERIAL,
     holiday VARCHAR(20) NOT NULL,
-    date DATE NOT NULL,    
+    date DATE UNIQUE NOT NULL,    
     CONSTRAINT holiday_pkey PRIMARY KEY (id)
 );
 
@@ -281,11 +287,11 @@ insert into timetable.groups_lessons (group_id, lesson_id) values (6, 5);
 
 INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id) VALUES ('2022-04-20', '08:00 - 09:20', 4, 2);
 INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-01', '08:00 - 09:20', 1, 1, 1, 201);
-INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-01', '08:00 - 09:20', 1, 1, 2, 201);
+INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-01', '08:00 - 09:20', 1, 2, 2, 202);
 INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-02', '08:00 - 09:20', 1, 1, 1, 201);
 INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-03', '08:00 - 09:20', 1, 1, 1, 301);
-INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-03', '08:00 - 09:20', 1, 1, 1, 204);
-INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-03', '08:00 - 09:20', 1, 1, 1, 201);
+INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-03', '08:00 - 09:20', 2, 1, 2, 303);
+INSERT INTO timetable.timetable (date, time_period, lesson_id, group_id, teacher_id, room_id) VALUES ('2023-04-03', '08:00 - 09:20', 3, 1, 3, 201);
 
 INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-01-01', 'NEW YEAR');
 INSERT INTO timetable.holidays (date, holiday) VALUES ('2022-01-06', 'THREE KINGS DAY');

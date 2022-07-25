@@ -2,7 +2,7 @@ package ua.foxminded.university.service;
 
 import java.util.List;
 
-import ua.foxminded.university.service.pojo.Student;
+import ua.foxminded.university.service.entities.Student;
 
 /**
  * @version 1.0
@@ -12,7 +12,7 @@ import ua.foxminded.university.service.pojo.Student;
 public interface StudentService {
 
     /**
-     * Add new student to the timetable.students, if student was added returns 1
+     * Add Student to the timetable.students, if student was added returns 1
      * otherwise returns 0
      * 
      * @param student
@@ -25,9 +25,9 @@ public interface StudentService {
      * returns 1 otherwise returns 0
      * 
      * @param studentID
-     * @return 1 or 0
+     * @return true or false
      */
-    int deleteStudent(int studentID);
+    boolean deleteStudent(int studentID);
 
     /**
      * The method finds a student by student id
@@ -56,9 +56,9 @@ public interface StudentService {
      * 
      * @param studentID
      * @param newPassword
-     * @return count of updated rows otherwise 0
+     * @return true or false
      */
-    int changePassword(int studentID, String newPassword);
+    boolean changePassword(int studentID, String newPassword);
 
     /**
      * The method updates student name and surname
@@ -66,5 +66,5 @@ public interface StudentService {
      * @param student
      * @return count of updated rows otherwise 0
      */
-    int updateStudent(Student student);
+    void updateStudent(Student student);
 }

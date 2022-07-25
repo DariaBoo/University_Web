@@ -2,8 +2,9 @@ package ua.foxminded.university.dao;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-import ua.foxminded.university.service.pojo.Lesson;
+import ua.foxminded.university.service.entities.Lesson;
 
 /**
  * @version 1.0
@@ -23,9 +24,9 @@ public interface LessonDAO {
      * Deletes lesson from the timetable.lessons
      * 
      * @param lessonID
-     * @return count of deleted rows otherwise zero
+     * @return true is deleted otherwise false
      */
-    int deleteLesson(int lessonID);
+    boolean deleteLesson(int lessonID);
     
     /**
      * The method finds a lesson by id and returns optional lesson
@@ -38,36 +39,24 @@ public interface LessonDAO {
      * The method finds all lessons and returns optional list of lessons
      * @return optional list of lessons
      */
-    List<Lesson> findAllLessons();
+    Optional<List<Lesson>> findAllLessons();
     
     /**
      * The method finds teachers lessons by teacher id
      * @return list of lessons
      */
-    List<Lesson> findLessonsByTeacherId(int teacherID);
+    Optional<Set<Lesson>> findLessonsByTeacherId(int teacherID);
     
     /**
      * The method finds groups lessons by group id
      * @return list of lessons
      */
-    List<Lesson> findLessonsByGroupId(int groupID);
+    Optional<Set<Lesson>> findLessonsByGroupId(int groupID);
     
     /**
      * The method lets update lesson's name and description and returns count of updated rows otherwise zero
      * @param lesson
      * @return count of updated rows otherwise zero
      */
-    int updateLesson(Lesson lesson);
-    
-    /**
-     * Returns a size of column 'lesson_name' from the timetable.lessons
-     * @return column's size
-     */
-    int getLessonNameMaxSize();
-    
-    /**
-     * Returns a size of column 'description' from the timetable.lessons
-     * @return column's size
-     */
-    int getDescriptionMaxSize();
+    void updateLesson(Lesson lesson);
 }

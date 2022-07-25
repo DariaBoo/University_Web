@@ -1,65 +1,57 @@
 package ua.foxminded.university.service.implementation;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.transaction.annotation.Transactional;
 
-import ua.foxminded.university.config.SpringConfigTest;
+import ua.foxminded.university.config.HibernateConfigTest;
+import ua.foxminded.university.service.LessonService;
+import ua.foxminded.university.service.entities.Lesson;
 import ua.foxminded.university.service.exception.ServiceException;
-import ua.foxminded.university.service.pojo.Lesson;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = { HibernateConfigTest.class }, loader = AnnotationConfigContextLoader.class)
+@Transactional
 class LessonServiceImplTest {
-    private LessonServiceImpl lessonServiceImpl;
-    private AnnotationConfigApplicationContext context;
+
+    @Autowired
+    private LessonService lessonService;
+
     private Lesson lesson;
     private Exception exception;
     private String expectedMessage;
     private String actualMessage;
-    private final int maxLessonNameSize = 20;
-    private final int maxDexcriptionSize = 100;
-    
+
     @BeforeEach
     void init() {
-        context = new AnnotationConfigApplicationContext(SpringConfigTest.class);
-        this.lessonServiceImpl = context.getBean("lessonServiceImpl", LessonServiceImpl.class);
+        new EmbeddedDatabaseBuilder().setName("test").setType(EmbeddedDatabaseType.H2)
+                .addScript("classpath:tablesTest.sql").build();
     }
 
     @Test
-    void addLesson_shouldThrowServiceException_whenInputIncorrectLessonData() {
-        lesson = new Lesson.LessonBuilder().setName(createCountOfSymbols(maxLessonNameSize + 1)).setDescription(createCountOfSymbols(maxDexcriptionSize + 1)).build();
-        assertThrows(StringIndexOutOfBoundsException.class, () -> lessonServiceImpl.addLesson(lesson));
-        
+    void addLesson_shouldReturnResult_whenInputCorrectLessonData() {
+        lesson = Lesson.builder().name("Test").description("test").build();
+        assertEquals(lessonService.findAllLessons().size() + 1, lessonService.addLesson(lesson));
     }
+
     @Test
-    void addLesson_shouldReturnResult_whenInputCorrectLessonData() throws ServiceException {
-        lesson = new Lesson.LessonBuilder().setName("Quidditch").setDescription("sport").build();
-        assertEquals(1, lessonServiceImpl.addLesson(lesson));
-    }
-    @Test
-    void addLesson_shouldThrowServiceExceptionMessage_whenInputIncorrectLessonName() {
-        lesson = new Lesson.LessonBuilder().setName(createCountOfSymbols(maxLessonNameSize + 1)).setDescription("sport").build();
-        exception = assertThrows(StringIndexOutOfBoundsException.class, () -> lessonServiceImpl.addLesson(lesson));
-        expectedMessage = "Lesson name is out of bound.";
+    void addLesson_shouldReturnResult_whenInputNotUniqueLessonName() {
+        lesson = Lesson.builder().name("Test").description("test").build();
+        lessonService.addLesson(lesson);
+        Lesson notUniqueName = Lesson.builder().name("Test").description("test").build();
+        exception = assertThrows(ServiceException.class, () -> lessonService.addLesson(notUniqueName));
+        expectedMessage = "Lesson with name Test already exists!";
         actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
-    }
-    @Test
-    void addLesson_shouldThrowServiceExceptionMessage_whenInputIncorrectDescription() {
-        lesson = new Lesson.LessonBuilder().setName("Quidditch").setDescription(createCountOfSymbols(maxDexcriptionSize + 1)).build();
-        exception = assertThrows(StringIndexOutOfBoundsException.class, () -> lessonServiceImpl.addLesson(lesson));
-        expectedMessage = "Lesson description is out of bound.";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
-    }
-           
-    private String createCountOfSymbols(int count) {
-        return Stream.generate(() -> "a")
-                .limit(count)
-                .collect(Collectors.joining());
+        assertEquals(expectedMessage, actualMessage);
     }
 }

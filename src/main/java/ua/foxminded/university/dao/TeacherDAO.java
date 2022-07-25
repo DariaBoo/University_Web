@@ -1,10 +1,12 @@
 package ua.foxminded.university.dao;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-import ua.foxminded.university.service.pojo.Day;
-import ua.foxminded.university.service.pojo.Teacher;
+import ua.foxminded.university.service.entities.Day;
+import ua.foxminded.university.service.entities.Teacher;
 
 /**
  * @version 1.0
@@ -14,7 +16,7 @@ import ua.foxminded.university.service.pojo.Teacher;
  */
 public interface TeacherDAO {
     /**
-     * The method adds new teacher to the timetable.teachers
+     * The method adds Teacher to the timetable.teachers
      * 
      * @param teacher
      * @return count of added rows otherwise -1
@@ -25,27 +27,27 @@ public interface TeacherDAO {
      * Deletes teacher from the timetable.teachers
      * 
      * @param teacherID
-     * @return count of deleted rows otherwise zero
+     * @return true is deleted otherwise false
      */
-    int deleteTeacher(int teacherID);
+    boolean deleteTeacher(int teacherID);
 
     /**
      * Assigns lesson to teacher to the timetable.lessons_teachers
      * 
      * @param lessonID  existed lesson id
      * @param teacherID existed teacher id
-     * @return count of updated rows otherwise -1
+     * @return true is assigned otherwise false
      */
-    int assignLessonToTeacher(int lessonID, int teacherID);
+    boolean assignLessonToTeacher(int lessonID, int teacherID);
 
     /**
      * Deletes lesson from teacher from the timetable.lessons_teachers
      * 
      * @param lessonID  existed lesson id
      * @param teacherID existed teacher id
-     * @return count of deleted rows otherwise zero
+     * @return true is deleted otherwise false
      */
-    int deleteLessonFromTeacher(int lessonID, int teacherID);
+    boolean deleteLessonFromTeacher(int lessonID, int teacherID);
 
     /**
      * The method set date start and date end of teacher's absent
@@ -61,9 +63,9 @@ public interface TeacherDAO {
      * 
      * @param teacherID existed teacher id
      * @param day
-     * @return count of deleted rows otherwise zero
+     * @return true is deleted otherwise false
      */
-    int deleteTeahcerAbsent(int teacherID, Day day);
+    boolean deleteTeahcerAbsent(int teacherID, Day day);
     
     /**
      * The method finds a teacher by id from the timetable.teachers
@@ -79,25 +81,18 @@ public interface TeacherDAO {
     Optional<List<Teacher>> findAllTeachers();
     
     /**
-     * The method finds all teachers by department id and returns optional list of teachers
-     * @param departmentID
-     * @return optional list of teachers
-     */
-    Optional<List<Teacher>> findTeachersByDepartment(int departmentID);
-    
-    /**
      * The method finds all teachers by lesson id and returns optional list of teachers
      * @param lessonID
      * @return optional list of teachers
      */
-    Optional<List<Teacher>> findTeachersByLessonId(int lessonID);
+    Optional<Set<Teacher>> findTeachersByLessonId(int lessonID);
     
    /**
     * The method finds all teachers absent days by teacher id
     * @param teacherID
     * @return optional list of teachers
     */
-    Optional<List<Teacher>> showTeacherAbsent(int teacherID);
+    Optional<List<Day>> showTeacherAbsent(int teacherID);
     
     /**
      * The method changes password by teacher id 
@@ -112,29 +107,13 @@ public interface TeacherDAO {
      * @param teacher
      * @return count of updated rows otherwise zero
      */
-    int updateTeacher(Teacher teacher);
-    
-    /**
-     * Returns a size of column 'first_name' from the timetable.teachers
-     * @return column's size
-     */
-    int getFirstNameMaxSize();
-    
-    /**
-     * Returns a size of column 'last_name' from the timetable.teachers
-     * @return column's size
-     */
-    int getLastNameMaxSize();
-    
-    /**
-     * Returns a size of column 'position' from the timetable.teachers
-     * @return column's size
-     */
-    int getPositionMaxSize();
+    void updateTeacher(Teacher teacher);
 
     /**
-     * Returns a size of column 'password' from the timetable.teachers
-     * @return column's size
+     * The method checks if teacher is absent
+     * @param teacher
+     * @param checkedDate
+     * @return true is absent otherwise false
      */
-    int getPasswordMaxSize();
+    boolean checkIsAbsent(Teacher teacher, LocalDate checkedDate);
 }

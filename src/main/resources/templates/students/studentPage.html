@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Welcome</title>
+
+</head>
+<style>
+body, html {
+	height: 100%;
+	margin: 0;
+}
+
+.bg {
+	background-image: url("/university/img/home.png"),
+		url("/university/img/5.png");
+	height: 100%;
+	background-position: center, center;
+	background-repeat: no-repeat;
+	background-size: 600px, 1000px;
+	background-color: white;
+}
+
+div.container {
+	position: relative;
+	top: 30px;
+}
+
+#from-to {
+	position: absolute;
+}
+
+#alert_message {
+	position: absolute;
+	top: 130%;
+}
+
+#chg_psw {
+	position: absolute;
+	left: 85%;
+}
+
+.btn_show {
+	border: 1px solid black;
+	color: white;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	cursor: pointer;
+	background-color: #45454a;
+	border-radius: 4px;
+}
+
+.btn_show:hover {
+	background-color: #6f6f76;
+}
+</style>
+<body>
+	<div class="bg">
+		<div th:if="${student}" role="alert">
+			<p
+				th:text="Welcome + ' ' + ${student.getFirstName()} + ' ' + ${student.getLastName()} + '!'" />
+		</div>
+		<br>
+		<div class="container">
+			<div id="from_to">
+				<form id="form" action="/university/student/timetable" method="post">
+					<label for="from">From: </label> <input type="date" id="from"
+						name="from" /> <label for="to"> to: </label> <input type="date"
+						id="to" name="to" />
+					<button type="submit" class="btn_show">Show</button>
+				</form>
+			</div>
+			<div id="chg_psw">
+				<a th:href="@{/students/change_password}"><button type="submit"
+						class="btn">Change password</button></a>
+			</div>
+			<br> <br> <br>
+			<div th:if="${timetables}" th:switch="${#lists.size(timetables)}">
+				<span id="alert_message" th:case="'0'">No lessons for this
+					period!</span>
+				<div th:case="*" class="div_timetable">
+					<h2 align="center">Timetable:</h2>
+					<table border="5" cellspacing="0" align="center" width="60%">
+						<tr>
+						<tr>
+							<th>Date</th>
+							<th>Time period</th>
+							<th>Lesson</th>
+							<th>Teacher</th>
+							<th>Room</th>
+						</tr>
+						<tr th:each="timetable : ${timetables}">
+							<td th:text="${timetable.getDate()}" />
+							<td th:text="${timetable.getLessonTimePeriod()}" />
+							<td th:text="${timetable.getLesson().getName()}" />
+							<td
+								th:text="${timetable.getTeacher().getFirstName()} + ' ' + ${timetable.getTeacher().getLastName()}" />
+							<td th:text="${timetable.getRoom().getNumber()}" />
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

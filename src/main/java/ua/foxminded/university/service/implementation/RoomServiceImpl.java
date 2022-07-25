@@ -2,29 +2,45 @@ package ua.foxminded.university.service.implementation;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import ua.foxminded.university.dao.implementation.RoomDAOImpl;
+import lombok.extern.slf4j.Slf4j;
+import ua.foxminded.university.dao.RoomDAO;
 import ua.foxminded.university.service.RoomService;
-import ua.foxminded.university.service.pojo.Room;
+import ua.foxminded.university.service.entities.Room;
 
+/**
+ * @version 1.0
+ * @author Bogush Daria
+ *
+ */
+@Slf4j
 @Service
 public class RoomServiceImpl implements RoomService {
 
-    private final RoomDAOImpl roomDAOImpl;
-    private static final Logger log = LoggerFactory.getLogger(RoomServiceImpl.class);
-
     @Autowired
-    public RoomServiceImpl(RoomDAOImpl roomDAOImpl) {
-        this.roomDAOImpl = roomDAOImpl;
-    }
+    private RoomDAO roomDAO;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @Transactional
     public List<Room> findAll() {
-        List<Room> resultList = roomDAOImpl.findAll().orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        List<Room> resultList = roomDAO.findAll().orElseThrow(() -> new IllegalArgumentException("Error occured while searching all groups"));
+        log.debug("Return list of rooms - {}", resultList);
+        return resultList;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public List<Room> findSuitableRooms(int groupID) {
+        List<Room> resultList = roomDAO.findSuitableRooms(groupID).orElseThrow(() -> new IllegalArgumentException("Error occured searching suitable groups"));
         log.debug("Return list of rooms - {}", resultList);
         return resultList;
     }

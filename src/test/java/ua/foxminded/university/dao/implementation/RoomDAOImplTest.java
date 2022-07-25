@@ -6,23 +6,49 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.transaction.annotation.Transactional;
 
-import ua.foxminded.university.config.SpringConfigTest;
+import ua.foxminded.university.config.HibernateConfigTest;
+import ua.foxminded.university.dao.RoomDAO;
+import ua.foxminded.university.service.entities.Room;
 
 @TestInstance(Lifecycle.PER_CLASS)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = { HibernateConfigTest.class }, loader = AnnotationConfigContextLoader.class)
 class RoomDAOImplTest {
-    private AnnotationConfigApplicationContext context;
-    private RoomDAOImpl roomDAOImpl;
+    
+    @Autowired
+    private RoomDAO roomDAO;
     
     @BeforeAll
     void init() {
-        context = new AnnotationConfigApplicationContext(SpringConfigTest.class);
-        roomDAOImpl = context.getBean("roomDAOImpl", RoomDAOImpl.class);
+        new EmbeddedDatabaseBuilder().setName("test").setType(EmbeddedDatabaseType.H2)
+        .addScript("classpath:tablesTest.sql").build();
     }
+    
     @Test
-    void test() {
-        assertEquals(10, roomDAOImpl.findAll().get().stream().count());
+    @Transactional
+    void findAll_shouldReturnCountOfRooms() {
+        assertEquals(10, roomDAO.findAll().get().stream().count());
     }
-
+    
+    @Test
+    @Transactional
+    void findAll_shouldReturnFirstRoom() {
+        Room room = new Room();
+        room.setNumber(101);
+        room.setCapacity(21);
+        System.out.println(room.hashCode());
+        Room room2 = roomDAO.findAll().get().stream().limit(1).findFirst().get();
+        System.out.println(room2.getNumber() + " " + room2.getCapacity() + " " + room2.getTimetable());
+        System.out.println(room2.hashCode());
+        assertEquals(room, roomDAO.findAll().get().stream().limit(1).findFirst().get());
+    }
 }

@@ -3,7 +3,7 @@ package ua.foxminded.university.dao;
 import java.util.List;
 import java.util.Optional;
 
-import ua.foxminded.university.service.pojo.Student;
+import ua.foxminded.university.service.entities.Student;
 
 /**
  * @version 1.0
@@ -12,7 +12,7 @@ import ua.foxminded.university.service.pojo.Student;
 public interface StudentDAO {
 
     /**
-     * The method adds new student to the timetable.studetns
+     * The method adds Student to the timetable.studetns
      * 
      * @param student
      * @return count of added rows otherwise 0
@@ -23,9 +23,9 @@ public interface StudentDAO {
      * Deletes student from the timetable.students
      * 
      * @param studentID existed student id
-     * @return count of deleted rows otherwise 0
+     * @return true is deleted otherwise false
      */
-    int deleteStudent(int studentID);
+    boolean deleteStudent(int studentID);
     
     /**
      * The method finds a student by student id
@@ -50,38 +50,14 @@ public interface StudentDAO {
      * The method changes password by student id
      * @param studentID
      * @param newPassword
-     * @return count of updated rows otherwise 0
+     * @return true is changed, otherwise false
      */
-    int changePassword(int studentID, String newPassword);
+    boolean changePassword(int studentID, String newPassword);
     
     /**
      * The method updates student name and surname
      * @param student
      * @return count of updated rows otherwise 0
      */
-    int updateStudent(Student student);
-    
-    /**
-     * Returns a size of column 'first_name' from the timetable.students
-     * @return column's size
-     */
-    int getFirstNameMaxSize();
-    
-    /**
-     * Returns a size of column 'last_name' from the timetable.students
-     * @return column's size
-     */
-    int getLastNameMaxSize();
-    
-    /**
-     * Returns a size of column 'id_card' from the timetable.students
-     * @return column's size
-     */
-    int getIdCardMaxSize();
-    
-    /**
-     * Returns a size of column 'password' from the timetable.students
-     * @return column's size
-     */
-    int getPasswordMaxSize();
+    void updateStudent(Student student);
 }

@@ -7,38 +7,33 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import ua.foxminded.university.service.implementation.GroupServiceImpl;
-import ua.foxminded.university.service.implementation.LessonServiceImpl;
-import ua.foxminded.university.service.implementation.TeacherServiceImpl;
+import ua.foxminded.university.service.GroupService;
+import ua.foxminded.university.service.LessonService;
+import ua.foxminded.university.service.TeacherService;
 
 @Controller
 @RequestMapping("/teachers")
 public class TeachersController {
-    private final TeacherServiceImpl teacherServiceImpl;
-    private final GroupServiceImpl groupServiceImpl;
-    private final LessonServiceImpl lessonServiceImpl;
-
+    
     @Autowired
-    public TeachersController(TeacherServiceImpl teacherServiceImpl, GroupServiceImpl groupServiceImpl,
-            LessonServiceImpl lessonServiceImpl) {
-        this.teacherServiceImpl = teacherServiceImpl;
-        this.groupServiceImpl = groupServiceImpl;
-        this.lessonServiceImpl = lessonServiceImpl;
-    }
+    private TeacherService teacherService;
+    @Autowired
+    private GroupService groupService;
+    @Autowired
+    private LessonService lessonService;
 
     @GetMapping
     public String listAllTeachers(Model model) {
-        model.addAttribute("teachers", teacherServiceImpl.findAllTeachers());
+        model.addAttribute("teachers", teacherService.findAllTeachers());
         return "teachers/list";
     }
 
     @RequestMapping("/{id}")
     public String viewTeacherById(@PathVariable Integer id, Model model) {
-        model.addAttribute("teacher", teacherServiceImpl.findByID(id));
-        model.addAttribute("groups", groupServiceImpl.findGroupsByTeacherId(id));
-        model.addAttribute("lessons", lessonServiceImpl.findLessonsByTeacherId(id));
-        model.addAttribute("absentDays", teacherServiceImpl.showTeacherAbsent(id));
+        model.addAttribute("teacher", teacherService.findByID(id));
+        model.addAttribute("groups", groupService.findGroupsByTeacherId(id));
+        model.addAttribute("lessons", lessonService.findLessonsByTeacherId(id));
+        model.addAttribute("absentDays", teacherService.showTeacherAbsent(id));
         return "teachers/view";
     }
-
 }

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/university/css/styles.css">
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<title>Student</title>
+<style>
+table {
+	margin-left: auto;
+	margin-right: auto;
+	font-family: "Lucida Handwriting", "Brush Script MT", cursive;
+	font-size: 20px;
+}
+
+tr {
+	height: 50px;
+}
+
+th {
+	text-align: left;
+	width: 200px;
+}
+
+td {
+	text-align: left;
+}
+
+.container {
+	position: relative;
+	top: 150px;
+}
+
+.div_button_back {
+	position: absolute;
+	top: 800px;
+	left: 500px;
+}
+
+.btn {
+	width: 100px;
+	height: 20px;
+	text-align: left;
+}
+</style>
+</head>
+<body>
+	<div class="bg">
+		<div class="container">
+		<div class="message" th:if="${message}">
+            <p th:text="${message}">success message</p>
+        </div>
+			<h1>Student information:</h1>
+			<table>
+				<tr>
+					<td class="btn"><a href="@{/students}"
+						th:href="@{/students/edit/} + ${student.getId()}">
+							<button class="button_edit">Update</button>
+					</a></td>
+					<td class="btn"><a href="@{/students}"
+						th:href="@{/students/delete/} + ${student.getId()}">
+							<button class="button_delete">Delete</button>
+					</a></td>
+				</tr>
+			</table>
+			<table>
+				<tr>
+					<th>Student Id:</th>
+					<td th:text="${student.getId()}" />
+				</tr>
+				<tr>
+					<th>First Name:</th>
+					<td th:text="${student.getFirstName()}" />
+				</tr>
+				<tr>
+					<th>Last Name:</th>
+					<td th:text="${student.getLastName()}" />
+				</tr>
+				<tr>
+					<th>Group Number:</th>
+					<td th:text="${student.getGroup().getId()}" />
+				</tr>
+				<tr>
+					<th>Id Card:</th>
+					<td th:text="${student.getIdCard()}" />
+				</tr>
+				<tr>
+					<th>Birthday:</th>
+					<td />
+				</tr>
+				<tr>
+					<th>E-Mail:</th>
+					<td />
+				</tr>
+				<tr>
+					<th>Address:</th>
+					<td />
+				</tr>
+				<tr>
+					<th>Telephone Number:</th>
+					<td />
+				</tr>
+			</table>
+		</div>
+		<div class="div_button_back">
+			<button class="button_back" onclick="history.back()">Back</button>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,6 +1,6 @@
 package ua.foxminded.university.service.implementation;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 
@@ -8,62 +8,65 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.transaction.annotation.Transactional;
 
-import ua.foxminded.university.config.SpringConfigTest;
-import ua.foxminded.university.dao.exception.DAOException;
-import ua.foxminded.university.service.LessonTimePeriod;
+import ua.foxminded.university.config.HibernateConfigTest;
+import ua.foxminded.university.service.TimetableService;
+import ua.foxminded.university.service.entities.Group;
+import ua.foxminded.university.service.entities.Lesson;
+import ua.foxminded.university.service.entities.Room;
+import ua.foxminded.university.service.entities.Teacher;
+import ua.foxminded.university.service.entities.Timetable;
 import ua.foxminded.university.service.exception.ServiceException;
-import ua.foxminded.university.service.pojo.Day;
-import ua.foxminded.university.service.pojo.Timetable;
-import ua.foxminded.university.service.pojo.Group;
-import ua.foxminded.university.service.pojo.Lesson;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = { HibernateConfigTest.class }, loader = AnnotationConfigContextLoader.class)
+@Transactional
 @TestInstance(Lifecycle.PER_CLASS)
 class TimetableServiceImplTest {
-    private TimetableServiceImpl timetableServiceImpl;
-    private AnnotationConfigApplicationContext context;
-    private Day day;
+    @Autowired
+    private TimetableService timetableService;
+
     private Lesson lesson;
     private Group group;
-    private Timetable dayTimetable;
+    private Timetable timetable;
+    private Teacher teacher;
+    private Room room;
 
     @BeforeAll
     void init() {
-        context = new AnnotationConfigApplicationContext(SpringConfigTest.class);
-        timetableServiceImpl = context.getBean("timetableServiceImpl", TimetableServiceImpl.class);
-        day = new Day();
-        day.setLessonTimePeriod(LessonTimePeriod.lesson1.getTimePeriod());
+        new EmbeddedDatabaseBuilder().setName("test").setType(EmbeddedDatabaseType.H2)
+                .addScript("classpath:tablesTest.sql").build();
+        lesson = Lesson.builder().id(1).build();
+        group = Group.builder().id(1).build();
+        teacher = Teacher.builder().id(1).build();
+        room = new Room();
+        room.setNumber(101);
     }
 
     @Test
     void scheduleTimetable_shouldThrowServiceException_whenInputTimetableWithHoliday() {
-        day.setDateOne(LocalDate.of(2022, 01, 01));
-        lesson = new Lesson.LessonBuilder().setID(5).build();
-        group = new Group.GroupBuilder().setId(1).build();
-        dayTimetable = new Timetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
+        lesson = Lesson.builder().id(5).build();
+        group = Group.builder().id(1).build();
+        timetable = Timetable.builder().date(LocalDate.of(2022, 01, 01))
+                .lessonTimePeriod("08:00 - 09:20").lesson(lesson).group(group).teacher(teacher)
+                .room(room).build();
 
-        assertThrows(ServiceException.class, () -> timetableServiceImpl.scheduleTimetable(dayTimetable));
+        assertThrows(ServiceException.class, () -> timetableService.scheduleTimetable(timetable));
     }
 
     @Test
-    void scheduleTimetable_shouldReturnResult_whenInputTimetableWithWeekDayNotHoliday()
-            throws ServiceException, DAOException {
-        day.setDateOne(LocalDate.of(2022, 01, 03));
-        lesson = new Lesson.LessonBuilder().setID(4).build();
-        group = new Group.GroupBuilder().setId(2).build();
-        dayTimetable = new Timetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
-        assertEquals(1, timetableServiceImpl.scheduleTimetable(dayTimetable));
+    void scheduleTimetable_shouldThrowServiceException_whenInputTimetableWithWeekDay() {
+        timetable = Timetable.builder().date(LocalDate.of(2022, 07, 10))
+                .lessonTimePeriod("08:00 - 09:20").lesson(lesson).group(group).teacher(teacher)
+                .room(room).build();
+        assertThrows(ServiceException.class, () -> timetableService.scheduleTimetable(timetable));
     }
-
-    @Test
-    void scheduleTimetable_shouldThrowServiceException_whenInputTimetableWithWeekend() {
-        day.setDateOne(LocalDate.of(2022, 05, 22));
-        lesson = new Lesson.LessonBuilder().setID(5).build();
-        group = new Group.GroupBuilder().setId(1).build();
-        dayTimetable = new Timetable.TimetableBuilder().setDay(day).setLesson(lesson).setGroup(group).build();
-
-        assertThrows(ServiceException.class, () -> timetableServiceImpl.scheduleTimetable(dayTimetable));
-    }
-
 }

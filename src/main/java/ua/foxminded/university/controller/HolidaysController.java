@@ -10,32 +10,32 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import ua.foxminded.university.service.implementation.HolidayServiceImpl;
-import ua.foxminded.university.service.pojo.Holiday;
+import ua.foxminded.university.service.HolidayService;
+import ua.foxminded.university.service.entities.Holiday;
+import ua.foxminded.university.service.exception.ServiceException;
 
 @Controller
 @RequestMapping("/holidays")
-public class HolidaysController {
-    private final HolidayServiceImpl holidayServiceImpl;
+public class HolidaysController {   
+    
+    private String message = "message";
 
     @Autowired
-    public HolidaysController(HolidayServiceImpl holidayServiceImpl) {
-        this.holidayServiceImpl = holidayServiceImpl;
-    }
+    private HolidayService holidayService;
 
     @GetMapping()
     public String listAllHolidays(Model model) {
-        model.addAttribute("holidays", holidayServiceImpl.findAllHolidays());
+        model.addAttribute("holidays", holidayService.findAllHolidays());
         return "holidays/list";
     }
 
     @RequestMapping("/holiday/delete/{id}")
     public String deleteHolidayById(@PathVariable Integer id, RedirectAttributes redirectAtt) {
-        int result = holidayServiceImpl.deleteHoliday(id);
-        if (result == 0) {
-            redirectAtt.addFlashAttribute("message", "Can't delete past holiday!");
+        boolean isDeleted = holidayService.deleteHoliday(id);
+        if (isDeleted) {
+            redirectAtt.addFlashAttribute(message, "Holiday was deleted!");           
         } else {
-            redirectAtt.addFlashAttribute("message", "Holiday was deleted!");
+            redirectAtt.addFlashAttribute(message, "Can't delete past holiday!");
         }
         return "redirect:/holidays";
     }
@@ -47,17 +47,17 @@ public class HolidaysController {
 
     @RequestMapping("/timetable")
     public String chooseDatePeriod() {
-        return "timetable/index";
+        return "holidays/list";
     }
 
     @PostMapping()
     public String saveHoliday(@ModelAttribute("holiday") Holiday holiday, RedirectAttributes redirectAtt) {
-        int result = holidayServiceImpl.addHoliday(holiday);
-        if (result == 0) {
-            redirectAtt.addFlashAttribute("message", "Error occured while added a holiday!");
-        } else {
-            redirectAtt.addFlashAttribute("message", "Holiday was added!");
+        try {
+        holidayService.addHoliday(holiday);
+        redirectAtt.addFlashAttribute(message, "Holiday was added!");
+        } catch (ServiceException e) {
+            redirectAtt.addFlashAttribute(message, e.getMessage());
         }
-        return "redirect:/timetable";
+        return "redirect:/holidays";
     }
 }

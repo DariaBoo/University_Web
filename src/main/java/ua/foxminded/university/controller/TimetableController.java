@@ -14,30 +14,38 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import ua.foxminded.university.service.implementation.GroupServiceImpl;
-import ua.foxminded.university.service.implementation.LessonServiceImpl;
-import ua.foxminded.university.service.implementation.TimetableServiceImpl;
-import ua.foxminded.university.service.pojo.Day;
-import ua.foxminded.university.service.pojo.Lesson;
-import ua.foxminded.university.service.pojo.Student;
-import ua.foxminded.university.service.pojo.Teacher;
-import ua.foxminded.university.service.pojo.Timetable;
+import ua.foxminded.university.service.GroupService;
+import ua.foxminded.university.service.LessonService;
+import ua.foxminded.university.service.RoomService;
+import ua.foxminded.university.service.StudentService;
+import ua.foxminded.university.service.TeacherService;
+import ua.foxminded.university.service.TimetableService;
+import ua.foxminded.university.service.entities.Day;
+import ua.foxminded.university.service.entities.Room;
+import ua.foxminded.university.service.entities.Student;
+import ua.foxminded.university.service.entities.Teacher;
+import ua.foxminded.university.service.entities.Timetable;
+import ua.foxminded.university.service.exception.ServiceException;
 
 @Controller
 public class TimetableController {
     static int studentId;
     static int teacherId;
-    private final TimetableServiceImpl timetableServiceImpl;
-    private final LessonServiceImpl lessonServiceImpl;
-    private final GroupServiceImpl groupServiceImpl;
-
+    private static String message = "message";
+    private static String timetableNew = "timetable/new";
+    
     @Autowired
-    public TimetableController(TimetableServiceImpl timetableServiceImpl, LessonServiceImpl lessonServiceImpl,
-            GroupServiceImpl groupServiceImpl) {
-        this.timetableServiceImpl = timetableServiceImpl;
-        this.lessonServiceImpl = lessonServiceImpl;
-        this.groupServiceImpl = groupServiceImpl;
-    }
+    private TimetableService timetableService;
+    @Autowired
+    private LessonService lessonService;
+    @Autowired
+    private GroupService groupService;
+    @Autowired
+    private TeacherService teacherService;
+    @Autowired
+    private RoomService roomService;
+    @Autowired
+    private StudentService studentService;
 
     @RequestMapping("/timetable")
     public String chooseDatePeriod(Model model) {
@@ -46,90 +54,101 @@ public class TimetableController {
 
     @RequestMapping("/timetable/show")
     public String showTimetable(HttpServletRequest request, Model model) {
-        LocalDate dateOne = LocalDate.parse(request.getParameter("from"));
-        LocalDate dateTwo = LocalDate.parse(request.getParameter("to"));
-        Day day = new Day(dateOne, dateTwo);
+        LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
+        LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
+        Day day = new Day(setDateOne, setDateTwo);
         try {
-            model.addAttribute("timetables", timetableServiceImpl.showTimetable(day));
+            model.addAttribute("timetables", timetableService.showTimetable(day));
         } catch (IllegalArgumentException e) {
-            model.addAttribute("message", e.getMessage());
+            model.addAttribute(message, e.getMessage());
         }
         return "timetable/index";
     }
 
     @GetMapping("/timetable/schedule")
     public String scheduleTimetable(Model model) {
-        model.addAttribute("groups", groupServiceImpl.findAllGroups());
-        return "timetable/new";
+        model.addAttribute("groups", groupService.findAllGroups());
+        return timetableNew;
     }
 
-    @GetMapping("/timetable/schedule/{id}")
-    public String showLessonsToSelectedGroup(@PathVariable("id") int id, Model model) {
-        model.addAttribute("day", new Day());
-        model.addAttribute("lesson", new Lesson());
-        model.addAttribute("group", groupServiceImpl.findById(id));
-        model.addAttribute("timetable", new Timetable());
-        model.addAttribute("lessons", lessonServiceImpl.findLessonsByGroupId(id));
-        model.addAttribute("groups", groupServiceImpl.findAllGroups());
-        return "timetable/new";
+    @GetMapping("/timetable/schedule/{groupId}")
+    public String scheduleTimetableForGroup(@PathVariable("groupId") int id, Model model) {
+        model.addAttribute("group", groupService.findById(id));
+        model.addAttribute("groups", groupService.findAllGroups());
+        model.addAttribute("lessons", lessonService.findLessonsByGroupId(id));
+        return timetableNew;
     }
 
+    @GetMapping("/timetable/schedule/{groupId}/{lessonId}")
+    public String scheduleTimetableForLesson(@PathVariable("lessonId") int lessonId, @PathVariable("groupId") int groupId,  Model model) {
+        model.addAttribute("timetable",  new Timetable());        
+        model.addAttribute("lesson", lessonService.findByID(lessonId));        
+        model.addAttribute("group", groupService.findById(groupId));
+        model.addAttribute("teacher", new Teacher());
+        model.addAttribute("room", new Room());
+        model.addAttribute("lessons", lessonService.findLessonsByGroupId(groupId));
+        model.addAttribute("groups", groupService.findAllGroups());
+        model.addAttribute("teachers", teacherService.findTeachersByLessonId(lessonId));
+        model.addAttribute("rooms", roomService.findSuitableRooms(groupId));
+        return timetableNew;
+    }
+    
     @RequestMapping(value = "/timetable/schedule", method = RequestMethod.POST)
     public String saveTimetable(@ModelAttribute("timetable") Timetable timetable, RedirectAttributes redirectAtt,
             Model model) {
         Day day = new Day();
-        day.setDateOne(timetable.getDay().getDateOne());
-        day.setDateTwo(timetable.getDay().getDateOne());
+        day.setDateOne(timetable.getDate());
+        day.setDateTwo(timetable.getDate());
         try {
-            int result = timetableServiceImpl.scheduleTimetable(timetable);
+            int result = timetableService.scheduleTimetable(timetable);
             if (result == 0) {
-                redirectAtt.addFlashAttribute("message", "Error occured while scheduled timetable!");
+                redirectAtt.addFlashAttribute(message, "Error occured while scheduled timetable!");
             } else {
-                redirectAtt.addFlashAttribute("message", "Timetable was scheduled!!!");
+                redirectAtt.addFlashAttribute(message, "Timetable was scheduled!!!");
                 redirectAtt.addFlashAttribute("day", day.getDateOne());
-                redirectAtt.addFlashAttribute("showTimetable", timetableServiceImpl.showTimetable(day));
+                redirectAtt.addFlashAttribute("showTimetable", timetableService.showTimetable(day));
             }
-        } catch (Exception e) {
-            redirectAtt.addFlashAttribute("message", e.getMessage());
+        } catch (ServiceException e) {
+            redirectAtt.addFlashAttribute(message, e.getMessage());
         }
         return "redirect:/timetable/schedule";
     }
 
     @RequestMapping("timetable/delete/{id}")
     public String deleteTimetable(@PathVariable Integer id, RedirectAttributes redirectAtt) {
-        int result = timetableServiceImpl.deleteTimetable(id);
-        if (result == 0) {
-            redirectAtt.addFlashAttribute("message", "Can't delete past timetable!");
+        boolean isDeleted = timetableService.deleteTimetable(id);
+        if (isDeleted) {
+            redirectAtt.addFlashAttribute(message, "Timetable was deleted!");            
         } else {
-            redirectAtt.addFlashAttribute("message", "Timetable was deleted!");
+            redirectAtt.addFlashAttribute(message, "Can't delete past timetable!");
         }
         return "redirect:/timetable";
     }
 
     @RequestMapping("/student/timetable")
     public String showStudentTimetable(HttpServletRequest request, Model model) {
-        LocalDate dateOne = LocalDate.parse(request.getParameter("from"));
-        LocalDate dateTwo = LocalDate.parse(request.getParameter("to"));
-        Student student = new Student.StudentBuilder().setID(studentId).build();
-        Day day = new Day(dateOne, dateTwo);
+        LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
+        LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
+        Student student = studentService.findByID(studentId);
+        Day day = new Day(setDateOne, setDateTwo);
         try {
-            model.addAttribute("timetables", timetableServiceImpl.getUserTimetable(day, student));
+            model.addAttribute("timetables", timetableService.getStudentTimetable(day, student));
         } catch (IllegalArgumentException e) {
-            model.addAttribute("message", e.getMessage());
+            model.addAttribute(message, e.getMessage());
         }
         return "students/studentPage";
     }
 
     @RequestMapping("/teacher/timetable")
     public String showTeacherTimetable(HttpServletRequest request, Model model) {
-        LocalDate dateOne = LocalDate.parse(request.getParameter("from"));
-        LocalDate dateTwo = LocalDate.parse(request.getParameter("to"));
-        Teacher teacher = new Teacher.TeacherBuidler().setID(teacherId).build();
-        Day day = new Day(dateOne, dateTwo);
+        LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
+        LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
+        Teacher teacher = Teacher.builder().id(teacherId).build();
+        Day day = new Day(setDateOne, setDateTwo);
         try {
-            model.addAttribute("timetables", timetableServiceImpl.getUserTimetable(day, teacher));
+            model.addAttribute("timetables", timetableService.getTeacherTimetable(day, teacher));
         } catch (IllegalArgumentException e) {
-            model.addAttribute("message", e.getMessage());
+            model.addAttribute(message, e.getMessage());
         }
         return "teachers/teacherPage";
     }

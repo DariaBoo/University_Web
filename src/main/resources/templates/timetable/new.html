@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>schedule timetable</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.container {
+	width: 60%;
+	margin: auto;
+	font-family: "Lucida Handwriting", "Brush Script MT", cursive;
+}
+
+.center {
+	margin: auto;
+	width: 45%;
+	text-align: center;
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
+.column1 {
+	font-size: 1.2em;
+	float: left;
+	width: 45%;
+	padding: 5px;
+}
+
+.form_r_center {
+	margin-left: 30%;
+	text-decoration: underline;
+	font-weight: bold;
+}
+
+.form_r {
+	margin-bottom: 10px;
+	margin-left: 20%;
+}
+
+.form_r label {
+	display: inline-block;
+	width: 200px;
+	font-weight: bold;
+}
+
+.button_new {
+	border: 1px solid green;
+	color: black;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	cursor: pointer;
+	background-color: #009933;
+	border-radius: 4px;
+}
+
+.button_new:hover {
+	background-color: #248f24;
+}
+
+.column2 {
+	font-size: 1.2em;
+	float: right;
+	width: 50%;
+	padding: 5px;
+}
+
+#date {
+	text-align: center;
+	text-decoration: underline;
+	font-weight: bold;
+}
+
+table, th, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+	width: auto;
+	margin: auto;
+}
+
+.div_timetable {
+	overflow: auto;
+}
+
+.div_button_back {
+	position: absolute;
+	top: 80%;
+	left: 15%;
+}
+
+.button_back {
+	border: 1px solid black;
+	color: white;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	cursor: pointer;
+	background-color: #45454a;
+	border-radius: 4px;
+}
+
+.button_back:hover {
+	background-color: #6f6f76;
+}
+
+div.hidden {
+	visibility: hidden;
+}
+</style>
+</head>
+<body>
+	<div class="form_bg">
+		<div class="container">
+			<br> <br> <br>
+			<div class="center">
+				<h2>Schedule Timetable</h2>
+				<div class="form_r">
+					<label for="groupId">Select Group: </label> <select
+						onchange="createURLWithGroup(this.value);">
+						<option value="0"></option>
+						<option th:each="group : ${groups}" th:text="${group.getName()}"
+							th:value="${group.getId()}"></option>
+					</select>
+				</div>
+				<div class="form_r" th:if="${lessons}">
+					<label id="lessonId" for="lessonId">Select Lesson: </label> <select
+						onchange="createURLWithLesson(this.value);">
+						<option value="0"></option>
+						<option th:each="lesson : ${lessons}"
+							th:text="${lesson.getName()}" th:value="${lesson.getId()}"></option>
+					</select>
+				</div>
+			</div>
+
+			<script>
+				function createURLWithGroup(id) {
+					var url = '/university/timetable/schedule/' + id;
+					window.location.href = url;
+				}
+			</script>
+			<script>
+				function createURLWithLesson(lessonId) {
+					console.log(lessonId);
+					var lessonId = lessonId;
+					var url = window.location.href + '/' + lessonId;
+					window.location.href = url;
+				}
+			</script>
+		</div>
+
+		<br> <br>
+		<div class="column1">
+			<div th:if="${timetable}">
+				<form th:method="POST" th:action="@{/timetable/schedule}"
+					th:object="${timetable}">
+
+					<div class="form_r">
+						<label for="groupId">Selected Group: </label> <select
+							th:field="*{group.id}" th:value="${group.id}">
+							<option th:value="${group.getId()}" th:text="${group.getName()}">Group</option>
+						</select>
+					</div>
+					<br>
+					<div class="form_r">
+						<label for="lessonId">Selected Lesson: </label> <select
+							th:field="*{lesson.id}" th:value="${lesson.id}">
+							<option th:value="${lesson.getId()}"
+								th:text="${lesson.getName()}">Lesson</option>
+						</select>
+					</div>
+					<br>
+					<div class="form_r">
+						<label for="date">Select Date: </label> <input type="date"
+							th:field="*{date}" th:value="${date}" id="date"
+							placeholder="Select date" required />
+					</div>
+					<br>
+					<div class="form_r">
+						<label for="timePeriod">Select Period: </label> <select
+							th:field="*{lessonTimePeriod}" th:value="${lessonTimePeriod}"
+							required>
+							<option value="">Lesson Time Period</option>
+							<option value="08:00 - 09:20">08:00 - 09:20</option>
+							<option value="09:30 - 10:50">09:30 - 10:50</option>
+							<option value="11:00 - 12:20">11:00 - 12:20</option>
+							<option value="12:30 - 13:50">12:30 - 13:50</option>
+							<option value="14:00 - 15:20">14:00 - 15:20</option>
+							<option value="15:30 - 16:50">15:30 - 16:50</option>
+							<option value="17:00 - 18:20">17:00 - 18:20</option>
+							<option value="18:30 - 19:50">18:30 - 19:50</option>
+						</select>
+					</div>
+					<br>
+					<div class="form_r">
+						<label for="teacher">Select Teacher: </label> <select
+							th:field="*{teacher.id}" th:value="${teacher.id}" required>
+							<option value="0">Teacher</option>
+							<option th:each="teacher : ${teachers}"
+								th:value="${teacher.getId()}"
+								th:text="${teacher.getFirstName() + ' ' + teacher.getLastName()}">Teachers</option>
+						</select>
+					</div>
+					<br>
+					<div class="form_r" th:switch="${#lists.size(rooms)}">
+						<span th:case="'0'">No Suitable Rooms For This Group!</span>
+						<div th:case="*">
+							<label for="room">Select Room: </label> <select
+								th:field="*{room.number}" th:value="${room.number}" required>
+								<option value="0">Room</option>
+								<option th:each="room : ${rooms}" th:value="${room.getNumber()}"
+									th:text="${room.getNumber()}">Rooms</option>
+							</select> <br> <br>
+							<div class="form_r">
+								<input type="submit" class="button_new" value="Create!"
+									name="create" />
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+
+
+		<div class="column2">
+			<div class="message" th:if="${message}">
+				<p th:text="${message}">success message</p>
+			</div>
+
+			<div class="div_timetable" th:if="${showTimetable}">
+				<p id="date" th:text="'Timetable for ' + ${day}" />
+				<table class="timetable">
+					<thead>
+						<tr>
+							<th>Date</th>
+							<th>Time period</th>
+							<th>Group</th>
+							<th>Lesson</th>
+							<th>Teacher</th>
+							<th>Room</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="timetable : ${showTimetable}">
+							<td th:text="${timetable.getDate()}" />
+							<td th:text="${timetable.getLessonTimePeriod()}" />
+							<td th:text="${timetable.getGroup().getName()}" />
+							<td th:text="${timetable.getLesson().getName()}" />
+							<td
+								th:text="${timetable.getTeacher().getFirstName()} + ' ' + ${timetable.getTeacher().getLastName()}" />
+							<td th:text="${timetable.getRoom().getNumber()}" />
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="div_button_back">
+		<a th:href="@{/timetable}"><button class="button_back">Back
+				To Timetable</button></a>
+	</div>
+</body>
+</html>

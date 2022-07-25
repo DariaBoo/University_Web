@@ -1,128 +1,138 @@
 package ua.foxminded.university.dao.implementation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.transaction.annotation.Transactional;
 
-import ua.foxminded.university.config.SpringConfigTest;
-import ua.foxminded.university.service.pojo.Group;
+import ua.foxminded.university.config.HibernateConfigTest;
+import ua.foxminded.university.dao.GroupDAO;
+import ua.foxminded.university.dao.exception.DAOException;
+import ua.foxminded.university.service.entities.Group;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = { HibernateConfigTest.class }, loader = AnnotationConfigContextLoader.class)
+@Transactional
 class GroupDAOImplTest {
-    private GroupDAOImpl groupDAOImpl;
-    private AnnotationConfigApplicationContext context;
+        
+    @Autowired
+    private GroupDAO groupDAO;    
+
     private List<Group> groups = new ArrayList<Group>();
-    private int maxGroupNameSize = 5;
-
+    private Group group;
+    
     @BeforeEach
-    void init() {
-        context = new AnnotationConfigApplicationContext(SpringConfigTest.class);
-        groupDAOImpl = context.getBean("groupDAOImpl", GroupDAOImpl.class);
+    void init() throws SQLException {
+        new EmbeddedDatabaseBuilder().setName("test").setType(EmbeddedDatabaseType.H2)
+                .addScript("classpath:tablesTest.sql").build();
     }
 
     @Test
-    void addGroup_shouldReturnZero_whenInputExistedGroup() {
-       assertEquals(0, groupDAOImpl.addGroup(new Group.GroupBuilder().setName("FW-72").setDepartmentID(8).build()));
+    void addGroup_shouldReturnGroupID_whenInputCorrectGroup() {
+        int countOfGroups = groupDAO.findAllGroups().get().size();
+        assertEquals(countOfGroups + 1, groupDAO.addGroup(Group.builder().name("AA-00").departmentID(8).build()));
     }
 
     @Test
-    void addGroup_shouldReturnCountOfAddedRows_whenInputNewGroup() {
-        assertEquals(1, groupDAOImpl.addGroup(new Group.GroupBuilder().setName("AA-00").setDepartmentID(0).build()));
+    void addGroup_shouldThrowException_whenInputExistedGroup() {
+        group = Group.builder().name("AA-00").departmentID(1).build();
+        groupDAO.addGroup(group);
+        Group group2 = Group.builder().name("AA-00").departmentID(1).build();  
+        assertThrows(DAOException.class, () -> groupDAO.addGroup(group2));
     }
 
     @Test
-    void deleteGroup_shouldReturnCountOfDeletedGroups_whenInputID() {
-        int id = groupDAOImpl.addGroup(new Group.GroupBuilder().setName("AA-11").setDepartmentID(0).build());
-        assertEquals(1, groupDAOImpl.deleteGroup(id));
+    void deleteGroup_shouldReturnCountOfDeletedGroups_whenInputID()  {
+        group = Group.builder().name("AA-11").departmentID(0).build();
+        int id = groupDAO.addGroup(group);
+        int countOfGroups = groupDAO.findAllGroups().get().size();
+        groupDAO.deleteGroup(id);
+        assertEquals(countOfGroups - 1, groupDAO.findAllGroups().get().size());
     }
 
-    @ParameterizedTest(name = "{index}. When input not existed group id or negative number {0} will return zero {1}.")
-    @CsvSource({ "100, 0", "-100, 0" })
-    void deleteGroup_shouldReturnZero_whenInputNotExistedID(int groupID, int result) {
-        assertEquals(result, groupDAOImpl.deleteGroup(groupID));
+    @ParameterizedTest(name = "{index}. When input not existed group id or negative number {0}.")
+    @CsvSource({ "100", "-100" })
+    void deleteGroup_shouldThrowIllegalArgumentException_whenInputNotExistedID(int groupID) {
+         assertFalse(groupDAO.deleteGroup(groupID));
     }
 
     @Test
-    void assignLessonToGroup_shouldReturnCountOfAddedRows_whenInputExistedLessonIDAndGroupIDAndRowNotExists() {
-        assertEquals(1, groupDAOImpl.assignLessonToGroup(1, 2));
+    void assignLessonToGroup_shouldReturnCountOfAddedLessons_whenAssignLessonToGroup() {
+        int countOfGroups = groupDAO.findGroupsByLessonId(1).get().size();
+        groupDAO.assignLessonToGroup(3, 1);
+        assertEquals(countOfGroups + 1, groupDAO.findGroupsByLessonId(1).get().size());
     }
 
-    @Test
-    void assignLessonToGroup_shouldReturnCountOfAddedRows_whenInputExistedLessonIDAndGroupIDAndRowExists() {
-        groupDAOImpl.assignLessonToGroup(1, 2);
-        assertEquals(0, groupDAOImpl.assignLessonToGroup(1, 2));
-    }
+//    @Test
+//    void assignLessonToGroup_shouldReturnCountOfAddedRows_whenInputAlreadyAssingedGroupAndLesson() {
+//        boolean isAssigned = groupDAO.assignLessonToGroup(1, 2);
+//        System.out.println("isAssigned " + isAssigned);
+//        boolean isAssignedAgain = groupDAO.assignLessonToGroup(1, 2);
+//        System.out.println("isAssignedAgain " + isAssignedAgain);
+//        assertFalse(isAssignedAgain);
+//    }
 
-    @ParameterizedTest(name = "{index}. When input already existed lesson and group or incorect lesson id or group id will return negative number {2}.")
-    @CsvSource({ "1, 8, 0", "1, 100, 0", "100, 8, 0", "100, 100, 0" })
-    void assignLessonToGroup_shouldReturnNegativeNumber_whenInputIncorrectData(int lessonID, int groupID, int result) {
-        assertEquals(result, groupDAOImpl.assignLessonToGroup(lessonID, groupID));
+    @ParameterizedTest(name = "{index}. When input already existed lesson and group or incorect lesson id or group id.")
+    @CsvSource({ "1, 8", "1, 100", "100, 8", "100, 100" })
+    void assignLessonToGroup_shouldReturnNegativeNumber_whenInputIncorrectData(int lessonID, int groupID) {
+        assertFalse(groupDAO.assignLessonToGroup(groupID, lessonID));
     }
 
     @Test
     void deleteLessonFromGroup_shouldReturnCountOfDelededRows_whenInputExistedLessonIDAndGroupID() {
-        groupDAOImpl.assignLessonToGroup(1, 2);
-        assertEquals(1, groupDAOImpl.deleteLessonFromGroup(1, 2));
-    }
-
-    @ParameterizedTest(name = "{index}. When input not existed or incorrect lessonID {0} and not existed or incorrect groupID {1} will return negative number {2}.")
-    @CsvSource({ "1, 3, 0", "1, 100, 0", "100, 8, 0", "100, 100, 0" })
-    void deleteLessonFromGroup_shouldReturnNegativeNumber_whenInputNotExistedLessonIDInTheGroup(int lessonID,
-            int groupID, int result) {
-        assertEquals(result, groupDAOImpl.deleteLessonFromGroup(lessonID, groupID));
+        groupDAO.assignLessonToGroup(1, 2);
+        assertTrue(groupDAO.deleteLessonFromGroup(1, 2));
     }
     
     @Test
     void findAllGroups_shouldReturnAllGroups_whenCallTheMethod() {
-        assertEquals(6, groupDAOImpl.findAllGroups().get().stream().count());        
+        assertEquals(6, groupDAO.findAllGroups().get().size());        
     }
     
     @Test
     void findAllGroups_shouldReturnFirstThreeGroups_whenCallTheMethod() {
         groups.clear();
-        groups.add(new Group.GroupBuilder().setId(1).setName("CO-68").setDepartmentID(1).build());
-        groups.add(new Group.GroupBuilder().setId(2).setName("FW-72").setDepartmentID(1).build());
-        groups.add(new Group.GroupBuilder().setId(3).setName("OQ-07").setDepartmentID(1).build());
-        assertEquals(groups, groupDAOImpl.findAllGroups().get().stream().limit(3).collect(Collectors.toList()));        
+        groups.add(Group.builder().id(1).name("CO-68").departmentID(1).build());
+        groups.add(Group.builder().id(2).name("FW-72").departmentID(1).build());
+        groups.add(Group.builder().id(3).name("OQ-07").departmentID(1).build());
+        assertEquals(groups, groupDAO.findAllGroups().get().stream().limit(3).collect(Collectors.toList()));        
     }
-    
+
     @Test
-    void findGroupsByDepartment_shouldReturnCountOFGroups_whenCallTheMethod() {
-        assertEquals(5, groupDAOImpl.findGroupsByDepartment(1).get().stream().count());
-    }
-    
-    @Test
-    void findGroupsByDepartment_shouldReturnDepartmentsGroups_whenInputExistedDepartmentID() {
-        groups.clear();
-        groups.add(new Group.GroupBuilder().setId(6).setName("OB-14").setDepartmentID(2).build());
-        assertEquals(groups, groupDAOImpl.findGroupsByDepartment(2).get());
+    void updateGroup_shouldReturnOne_whenInputExistedGroupIDAndNewName() {     
+        group = Group.builder().id(1).name("00-AA").departmentID(1).build();
+        int groupID = groupDAO.addGroup(group);
+        group.setName("AA-00");
+        groupDAO.updateGroup(group);        
+        assertEquals("AA-00", groupDAO.findById(groupID).get().getName());
     }
     @Test
-    void findGroupsByDepartment_shouldReturnEmptyOptional_whenInputNotExistedDepartmentID() {        
-        assertEquals(Optional.of(new ArrayList<Group>()), groupDAOImpl.findGroupsByDepartment(20));
+    void updateGroup_whenInputNotExistedGroupID() {   
+        group = Group.builder().id(100).name("AA-00").build();
+        groupDAO.updateGroup(group);        
+        assertEquals("AA-00", groupDAO.findById(100).get().getName());
     }
-    @Test
-    void updateGroup_shouldReturnOne_whenInputExistedGroupIDAndNewName() {       
-        assertEquals(1, groupDAOImpl.updateGroup(new Group.GroupBuilder().setId(5).setName("AA-00").build()));
-    }
-    @Test
-    void updateGroup_shouldReturnOne_whenInputNotExistedGroupID() {       
-        assertEquals(0, groupDAOImpl.updateGroup(new Group.GroupBuilder().setId(100).setName("AA-00").build()));
-    }
-    @Test
-    void getGroupNameMaxSize_shouldReturnColumnSize_whenCallTheMethod() {
-        assertEquals(maxGroupNameSize, groupDAOImpl.getGroupNameMaxSize());
-    }
+
     @Test
     void findGroupsByTeacherId_shouldReturnCountOfGroups_whenInputTeacherId() {
-        assertEquals(4, groupDAOImpl.findGroupsByTeacherId(1).get().size());
+        assertEquals(4, groupDAO.findGroupsByTeacherId(1).get().size());
     }
 }

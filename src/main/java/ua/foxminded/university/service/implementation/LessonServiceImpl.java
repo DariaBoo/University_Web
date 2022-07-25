@@ -1,62 +1,45 @@
 package ua.foxminded.university.service.implementation;
 
 import java.util.List;
+import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import ua.foxminded.university.dao.implementation.LessonDAOImpl;
+import lombok.extern.slf4j.Slf4j;
+import ua.foxminded.university.dao.LessonDAO;
+import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.service.LessonService;
-import ua.foxminded.university.service.pojo.Lesson;
+import ua.foxminded.university.service.entities.Lesson;
+import ua.foxminded.university.service.exception.ServiceException;
 
 /**
  * @version 1.0
  * @author Bogush Daria
  *
  */
+@Slf4j
 @Service
 public class LessonServiceImpl implements LessonService {
-
-    private final LessonDAOImpl lessonDaoImpl;
-    private static final Logger log = LoggerFactory.getLogger(LessonServiceImpl.class.getName());
-
-    /**
-     * Returns instance of the class
-     * 
-     * @param lessonDaoImpl
-     */
+     
+    
     @Autowired
-    public LessonServiceImpl(LessonDAOImpl lessonDaoImpl) {
-        this.lessonDaoImpl = lessonDaoImpl;
-    }
+    private LessonDAO lessonDAO;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int addLesson(Lesson lesson) {
-        log.trace("Add new lesson to the database");
-        log.trace("Check is lesson name - {} is not out of bound", lesson.getName());
-        if (lesson.getName().length() > lessonDaoImpl.getLessonNameMaxSize()) {
-            log.error("Lesson name - {} is out of bound", lesson.getName());
-            throw new StringIndexOutOfBoundsException("Lesson name is out of bound.");
+    @Transactional
+    public int addLesson(Lesson lesson) {  
+        int result = 0;
+        try {     
+            result = lessonDAO.addLesson(lesson);
+        } catch (DAOException e) {
+            log.error(e.getMessage(), e.getCause());
+            throw new ServiceException(e.getMessage());
         }
-        if (lesson.getDescription().length() > lessonDaoImpl.getDescriptionMaxSize()) {
-            log.error("Lesson description - {} is out of bound", lesson.getDescription());
-            throw new StringIndexOutOfBoundsException("Lesson description is out of bound.");
-        }
-        return lessonDaoImpl.addLesson(lesson);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int deleteLesson(int lessonID) {
-        int result = lessonDaoImpl.deleteLesson(lessonID);
-        log.debug("Delete lesson with id {} and return a result - {}", lessonID, result);
         return result;
     }
 
@@ -64,18 +47,33 @@ public class LessonServiceImpl implements LessonService {
      * {@inheritDoc}
      */
     @Override
-    public int updateLesson(Lesson lesson) {
-        int result = lessonDaoImpl.updateLesson(lesson);
-        log.debug("Update lesson - {} and return a result - {}", lesson, result);
-        return result;
+    @Transactional
+    public boolean deleteLesson(int lessonID) {
+        return lessonDAO.deleteLesson(lessonID);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
+    @Transactional
+    public void updateLesson(Lesson lesson) {
+        try {
+        log.debug("Update lesson - {}", lesson);
+        lessonDAO.updateLesson(lesson);
+        } catch (DAOException e) {
+            log.error(e.getMessage(), e.getCause());
+            throw new ServiceException(e.getMessage());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
     public Lesson findByID(int lessonID) {
-        Lesson resultLesson = lessonDaoImpl.findByID(lessonID).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        Lesson resultLesson = lessonDAO.findByID(lessonID).orElseThrow(() -> new IllegalArgumentException("Error occured while searching lesson by id"));
         log.debug("Find lesson by id - {} and return lesson - {}", lessonID, resultLesson);
         return resultLesson;
     }
@@ -84,8 +82,9 @@ public class LessonServiceImpl implements LessonService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public List<Lesson> findAllLessons() {
-        List<Lesson> resultList = lessonDaoImpl.findAllLessons();
+        List<Lesson> resultList = lessonDAO.findAllLessons().orElseThrow(() -> new IllegalArgumentException("Error occured while searching all lessons"));
         log.debug("Take a list of lessons - {}", resultList);
         return resultList;
     }
@@ -94,19 +93,21 @@ public class LessonServiceImpl implements LessonService {
      * {@inheritDoc}
      */
     @Override
-    public List<Lesson> findLessonsByTeacherId(int teacherID) {
-        List<Lesson> resultList = lessonDaoImpl.findLessonsByTeacherId(teacherID);
-        log.debug("Find all lessons by teacher id - {} and return list of lessons - {}", teacherID, resultList);
-        return resultList;
+    @Transactional
+    public Set<Lesson> findLessonsByTeacherId(int teacherID) {
+        Set<Lesson> resultSet = lessonDAO.findLessonsByTeacherId(teacherID).orElseThrow(() -> new IllegalArgumentException("Error occured while searching lessons by teacher id"));
+        log.debug("Find all lessons by teacher id - {} and return list of lessons - {}", teacherID, resultSet);
+        return resultSet;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Lesson> findLessonsByGroupId(int groupID) {
-        List<Lesson> resultList = lessonDaoImpl.findLessonsByGroupId(groupID);
-        log.debug("Find all lessons by group id - {} and return list of lessons - {}", groupID, resultList);
-        return resultList;
+    @Transactional
+    public Set<Lesson> findLessonsByGroupId(int groupID) {
+        Set<Lesson> resultSet = lessonDAO.findLessonsByGroupId(groupID).orElseThrow(() -> new IllegalArgumentException("Error occured while searching lessons by group id"));
+        log.debug("Find all lessons by group id - {} and return list of lessons - {}", groupID, resultSet);
+        return resultSet;
     }
 }
