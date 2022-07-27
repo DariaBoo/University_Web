@@ -1,10 +1,14 @@
 package ua.foxminded.university.dao;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import ua.foxminded.university.service.entities.Day;
-import ua.foxminded.university.service.entities.Student;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.entities.Timetable;
 
@@ -14,31 +18,17 @@ import ua.foxminded.university.service.entities.Timetable;
  *
  *
  */
-public interface TimetableDAO {
+@Repository
+public interface TimetableDAO extends JpaRepository<Timetable, Integer> {
 
-    /**
-     * The method schedules lesson, group, teacher and room for the day and lesson
-     * time period
-     * 
-     * @param timetable includes lesson id, group id, date and lesson time period
-     * @return count of added rows otherwise 0
-     */
-    int scheduleTimetable(Timetable timetable);
-
-    /**
-     * Deletes scheduled timetable by timetable id
-     * 
-     * @param timetableID
-     * @return count of deleted rows otherwise zero
-     */
-    boolean deleteTimetable(int timetableID);
     
     /**
      * Returns list of DayTimetable for all groups and teachers by period of dates
      * @param day
      * @return list of dayTimetable
      */
-    Optional<List<Timetable>> showTimetable(Day day);
+    @Query("SELECT t FROM Timetable t WHERE t.date >= ?1 AND t.date <= ?2")
+    Optional<List<Timetable>> findByDate(LocalDate dateStart, LocalDate dateEnd);
     
     /**
      * Returns list of Optional DayTimetable by date and teacher
@@ -48,7 +38,8 @@ public interface TimetableDAO {
      * @return list of dayTimetable if this user has lessons at this date otherwise
      *         List of Optional.empty
      */
-    Optional<List<Timetable>> getTeacherTimetable(Day day, Teacher teacher);
+    @Query("SELECT t FROM Timetable t WHERE t.date >= ?1 AND t.date <= ?2 AND t.teacher = ?3")
+    Optional<List<Timetable>> findByDateAndTeacher(LocalDate dateStart, LocalDate dateEnd, Teacher teacher);
 
     /**
      * Returns list of Optional DayTimetable by date and student
@@ -58,5 +49,6 @@ public interface TimetableDAO {
      * @return list of dayTimetable if this user has lessons at this date otherwise
      *         List of Optional.empty
      */
-    Optional<List<Timetable>> getStudentTimetable(Day day, Student student);
+    @Query("SELECT t FROM Timetable t WHERE t.date >= ?1 AND t.date <= ?2 AND t.group = ?3")
+    Optional<List<Timetable>> findByDateAndGroup(LocalDate dateStart, LocalDate dateEnd, Group group);
 }

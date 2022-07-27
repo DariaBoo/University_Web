@@ -3,15 +3,15 @@ package ua.foxminded.university.service.implementation;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.StudentDAO;
-import ua.foxminded.university.dao.exception.DAOException;
+import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.StudentService;
 import ua.foxminded.university.service.entities.Student;
-import ua.foxminded.university.service.exception.ServiceException;
 
 /**
  * @version 1.0
@@ -32,14 +32,16 @@ public class StudentServiceImpl implements StudentService {
      */
     @Override
     @Transactional
-    public int addStudent(Student student) {
+    public boolean addStudent(Student student) {
         try {
-            result = studentDAO.addStudent(student);
-        } catch (DAOException e) {
+            studentDAO.save(student);
+            log.info("Add new student");
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getMessage(), e.getCause());
-            throw new ServiceException(e.getMessage());
+            throw new UniqueConstraintViolationException("Student with first name - [" + student.getFirstName() + "], last name - ["
+                    + student.getLastName() + "] and id card - [" + student.getIdCard() + "] already exists!");
         }
-        return result;
+        return studentDAO.existsById(student.getId());
     }
 
     /**
@@ -49,10 +51,12 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public void updateStudent(Student student) {
         try {
-            studentDAO.updateStudent(student);
-        } catch (DAOException e) {
+            studentDAO.save(student);
+            log.info("Update student with id :: {}", student.getId());
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getMessage(), e.getCause());
-            throw new ServiceException(e.getMessage());
+            throw new UniqueConstraintViolationException("Student with first name - [" + student.getFirstName() + "], last name - ["
+                    + student.getLastName() + "] and id card - [" + student.getIdCard() + "] already exists!");
         }
     }
 
@@ -61,8 +65,10 @@ public class StudentServiceImpl implements StudentService {
      */
     @Override
     @Transactional
-    public boolean deleteStudent(int studentID) {
-        return studentDAO.deleteStudent(studentID);
+    public boolean deleteStudent(int studentId) {
+        studentDAO.deleteById(studentId);
+        log.info("Delete student with id :: {}", studentId);
+        return !studentDAO.existsById(studentId);
     }
 
     /**
@@ -70,19 +76,22 @@ public class StudentServiceImpl implements StudentService {
      */
     @Override
     @Transactional
-    public boolean changePassword(int studentID, String newPassword) {
-        return studentDAO.changePassword(studentID, newPassword);
+    public void changePassword(int studentId, String newPassword) {
+        Student student = findById(studentId);
+        student.setPassword(newPassword);
+        studentDAO.save(student);
+        log.debug("Password changed. Student id :: {}", studentId);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @Transactional
-    public Student findByID(int studentID) {
-        Student resultStudent = studentDAO.findByID(studentID).orElseThrow(() -> new IllegalArgumentException(
-                "Student with id " + studentID + " is not exist or student id is incorrect"));
-        log.debug("Find student by id {} and return student - {}", studentID, resultStudent);
+    @Transactional(readOnly = true)
+    public Student findById(int studentId) {
+        Student resultStudent = studentDAO.findById(studentId).orElseThrow(() -> new IllegalArgumentException(
+                "Student with id " + studentId + " is not exist or student id is incorrect"));
+        log.debug("Found student by id :: {}", studentId);
         return resultStudent;
     }
 
@@ -90,22 +99,11 @@ public class StudentServiceImpl implements StudentService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
+    @Cacheable("students")
     public List<Student> findAllStudents() {
-        List<Student> resultList = studentDAO.findAllStudents()
-                .orElseThrow(() -> new IllegalArgumentException("Error occured while searching all students"));
-        log.debug("Return list of students - {}", resultList);
-        return resultList;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional
-    public List<Student> findStudentsByGroup(int groupID) {
-        List<Student> resultList = studentDAO.findStudentsByGroup(groupID).orElseThrow(() -> new IllegalArgumentException("Incorrect group id " + groupID));
-        log.debug("Find students by group id - {} and return list of students -{}", groupID, resultList);
+        List<Student> resultList = studentDAO.findAll();
+        log.debug("Found all students, list size :: {}", resultList.size());
         return resultList;
     }
 }

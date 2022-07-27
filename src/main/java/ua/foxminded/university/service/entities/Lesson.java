@@ -1,7 +1,6 @@
 package ua.foxminded.university.service.entities;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,9 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -22,8 +18,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
-@NamedEntityGraph(name = "graph.lesson-groups-teachers", attributeNodes = { @NamedAttributeNode("groups"), @NamedAttributeNode("teachers")})
+@ToString
 @Entity
 @Getter 
 @Setter 
@@ -31,8 +28,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(exclude = {"teachers", "groups", "timetable" })
-@Table(name = "timetable.lessons")
-@NamedQuery(name = "Lesson.findLessonsByTeacherId", query = "SELECT l.id, l.name, l.description FROM Lesson AS l LEFT JOIN l.teachers AS t WHERE t.id = :teacherID")
+@Table(name = "lessons")
 public class Lesson {
 
     @Id
@@ -46,12 +42,15 @@ public class Lesson {
     @Column(name = "description", length = 100)
     private String description;
     
+    @ToString.Exclude
     @ManyToMany(mappedBy = "lessons")
-    private Set<Teacher> teachers = new HashSet<>();
+    private List<Teacher> teachers;
     
+    @ToString.Exclude
     @ManyToMany(mappedBy = "lessons")
-    private Set<Group> groups = new HashSet<>();
+    private List<Group> groups;
     
+    @ToString.Exclude
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, targetEntity = Timetable.class)
-    private Set<Timetable> timetable;
+    private List<Timetable> timetable;
 }

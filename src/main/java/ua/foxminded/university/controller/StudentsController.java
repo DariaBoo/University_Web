@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.extern.slf4j.Slf4j;
+import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.StudentService;
 import ua.foxminded.university.service.entities.Student;
-import ua.foxminded.university.service.exception.ServiceException;
 
 @Slf4j
 @Controller
@@ -38,7 +38,7 @@ public class StudentsController {
 
     @RequestMapping("/{id}")
     public String viewStudentById(@PathVariable Integer id, Model model) {
-        model.addAttribute("student", studentService.findByID(id));
+        model.addAttribute("student", studentService.findById(id));
         return "students/view";
     }
 
@@ -51,9 +51,9 @@ public class StudentsController {
     @PostMapping()
     public String saveNewStudent(@ModelAttribute("student") Student student, RedirectAttributes redirectAtt) {
         try {
-            int studentID = studentService.addStudent(student);
-            redirectAtt.addFlashAttribute(message, "Student was added with id " + studentID + "!");
-        } catch (ServiceException e) {
+            studentService.addStudent(student);
+            redirectAtt.addFlashAttribute(message, "Student was added!");
+        } catch (UniqueConstraintViolationException e) {
             log.error(e.getMessage());
             redirectAtt.addFlashAttribute(message, e.getMessage());
         }
@@ -62,8 +62,7 @@ public class StudentsController {
 
     @RequestMapping("/delete/{id}")
     public String deleteStudent(@PathVariable Integer id, RedirectAttributes redirectAtt) {
-        boolean isDeleted = studentService.deleteStudent(id);
-        if(isDeleted) {
+        if(studentService.deleteStudent(id)) {
             redirectAtt.addFlashAttribute(message, "Student was deleted!");
         } else {
             redirectAtt.addFlashAttribute(message, "Error to delete!");
@@ -73,7 +72,7 @@ public class StudentsController {
 
     @GetMapping("/edit/{id}")
     public String edit(Model model, @PathVariable("id") int id, RedirectAttributes redirectAtt) {
-            model.addAttribute("student", studentService.findByID(id));
+            model.addAttribute("student", studentService.findById(id));
             model.addAttribute("groups", groupService.findAllGroups());
         return "students/edit";
     }
@@ -83,7 +82,7 @@ public class StudentsController {
         try {
             studentService.updateStudent(student);
             redirectAtt.addFlashAttribute(message, "Student was updated!");
-        } catch (ServiceException e) {
+        } catch (UniqueConstraintViolationException e) {
             log.error(e.getMessage());
             redirectAtt.addFlashAttribute(message, e.getMessage());
         }

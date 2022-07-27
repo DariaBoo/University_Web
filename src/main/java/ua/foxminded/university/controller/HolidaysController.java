@@ -16,8 +16,8 @@ import ua.foxminded.university.service.exception.ServiceException;
 
 @Controller
 @RequestMapping("/holidays")
-public class HolidaysController {   
-    
+public class HolidaysController {
+
     private String message = "message";
 
     @Autowired
@@ -31,9 +31,8 @@ public class HolidaysController {
 
     @RequestMapping("/holiday/delete/{id}")
     public String deleteHolidayById(@PathVariable Integer id, RedirectAttributes redirectAtt) {
-        boolean isDeleted = holidayService.deleteHoliday(id);
-        if (isDeleted) {
-            redirectAtt.addFlashAttribute(message, "Holiday was deleted!");           
+        if (holidayService.deleteHoliday(id)) {
+            redirectAtt.addFlashAttribute(message, "Holiday was deleted!");
         } else {
             redirectAtt.addFlashAttribute(message, "Can't delete past holiday!");
         }
@@ -53,8 +52,11 @@ public class HolidaysController {
     @PostMapping()
     public String saveHoliday(@ModelAttribute("holiday") Holiday holiday, RedirectAttributes redirectAtt) {
         try {
-        holidayService.addHoliday(holiday);
-        redirectAtt.addFlashAttribute(message, "Holiday was added!");
+            if (holidayService.addHoliday(holiday)) {
+                redirectAtt.addFlashAttribute(message, "Holiday was added!");
+            } else {
+                redirectAtt.addFlashAttribute(message, "Error to add holiday [ " + holiday.getName() + "]!");
+            }
         } catch (ServiceException e) {
             redirectAtt.addFlashAttribute(message, e.getMessage());
         }

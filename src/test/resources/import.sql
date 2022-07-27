@@ -122,7 +122,6 @@ INSERT INTO timetable.groups (group_name, department_id, isActive) VALUES ('SG-6
 INSERT INTO timetable.groups (group_name, department_id, isActive) VALUES ('GW-21', 1, true);
 INSERT INTO timetable.groups (group_name, department_id, isActive) VALUES ('OB-14', 2, true);
 
-
 insert into timetable.rooms (room_id, capacity) values (101, 21);
 insert into timetable.rooms (room_id, capacity) values (102, 26);
 insert into timetable.rooms (room_id, capacity) values (201, 30);
@@ -312,4 +311,3 @@ INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (3
 INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (3, '2023-01-01', '2023-01-01');
 INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (4, '2022-01-10', '2022-01-12');
 INSERT INTO timetable.teacherabsent (teacher_id, date_start, date_end) VALUES (4, '2023-01-01', '2023-01-01');
-

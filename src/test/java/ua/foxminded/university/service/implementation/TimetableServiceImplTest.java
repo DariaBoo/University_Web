@@ -10,14 +10,11 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
-import ua.foxminded.university.config.HibernateConfigTest;
 import ua.foxminded.university.service.TimetableService;
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.entities.Lesson;
@@ -25,9 +22,12 @@ import ua.foxminded.university.service.entities.Room;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.entities.Timetable;
 import ua.foxminded.university.service.exception.ServiceException;
+import ua.foxminded.university.springboot.AppSpringBoot;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { HibernateConfigTest.class }, loader = AnnotationConfigContextLoader.class)
+@SpringBootTest(classes = AppSpringBoot.class)
+//@Sql({"/schema.sql", "/data.sql"})
+@ActiveProfiles("test")
 @Transactional
 @TestInstance(Lifecycle.PER_CLASS)
 class TimetableServiceImplTest {
@@ -42,8 +42,6 @@ class TimetableServiceImplTest {
 
     @BeforeAll
     void init() {
-        new EmbeddedDatabaseBuilder().setName("test").setType(EmbeddedDatabaseType.H2)
-                .addScript("classpath:tablesTest.sql").build();
         lesson = Lesson.builder().id(1).build();
         group = Group.builder().id(1).build();
         teacher = Teacher.builder().id(1).build();

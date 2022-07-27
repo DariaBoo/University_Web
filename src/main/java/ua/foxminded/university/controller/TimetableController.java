@@ -14,13 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.LessonService;
 import ua.foxminded.university.service.RoomService;
 import ua.foxminded.university.service.StudentService;
-import ua.foxminded.university.service.TeacherService;
 import ua.foxminded.university.service.TimetableService;
 import ua.foxminded.university.service.entities.Day;
+import ua.foxminded.university.service.entities.Group;
+import ua.foxminded.university.service.entities.Lesson;
 import ua.foxminded.university.service.entities.Room;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.Teacher;
@@ -33,15 +35,13 @@ public class TimetableController {
     static int teacherId;
     private static String message = "message";
     private static String timetableNew = "timetable/new";
-    
+
     @Autowired
     private TimetableService timetableService;
     @Autowired
     private LessonService lessonService;
     @Autowired
     private GroupService groupService;
-    @Autowired
-    private TeacherService teacherService;
     @Autowired
     private RoomService roomService;
     @Autowired
@@ -73,26 +73,31 @@ public class TimetableController {
 
     @GetMapping("/timetable/schedule/{groupId}")
     public String scheduleTimetableForGroup(@PathVariable("groupId") int id, Model model) {
-        model.addAttribute("group", groupService.findById(id));
+        Group group = groupService.findById(id);
+        model.addAttribute("group", group);
         model.addAttribute("groups", groupService.findAllGroups());
-        model.addAttribute("lessons", lessonService.findLessonsByGroupId(id));
+        model.addAttribute("lessons", group.getLessons());
         return timetableNew;
     }
 
     @GetMapping("/timetable/schedule/{groupId}/{lessonId}")
-    public String scheduleTimetableForLesson(@PathVariable("lessonId") int lessonId, @PathVariable("groupId") int groupId,  Model model) {
-        model.addAttribute("timetable",  new Timetable());        
-        model.addAttribute("lesson", lessonService.findByID(lessonId));        
-        model.addAttribute("group", groupService.findById(groupId));
+    public String scheduleTimetableForLesson(@PathVariable("lessonId") int lessonId,
+            @PathVariable("groupId") int groupId, Model model) {
+        Group group = groupService.findById(groupId);
+        int countOfStudents = group.getStudents().size();
+        Lesson lesson = lessonService.findById(lessonId);
+        model.addAttribute("timetable", new Timetable());
+        model.addAttribute("lesson", lesson);
+        model.addAttribute("group", group);
         model.addAttribute("teacher", new Teacher());
         model.addAttribute("room", new Room());
-        model.addAttribute("lessons", lessonService.findLessonsByGroupId(groupId));
+        model.addAttribute("lessons", group.getLessons());
         model.addAttribute("groups", groupService.findAllGroups());
-        model.addAttribute("teachers", teacherService.findTeachersByLessonId(lessonId));
-        model.addAttribute("rooms", roomService.findSuitableRooms(groupId));
+        model.addAttribute("teachers", lesson.getTeachers());
+        model.addAttribute("rooms", roomService.findSuitableRooms(countOfStudents));
         return timetableNew;
     }
-    
+
     @RequestMapping(value = "/timetable/schedule", method = RequestMethod.POST)
     public String saveTimetable(@ModelAttribute("timetable") Timetable timetable, RedirectAttributes redirectAtt,
             Model model) {
@@ -100,15 +105,11 @@ public class TimetableController {
         day.setDateOne(timetable.getDate());
         day.setDateTwo(timetable.getDate());
         try {
-            int result = timetableService.scheduleTimetable(timetable);
-            if (result == 0) {
-                redirectAtt.addFlashAttribute(message, "Error occured while scheduled timetable!");
-            } else {
-                redirectAtt.addFlashAttribute(message, "Timetable was scheduled!!!");
-                redirectAtt.addFlashAttribute("day", day.getDateOne());
-                redirectAtt.addFlashAttribute("showTimetable", timetableService.showTimetable(day));
-            }
-        } catch (ServiceException e) {
+            timetableService.scheduleTimetable(timetable);
+            redirectAtt.addFlashAttribute(message, "Timetable was scheduled!!!");
+            redirectAtt.addFlashAttribute("day", day.getDateOne());
+            redirectAtt.addFlashAttribute("showTimetable", timetableService.showTimetable(day));
+        } catch (ServiceException | UniqueConstraintViolationException e) {
             redirectAtt.addFlashAttribute(message, e.getMessage());
         }
         return "redirect:/timetable/schedule";
@@ -118,7 +119,7 @@ public class TimetableController {
     public String deleteTimetable(@PathVariable Integer id, RedirectAttributes redirectAtt) {
         boolean isDeleted = timetableService.deleteTimetable(id);
         if (isDeleted) {
-            redirectAtt.addFlashAttribute(message, "Timetable was deleted!");            
+            redirectAtt.addFlashAttribute(message, "Timetable was deleted!");
         } else {
             redirectAtt.addFlashAttribute(message, "Can't delete past timetable!");
         }
@@ -129,7 +130,7 @@ public class TimetableController {
     public String showStudentTimetable(HttpServletRequest request, Model model) {
         LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
         LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
-        Student student = studentService.findByID(studentId);
+        Student student = studentService.findById(studentId);
         Day day = new Day(setDateOne, setDateTwo);
         try {
             model.addAttribute("timetables", timetableService.getStudentTimetable(day, student));

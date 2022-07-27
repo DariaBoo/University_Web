@@ -57,7 +57,7 @@
 					<tr th:each="group : ${groups}">
 						<td th:text="${group.getId()} + '.'" />
 						<td th:text="${group.getName()}" />
-						<td th:text="${group.getDepartmentID()}" />
+						<td th:text="${group.getDepartmentId()}" />
 						<td><a href="#" th:href="@{/groups/} + ${group.getId()}"><button
 									class="button_view">View</button></a></td>
 						<td><a href="#"

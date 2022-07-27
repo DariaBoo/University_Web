@@ -17,8 +17,8 @@ public interface RoomService {
     List<Room> findAll();
 
     /**
-     * Shows all rooms
+     * Shows all rooms by capacity
      * @return list of suitable rooms
      */
-    List<Room> findSuitableRooms(int groupID);
+    List<Room> findSuitableRooms(int capacity);
 }

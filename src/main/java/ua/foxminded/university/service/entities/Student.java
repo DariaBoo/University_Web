@@ -24,16 +24,15 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true, exclude = {"group"})
-@Table(name = "timetable.students", uniqueConstraints = { @UniqueConstraint(name = "unique_name_surname_idCard", columnNames = {"first_name", "last_name", "id_card"}),
+@Table(name = "students", uniqueConstraints = { @UniqueConstraint(name = "unique_name_surname_idCard", columnNames = {"first_name", "last_name", "id_card"}),
         @UniqueConstraint(name = "unique_group", columnNames = {"first_name", "last_name", "id_card", "group_id"})})
-@org.hibernate.annotations.NamedQuery(name = "Student_changePassword", query = "UPDATE Student s SET s.password = :newPassword WHERE s.id = :id")
 @DynamicUpdate
 public class Student extends User {
 
     @Column(name = "id_card", unique = true)
     private String idCard;
     
-    @ManyToOne(targetEntity = Group.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Group.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", nullable = false) 
     private Group group;      
 }
