@@ -27,7 +27,7 @@ public interface TimetableDAO extends JpaRepository<Timetable, Integer> {
      * @param day
      * @return list of dayTimetable
      */
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     @Query("SELECT t FROM Timetable t JOIN FETCH t.group JOIN FETCH t.room JOIN FETCH t.teacher JOIN FETCH t.lesson WHERE t.date >= ?1 AND t.date <= ?2")
     Optional<List<Timetable>> findByDate(LocalDate dateStart, LocalDate dateEnd);
     
@@ -39,6 +39,7 @@ public interface TimetableDAO extends JpaRepository<Timetable, Integer> {
      * @return list of dayTimetable if this user has lessons at this date otherwise
      *         List of Optional.empty
      */
+    @Transactional(readOnly = true)
     @Query("SELECT t FROM Timetable t WHERE t.date >= ?1 AND t.date <= ?2 AND t.teacher = ?3")
     Optional<List<Timetable>> findByDateAndTeacher(LocalDate dateStart, LocalDate dateEnd, Teacher teacher);
 
@@ -50,6 +51,7 @@ public interface TimetableDAO extends JpaRepository<Timetable, Integer> {
      * @return list of dayTimetable if this user has lessons at this date otherwise
      *         List of Optional.empty
      */
+    @Transactional(readOnly = true)
     @Query("SELECT t FROM Timetable t WHERE t.date >= ?1 AND t.date <= ?2 AND t.group = ?3")
     Optional<List<Timetable>> findByDateAndGroup(LocalDate dateStart, LocalDate dateEnd, Group group);
 }
