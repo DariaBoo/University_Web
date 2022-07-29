@@ -21,16 +21,16 @@ import ua.foxminded.university.service.entities.Timetable;
  */
 public interface TimetableDAO extends JpaRepository<Timetable, Integer> {
 
-    
     /**
      * Returns list of DayTimetable for all groups and teachers by period of dates
+     * 
      * @param day
      * @return list of dayTimetable
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     @Query("SELECT t FROM Timetable t JOIN FETCH t.group JOIN FETCH t.room JOIN FETCH t.teacher JOIN FETCH t.lesson WHERE t.date >= ?1 AND t.date <= ?2")
     Optional<List<Timetable>> findByDate(LocalDate dateStart, LocalDate dateEnd);
-    
+
     /**
      * Returns list of Optional DayTimetable by date and teacher
      * 

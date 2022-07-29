@@ -193,9 +193,7 @@ public class TeacherServiceImpl implements TeacherService {
     public boolean checkIsAbsent(LocalDate date, Teacher teacher) {
         Predicate<Day> isBefore = day ->  day.getDateOne().minusDays(1).isBefore(date);
         Predicate<Day> isAfter = day ->  day.getDateTwo().plusDays(1).isAfter(date);
-        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         boolean isAbsent = teacher.getAbsentPeriod().stream().anyMatch(isBefore.and(isAfter));
-        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         log.info("Check is teacher [id::{}] absent [date::{}]", teacher.getId(), date);
         return isAbsent;
     }

@@ -52,9 +52,6 @@ public class StudentsController {
     public String saveNewStudent(@ModelAttribute("student") Student student, RedirectAttributes redirectAtt) {
         try {
             studentService.addStudent(student);
-            System.out.println("-----------------------------------------");
-            System.out.println(studentService.findById(student.getId()));
-            System.out.println("-----------------------------------------");
             redirectAtt.addFlashAttribute(message, "Student was added!");
         } catch (UniqueConstraintViolationException e) {
             log.error(e.getMessage());

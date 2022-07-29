@@ -1,7 +1,6 @@
 package ua.foxminded.university.controller;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -109,8 +108,7 @@ public class TimetableController {
             timetableService.scheduleTimetable(timetable);
             redirectAtt.addFlashAttribute(message, "Timetable was scheduled!!!");
             redirectAtt.addFlashAttribute("day", day.getDateOne());
-            List<Timetable> t = timetableService.showTimetable(day);
-            redirectAtt.addFlashAttribute("timetables", t);
+            redirectAtt.addFlashAttribute("timetables", timetableService.showTimetable(day));
         } catch (ServiceException | UniqueConstraintViolationException e) {
             redirectAtt.addFlashAttribute(message, e.getMessage());
         }
