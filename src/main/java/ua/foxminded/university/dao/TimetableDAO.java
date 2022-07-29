@@ -6,7 +6,8 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.entities.Teacher;
@@ -18,7 +19,6 @@ import ua.foxminded.university.service.entities.Timetable;
  *
  *
  */
-@Repository
 public interface TimetableDAO extends JpaRepository<Timetable, Integer> {
 
     
@@ -27,7 +27,8 @@ public interface TimetableDAO extends JpaRepository<Timetable, Integer> {
      * @param day
      * @return list of dayTimetable
      */
-    @Query("SELECT t FROM Timetable t WHERE t.date >= ?1 AND t.date <= ?2")
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Query("SELECT t FROM Timetable t JOIN FETCH t.group JOIN FETCH t.room JOIN FETCH t.teacher JOIN FETCH t.lesson WHERE t.date >= ?1 AND t.date <= ?2")
     Optional<List<Timetable>> findByDate(LocalDate dateStart, LocalDate dateEnd);
     
     /**

@@ -5,11 +5,13 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 
 import ua.foxminded.university.service.entities.Room;
 
-@Repository
+/**
+ * @version 1.0
+ * @author Bogush Daria
+ */
 public interface RoomDAO extends JpaRepository<Room, Integer> {
     /**
      * Shows all rooms

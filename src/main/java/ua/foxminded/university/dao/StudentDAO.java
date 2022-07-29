@@ -1,7 +1,6 @@
 package ua.foxminded.university.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import ua.foxminded.university.service.entities.Student;
 
@@ -9,7 +8,6 @@ import ua.foxminded.university.service.entities.Student;
  * @version 1.0
  * @author Bogush Daria
  */
-@Repository
 public interface StudentDAO extends JpaRepository<Student, Integer> {
 
 }

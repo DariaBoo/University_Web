@@ -156,6 +156,7 @@ public class TeacherServiceImpl implements TeacherService {
     public Teacher findById(int teacherId) {
         Teacher resultTeacher = teacherDAO.findById(teacherId)
                 .orElseThrow(() -> new IllegalArgumentException("Error occured while searching by id"));
+        resultTeacher.getAbsentPeriod();
         log.debug("Found teacher by id :: {}", teacherId);
         return resultTeacher;
     }
@@ -188,11 +189,13 @@ public class TeacherServiceImpl implements TeacherService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional
+    @Transactional()    
     public boolean checkIsAbsent(LocalDate date, Teacher teacher) {
         Predicate<Day> isBefore = day ->  day.getDateOne().minusDays(1).isBefore(date);
         Predicate<Day> isAfter = day ->  day.getDateTwo().plusDays(1).isAfter(date);
+        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         boolean isAbsent = teacher.getAbsentPeriod().stream().anyMatch(isBefore.and(isAfter));
+        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         log.info("Check is teacher [id::{}] absent [date::{}]", teacher.getId(), date);
         return isAbsent;
     }

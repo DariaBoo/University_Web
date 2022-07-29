@@ -4,7 +4,6 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -48,7 +47,7 @@ public class Day {
     private LocalDate dateTwo;
     
     @ToString.Exclude
-    @ManyToOne(targetEntity = Teacher.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Teacher.class)
     @JoinColumn(name = "teacher_id",  referencedColumnName = "id")
     private Teacher teacher;  
 }

@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
@@ -120,7 +121,7 @@ public class TimetableServiceImpl implements TimetableService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Timetable> getTeacherTimetable(Day day, Teacher teacher) {
         List<Timetable> resultList = timetableDAO.findByDateAndTeacher(day.getDateOne(), day.getDateTwo(), teacher)
                 .orElseThrow(() -> new IllegalArgumentException(
@@ -133,7 +134,7 @@ public class TimetableServiceImpl implements TimetableService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Timetable> getStudentTimetable(Day day, Student student) {
         List<Timetable> resultList = timetableDAO
                 .findByDateAndGroup(day.getDateOne(), day.getDateTwo(), student.getGroup())
@@ -147,7 +148,7 @@ public class TimetableServiceImpl implements TimetableService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public List<Timetable> showTimetable(Day day) {
         List<Timetable> resultList = timetableDAO.findByDate(day.getDateOne(), day.getDateTwo())
                 .orElseThrow(() -> new IllegalArgumentException(

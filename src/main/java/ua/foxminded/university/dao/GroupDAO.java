@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import ua.foxminded.university.service.entities.Group;
 
@@ -12,7 +11,6 @@ import ua.foxminded.university.service.entities.Group;
  * @version 1.0
  * @author Bogush Daria
  */
-@Repository
 public interface GroupDAO extends JpaRepository<Group, Integer>{   
     
     /**

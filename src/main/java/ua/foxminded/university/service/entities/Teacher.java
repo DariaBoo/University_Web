@@ -23,7 +23,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-@ToString
+@ToString(callSuper = true)
 @Entity
 @Getter 
 @Setter 
