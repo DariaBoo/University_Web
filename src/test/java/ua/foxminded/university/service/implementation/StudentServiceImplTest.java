@@ -2,7 +2,6 @@ package ua.foxminded.university.service.implementation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 
@@ -10,21 +9,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
-import ua.foxminded.university.config.HibernateConfigTest;
 import ua.foxminded.university.service.StudentService;
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.exception.ServiceException;
+import ua.foxminded.university.springboot.AppSpringBoot;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { HibernateConfigTest.class }, loader = AnnotationConfigContextLoader.class)
+@SpringBootTest(classes = AppSpringBoot.class)
+//@Sql({"/schema.sql", "/data.sql"})
+@ActiveProfiles("test")
 @Transactional
 class StudentServiceImplTest {
     @Autowired
@@ -63,10 +64,5 @@ class StudentServiceImplTest {
       expectedMessage = "Student with name Test, surname Test and id card W2 already exists or student id card is not unique!";
       actualMessage = exception.getMessage();
       assertEquals(expectedMessage, actualMessage);
-    }
-
-    @Test
-    void changePassword_shouldReturnResutl_whenInputCorrectData() {
-        assertTrue(studentService.changePassword(1, "5555"));
     }
 }

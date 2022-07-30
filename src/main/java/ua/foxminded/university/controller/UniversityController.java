@@ -45,13 +45,13 @@ public class UniversityController {
                 && !password.equals("") && password.equals("555")) {
             int id = Integer.parseInt(userName.split("#")[1]);
             TimetableController.teacherId = id;
-            model.addAttribute("teacher", teacherService.findByID(id));
+            model.addAttribute("teacher", teacherService.findById(id));
             return "teachers/teacherPage";
         } else if (userName != null && !userName.equals("") && userName.matches("[a-zA-Z]+_\\d+") && password != null
                 && !password.equals("") && password.equals("1234")) {
             int id = Integer.parseInt(userName.split("_")[1]);
             TimetableController.studentId = id;
-            model.addAttribute("student", studentService.findByID(id));
+            model.addAttribute("student", studentService.findById(id));
             return "students/studentPage";
         } else {
             message = "Wrong username or password!";

@@ -7,14 +7,16 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.HolidayDAO;
 import ua.foxminded.university.dao.TimetableDAO;
-import ua.foxminded.university.dao.exception.DAOException;
 import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
+import ua.foxminded.university.service.TeacherService;
 import ua.foxminded.university.service.TimetableService;
 import ua.foxminded.university.service.entities.Day;
 import ua.foxminded.university.service.entities.Student;
@@ -36,35 +38,73 @@ public class TimetableServiceImpl implements TimetableService {
     private TimetableDAO timetableDAO;
     @Autowired
     private HolidayDAO holidayDAO;
-    
+    @Autowired
+    private TeacherService teacherService;
+
     private final String illegalArgumentExceptionMessage = "No timetable for ";
+    private static final String uniqueGroupDateTime = "unique_group_date_time";
+    private static final String uniqueTeacherDateTime = "unique_teacher_date_time";
+    private static final String uniqueRoomDateTime = "unique_room_date_time";
 
     /**
      * {@inheritDoc}
      */
     @Override
     @Transactional
-    public int scheduleTimetable(Timetable timetable) {
+    public Timetable scheduleTimetable(Timetable timetable) {
         LocalDate day = timetable.getDate();
-        int result = 0;
-        log.trace("Check if a day - {} is not a weekend", day);
+        Timetable savedTimetable = new Timetable();
+        Teacher teacher = teacherService.findById(timetable.getTeacher().getId());
         if (isWeekend(day)) {
             log.error("Can't schedule timetable for weekend. Attempt to schedule {}.", day);
             throw new ServiceException("Can't schedule timetable for weekend! Attempt to schedule (" + day + ")");
         }
-        log.trace("Check if a day - {} is not a holiday", day);
         if (isHoliday(day)) {
             log.error("Can't schedule timetable for holiday. Attempt to schedule {}", day);
             throw new ServiceException("Can't schedule timetable for holiday! Attempt to schedule (" + day + ")");
         }
-        try {
-            result = timetableDAO.scheduleTimetable(timetable);
-            log.debug("Took the result - {} of shceduling timetable.", result);
-        } catch (UniqueConstraintViolationException | NoSuchElementException | DAOException e) {
-            log.error(e.getMessage(), e.getCause());
-            throw new ServiceException(e.getMessage());
+        if (teacherService.checkIsAbsent(timetable.getDate(), teacher)) {
+            log.error("Teacher [id::{}] is absent [date::{}]", timetable.getTeacher().getId(), timetable.getDate());
+            throw new NoSuchElementException("Teacher [id::" + timetable.getTeacher().getId() + "] is absent [date::"
+                    + timetable.getDate() + "]. Try again.");
         }
-        return result;
+        try {
+            savedTimetable = timetableDAO.saveAndFlush(timetable);
+            log.debug("Timetable [date::{}, time::{}] is scheduled", savedTimetable.getDate(),
+                    savedTimetable.getLessonTimePeriod());
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            throwCorrectException(e, timetable);
+        }
+        return savedTimetable;
+    }
+
+    private void throwCorrectException(DataIntegrityViolationException exception, Timetable timetable) {
+        if (exception.getMostSpecificCause().getMessage().contains(uniqueGroupDateTime)) {
+            log.error(
+                    "ConstraintViolationException: date - {}, lesson time period - {}, group id - {} violate the unique primary keys condition - {}",
+                    timetable.getDate(), timetable.getLessonTimePeriod(), timetable.getGroup().getId(),
+                    uniqueGroupDateTime);
+            throw new UniqueConstraintViolationException(
+                    "Group with id: " + timetable.getGroup().getId() + " is already scheduled (date:"
+                            + timetable.getDate() + ", time:" + timetable.getLessonTimePeriod() + ")!",
+                    exception);
+        } else if (exception.getMostSpecificCause().getMessage().contains(uniqueTeacherDateTime)) {
+            log.error(
+                    "ConstraintViolationException: date - {}, lesson time period - {}, teacher id - {} violate the unique primary keys condition - {}",
+                    timetable.getDate(), timetable.getLessonTimePeriod(), timetable.getTeacher().getId(),
+                    uniqueTeacherDateTime);
+            throw new UniqueConstraintViolationException("Teacher with id: " + timetable.getTeacher().getId()
+                    + " is already scheduled (" + timetable.getDate() + ", " + timetable.getLessonTimePeriod() + ")!",
+                    exception);
+        } else if (exception.getMostSpecificCause().getMessage().contains(uniqueRoomDateTime)) {
+            log.error(
+                    "ConstraintViolationException: date - {}, lesson time period - {}, room id - {} violate the unique primary keys condition - {}",
+                    timetable.getDate(), timetable.getLessonTimePeriod(), timetable.getRoom().getNumber(),
+                    uniqueRoomDateTime);
+            throw new UniqueConstraintViolationException("Room number: " + timetable.getRoom().getNumber()
+                    + " is already scheduled (" + timetable.getDate() + ", " + timetable.getLessonTimePeriod() + ")!",
+                    exception);
+        }
     }
 
     /**
@@ -72,19 +112,21 @@ public class TimetableServiceImpl implements TimetableService {
      */
     @Override
     @Transactional
-    public boolean deleteTimetable(int timetableID) {
-        return timetableDAO.deleteTimetable(timetableID);
+    public boolean deleteTimetable(int timetableId) {
+        timetableDAO.deleteById(timetableId);
+        return timetableDAO.existsById(timetableId);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Timetable> getTeacherTimetable(Day day, Teacher teacher) {
-        List<Timetable> resultList = timetableDAO.getTeacherTimetable(day, teacher).orElseThrow(() -> new IllegalArgumentException(
-                illegalArgumentExceptionMessage + day.getDateOne() + " - " + day.getDateTwo()));
-        log.debug("Get month timetable for user {} and return a list of timetable - {}", teacher, resultList);
+        List<Timetable> resultList = timetableDAO.findByDateAndTeacher(day.getDateOne(), day.getDateTwo(), teacher)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        illegalArgumentExceptionMessage + day.getDateOne() + " - " + day.getDateTwo()));
+        log.debug("Found timetable [count::{}] for user [id::{}]", resultList.size(), teacher.getId());
         return resultList;
     }
 
@@ -92,11 +134,13 @@ public class TimetableServiceImpl implements TimetableService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Timetable> getStudentTimetable(Day day, Student student) {
-        List<Timetable> resultList = timetableDAO.getStudentTimetable(day, student).orElseThrow(() -> new IllegalArgumentException(
-                illegalArgumentExceptionMessage + day.getDateOne() + " - " + day.getDateTwo()));
-        log.debug("Get month timetable for user {} and return a list of timetable - {}", student, resultList);
+        List<Timetable> resultList = timetableDAO
+                .findByDateAndGroup(day.getDateOne(), day.getDateTwo(), student.getGroup())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        illegalArgumentExceptionMessage + day.getDateOne() + " - " + day.getDateTwo()));
+        log.debug("Found timetable [count::{}] for student [id::{}]", resultList.size(), student.getId());
         return resultList;
     }
 
@@ -104,35 +148,34 @@ public class TimetableServiceImpl implements TimetableService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public List<Timetable> showTimetable(Day day) {
-        List<Timetable> resultList = timetableDAO.showTimetable(day).orElseThrow(() -> new IllegalArgumentException(
-                illegalArgumentExceptionMessage + day.getDateOne() + " - " + day.getDateTwo()));
-        log.debug("Return a list of timetable - {}", resultList);
+        List<Timetable> resultList = timetableDAO.findByDate(day.getDateOne(), day.getDateTwo())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        illegalArgumentExceptionMessage + day.getDateOne() + " - " + day.getDateTwo()));
+        log.debug("Found timetable [count::{}]", resultList.size());
         return resultList;
     }
 
     private boolean isWeekend(LocalDate date) {
-        log.trace("Check is input date - {} is weekend", date);
         DayOfWeek dayOfWeek = DayOfWeek.of(date.get(ChronoField.DAY_OF_WEEK));
         switch (dayOfWeek) {
         case SATURDAY:
-            log.info("Input date - {} is saturday", date);
+            log.info("Inputed date [{}] is saturday", date);
             return true;
         case SUNDAY:
-            log.info("Input date - {} is sunday", date);
+            log.info("Inputed date [{}] is sunday", date);
             return true;
+        default:
+            log.info("Inputed date [{}] is week day", date);
         }
         return false;
     }
 
     private boolean isHoliday(LocalDate day) {
         boolean result = false;
-        log.debug("Take a list of holidays from the database");
-        if (holidayDAO.findAllHolidays().isPresent()) {
-            result = holidayDAO.findAllHolidays().get().stream()
-                    .anyMatch(holiday -> holiday.getDate().isEqual(day));
-            log.info("Input day - {} is a holiday", day);
+        if (!holidayDAO.findAll().isEmpty()) {
+            result = holidayDAO.findAll().stream().anyMatch(holiday -> holiday.getDate().isEqual(day));
         }
         return result;
     }

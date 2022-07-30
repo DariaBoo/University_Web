@@ -3,6 +3,7 @@ package ua.foxminded.university.service.implementation;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,10 +28,11 @@ public class RoomServiceImpl implements RoomService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
+    @Cacheable("rooms")
     public List<Room> findAll() {
-        List<Room> resultList = roomDAO.findAll().orElseThrow(() -> new IllegalArgumentException("Error occured while searching all groups"));
-        log.debug("Return list of rooms - {}", resultList);
+        List<Room> resultList = roomDAO.findAll();
+        log.debug("Found all rooms, list size :: {}", resultList.size());
         return resultList;
     }
     
@@ -38,10 +40,10 @@ public class RoomServiceImpl implements RoomService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional
-    public List<Room> findSuitableRooms(int groupID) {
-        List<Room> resultList = roomDAO.findSuitableRooms(groupID).orElseThrow(() -> new IllegalArgumentException("Error occured searching suitable groups"));
-        log.debug("Return list of rooms - {}", resultList);
+    @Transactional(readOnly = true)
+    public List<Room> findSuitableRooms(int capacity) {
+        List<Room> resultList = roomDAO.findSuitableRooms(capacity).orElseThrow(() -> new IllegalArgumentException("Error occured searching suitable groups"));
+        log.debug("Found list of suitable rooms (count - {}) by capacity :: {}", resultList.size(), capacity);
         return resultList;
     }
 }

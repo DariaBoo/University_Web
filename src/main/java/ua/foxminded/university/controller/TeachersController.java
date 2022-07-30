@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import ua.foxminded.university.service.GroupService;
-import ua.foxminded.university.service.LessonService;
 import ua.foxminded.university.service.TeacherService;
+import ua.foxminded.university.service.entities.Teacher;
 
 @Controller
 @RequestMapping("/teachers")
@@ -19,8 +19,6 @@ public class TeachersController {
     private TeacherService teacherService;
     @Autowired
     private GroupService groupService;
-    @Autowired
-    private LessonService lessonService;
 
     @GetMapping
     public String listAllTeachers(Model model) {
@@ -30,10 +28,11 @@ public class TeachersController {
 
     @RequestMapping("/{id}")
     public String viewTeacherById(@PathVariable Integer id, Model model) {
-        model.addAttribute("teacher", teacherService.findByID(id));
+        Teacher teacher = teacherService.findById(id);
+        model.addAttribute("teacher", teacher);
         model.addAttribute("groups", groupService.findGroupsByTeacherId(id));
-        model.addAttribute("lessons", lessonService.findLessonsByTeacherId(id));
-        model.addAttribute("absentDays", teacherService.showTeacherAbsent(id));
+        model.addAttribute("lessons", teacher.getLessons());
+        model.addAttribute("absentDays", teacher.getAbsentPeriod());
         return "teachers/view";
     }
 }

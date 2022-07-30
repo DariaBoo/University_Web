@@ -7,9 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.LessonService;
-import ua.foxminded.university.service.TeacherService;
+import ua.foxminded.university.service.entities.Lesson;
 
 @Controller
 @RequestMapping("/lessons")
@@ -17,10 +16,6 @@ public class LessonsController {
     
     @Autowired
     private LessonService lessonService;
-    @Autowired
-    private TeacherService teacherService;
-    @Autowired
-    private GroupService groupService;
 
     @GetMapping()
     public String listAllLessons(Model model) {
@@ -30,9 +25,10 @@ public class LessonsController {
 
     @RequestMapping("/{id}")
     public String viewLessonById(@PathVariable Integer id, Model model) {
-        model.addAttribute("lesson", lessonService.findByID(id));
-        model.addAttribute("teachers", teacherService.findTeachersByLessonId(id));
-        model.addAttribute("groups", groupService.findGroupsByLessonId(id));
+        Lesson lesson = lessonService.findById(id);
+        model.addAttribute("lesson", lesson);
+        model.addAttribute("teachers", lesson.getTeachers());
+        model.addAttribute("groups", lesson.getGroups());
         return "lessons/view";
     }
 }

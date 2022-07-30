@@ -1,18 +1,17 @@
 package ua.foxminded.university.service.implementation;
 
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.LessonDAO;
-import ua.foxminded.university.dao.exception.DAOException;
+import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.LessonService;
 import ua.foxminded.university.service.entities.Lesson;
-import ua.foxminded.university.service.exception.ServiceException;
 
 /**
  * @version 1.0
@@ -32,15 +31,15 @@ public class LessonServiceImpl implements LessonService {
      */
     @Override
     @Transactional
-    public int addLesson(Lesson lesson) {  
-        int result = 0;
+    public boolean addLesson(Lesson lesson) {  
         try {     
-            result = lessonDAO.addLesson(lesson);
-        } catch (DAOException e) {
+            lessonDAO.save(lesson);
+            log.info("Save lesson with id :: {}", lesson.getId());
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getMessage(), e.getCause());
-            throw new ServiceException(e.getMessage());
+            throw new UniqueConstraintViolationException("Lesson with name [" + lesson.getName() + "] already exists!");
         }
-        return result;
+        return lessonDAO.existsById(lesson.getId());
     }
 
     /**
@@ -48,8 +47,10 @@ public class LessonServiceImpl implements LessonService {
      */
     @Override
     @Transactional
-    public boolean deleteLesson(int lessonID) {
-        return lessonDAO.deleteLesson(lessonID);
+    public boolean deleteLesson(int lessonId) {
+        lessonDAO.deleteById(lessonId);
+        log.info("Delete lesson with id :: {}", lessonId);
+        return !lessonDAO.existsById(lessonId);
     }
 
     /**
@@ -59,11 +60,11 @@ public class LessonServiceImpl implements LessonService {
     @Transactional
     public void updateLesson(Lesson lesson) {
         try {
-        log.debug("Update lesson - {}", lesson);
-        lessonDAO.updateLesson(lesson);
-        } catch (DAOException e) {
+        log.info("Update lesson with id :: {}", lesson.getId());
+        lessonDAO.save(lesson);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getMessage(), e.getCause());
-            throw new ServiceException(e.getMessage());
+            throw new UniqueConstraintViolationException("Lesson with name [" + lesson.getName() + "] already exists!");
         }
     }
 
@@ -71,10 +72,10 @@ public class LessonServiceImpl implements LessonService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional
-    public Lesson findByID(int lessonID) {
-        Lesson resultLesson = lessonDAO.findByID(lessonID).orElseThrow(() -> new IllegalArgumentException("Error occured while searching lesson by id"));
-        log.debug("Find lesson by id - {} and return lesson - {}", lessonID, resultLesson);
+    @Transactional(readOnly = true)
+    public Lesson findById(int lessonId) {
+        Lesson resultLesson = lessonDAO.findById(lessonId).orElseThrow(() -> new IllegalArgumentException("Error occured while searching lesson by id"));
+        log.debug("Found lesson by id :: {}", lessonId);
         return resultLesson;
     }
 
@@ -82,32 +83,11 @@ public class LessonServiceImpl implements LessonService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
+    @Cacheable("lessons")
     public List<Lesson> findAllLessons() {
-        List<Lesson> resultList = lessonDAO.findAllLessons().orElseThrow(() -> new IllegalArgumentException("Error occured while searching all lessons"));
-        log.debug("Take a list of lessons - {}", resultList);
+        List<Lesson> resultList = lessonDAO.findAll();
+        log.debug("Found all lessons, list size :: ", resultList.size());
         return resultList;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional
-    public Set<Lesson> findLessonsByTeacherId(int teacherID) {
-        Set<Lesson> resultSet = lessonDAO.findLessonsByTeacherId(teacherID).orElseThrow(() -> new IllegalArgumentException("Error occured while searching lessons by teacher id"));
-        log.debug("Find all lessons by teacher id - {} and return list of lessons - {}", teacherID, resultSet);
-        return resultSet;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional
-    public Set<Lesson> findLessonsByGroupId(int groupID) {
-        Set<Lesson> resultSet = lessonDAO.findLessonsByGroupId(groupID).orElseThrow(() -> new IllegalArgumentException("Error occured while searching lessons by group id"));
-        log.debug("Find all lessons by group id - {} and return list of lessons - {}", groupID, resultSet);
-        return resultSet;
     }
 }

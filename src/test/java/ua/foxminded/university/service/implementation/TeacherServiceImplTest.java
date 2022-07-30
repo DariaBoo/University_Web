@@ -2,25 +2,28 @@ package ua.foxminded.university.service.implementation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
-import ua.foxminded.university.config.HibernateConfigTest;
 import ua.foxminded.university.service.TeacherService;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.exception.ServiceException;
+import ua.foxminded.university.springboot.AppSpringBoot;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { HibernateConfigTest.class }, loader = AnnotationConfigContextLoader.class)
+@SpringBootTest(classes = AppSpringBoot.class)
+//@Sql({"/schema.sql", "/data.sql"})
+@ActiveProfiles("test")
 @Transactional
 class TeacherServiceImplTest {
     
@@ -44,26 +47,17 @@ class TeacherServiceImplTest {
                 .position("test").password("555").build();
         assertEquals(11, teacherService.addTeacher(teacher));
     }
- 
-    @Test
-    void changePassword_shouldReturnResult_whenInputCorrecrData() {
-        assertEquals(1, teacherService.changePassword(1, "5555"));
-    }
     
     @Test
     void updateTeacher_shouldReturnResult_whenInputCorrectData() {
-        teacher = Teacher.builder().id(1).firstName("test").lastName("test").position("test").departmentID(1).password("555").build();
-        int id = teacherService.addTeacher(teacher);
-        teacher.setFirstName("test2");
-        teacherService.updateTeacher(teacher);
-        assertEquals("test2", teacherService.findByID(id).getFirstName());
+        assertTrue(teacherService.addTeacher(teacher));
     }
     
     @Test
     void updateTeacher_shouldThrowServiceExceptionMessage_whenInputIncorrectTeacherData() {
-        teacher = Teacher.builder().id(1).firstName("test").lastName("test").position("test").departmentID(1).password("555").build();
+        teacher = Teacher.builder().id(1).firstName("test").lastName("test").position("test").departmentId(1).password("555").build();
         teacherService.addTeacher(teacher);
-        Teacher teacher2 = Teacher.builder().id(1).firstName("test").lastName("test").position("test").departmentID(1).password("555").build();
+        Teacher teacher2 = Teacher.builder().id(1).firstName("test").lastName("test").position("test").departmentId(1).password("555").build();
         exception = assertThrows(ServiceException.class, () -> teacherService.addTeacher(teacher2));
         expectedMessage = "Teacher with name test, surname test already exists!";
         actualMessage = exception.getMessage();

@@ -20,7 +20,7 @@ import lombok.Setter;
 @Getter 
 @Setter 
 @NoArgsConstructor
-@Table(name = "timetable.holidays")
+@Table(name = "holidays")
 @EqualsAndHashCode
 public class Holiday {
 

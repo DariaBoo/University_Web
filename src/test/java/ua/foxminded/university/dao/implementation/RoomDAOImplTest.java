@@ -1,54 +1,32 @@
 package ua.foxminded.university.dao.implementation;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.transaction.annotation.Transactional;
 
-import ua.foxminded.university.config.HibernateConfigTest;
 import ua.foxminded.university.dao.RoomDAO;
-import ua.foxminded.university.service.entities.Room;
+import ua.foxminded.university.springboot.AppSpringBoot;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { HibernateConfigTest.class }, loader = AnnotationConfigContextLoader.class)
+@SpringBootTest(classes = AppSpringBoot.class)
+//@Sql({"/schema.sql", "/data.sql"})
+@ActiveProfiles("test")
 class RoomDAOImplTest {
     
     @Autowired
     private RoomDAO roomDAO;
     
-    @BeforeAll
-    void init() {
-        new EmbeddedDatabaseBuilder().setName("test").setType(EmbeddedDatabaseType.H2)
-        .addScript("classpath:tablesTest.sql").build();
-    }
-    
-    @Test
-    @Transactional
-    void findAll_shouldReturnCountOfRooms() {
-        assertEquals(10, roomDAO.findAll().get().stream().count());
-    }
-    
-    @Test
-    @Transactional
-    void findAll_shouldReturnFirstRoom() {
-        Room room = new Room();
-        room.setNumber(101);
-        room.setCapacity(21);
-        System.out.println(room.hashCode());
-        Room room2 = roomDAO.findAll().get().stream().limit(1).findFirst().get();
-        System.out.println(room2.getNumber() + " " + room2.getCapacity() + " " + room2.getTimetable());
-        System.out.println(room2.hashCode());
-        assertEquals(room, roomDAO.findAll().get().stream().limit(1).findFirst().get());
-    }
+    @Test 
+    void findSuitableRoom() {
+        System.out.println(roomDAO.findAll());
+        assertEquals(10, roomDAO.findSuitableRooms(20).get().size());
+    }   
 }

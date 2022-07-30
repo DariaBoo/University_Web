@@ -310,7 +310,7 @@ h3 {
 						<summary>Groups: </summary>
 						<ul th:each="group : ${groups}">
 							<li><a th:href="@{/groups/} + ${group.getId()}"
-								th:text="${group.getName()} + ' ' + ${group.getDepartmentID()}"></a></li>
+								th:text="${group.getName()} + ' ' + ${group.getDepartmentId()}"></a></li>
 						</ul>
 					</details>
 				</div>

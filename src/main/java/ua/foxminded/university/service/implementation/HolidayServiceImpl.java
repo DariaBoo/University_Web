@@ -3,15 +3,15 @@ package ua.foxminded.university.service.implementation;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.HolidayDAO;
-import ua.foxminded.university.dao.exception.DAOException;
+import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.HolidayService;
 import ua.foxminded.university.service.entities.Holiday;
-import ua.foxminded.university.service.exception.ServiceException;
 
 /**
  * @version 1.0
@@ -29,10 +29,11 @@ public class HolidayServiceImpl implements HolidayService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
+    @Cacheable("holidays")
     public List<Holiday> findAllHolidays() {
-        List<Holiday> resultList = holidayDAO.findAllHolidays().orElseThrow(() -> new IllegalArgumentException("Error occured"));
-        log.debug("Take list of holidays - {}, otherwise return IllegalArgumentException", resultList);
+        List<Holiday> resultList = holidayDAO.findAll();
+        log.debug("Found list of holidays, list size :: ", resultList.size());
         return resultList;
     }
 
@@ -42,16 +43,15 @@ public class HolidayServiceImpl implements HolidayService {
      */
     @Override
     @Transactional
-    public int addHoliday(Holiday holiday) {
-        int result = 0;
+    public boolean addHoliday(Holiday holiday) {
         try {
-            result = holidayDAO.addHoliday(holiday);
-            log.debug("Add a new holiday and return an id - {}", result);
-        } catch(DAOException e) {
+            holidayDAO.save(holiday);
+            log.debug("Add a new holiday");
+        } catch(org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getMessage(), e.getCause());
-            throw new ServiceException(e.getMessage());
+            throw new UniqueConstraintViolationException("Holiday with date :: " + holiday.getDate() + " already exists!");
         }
-        return result;
+        return holidayDAO.existsById(holiday.getId());
     }
 
     /**
@@ -59,7 +59,8 @@ public class HolidayServiceImpl implements HolidayService {
      */
     @Override
     @Transactional
-    public boolean deleteHoliday(int holidayID) {
-        return holidayDAO.deleteHoliday(holidayID);
+    public boolean deleteHoliday(int holidayId) {
+        holidayDAO.deleteById(holidayId);
+        return !holidayDAO.existsById(holidayId);
     }
 }

@@ -228,7 +228,7 @@ div.hidden {
 				<p th:text="${message}">success message</p>
 			</div>
 
-			<div class="div_timetable" th:if="${showTimetable}">
+			<div class="div_timetable" th:if="${timetables}">
 				<p id="date" th:text="'Timetable for ' + ${day}" />
 				<table class="timetable">
 					<thead>
@@ -242,7 +242,7 @@ div.hidden {
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="timetable : ${showTimetable}">
+						<tr th:each="timetable : ${timetables}">
 							<td th:text="${timetable.getDate()}" />
 							<td th:text="${timetable.getLessonTimePeriod()}" />
 							<td th:text="${timetable.getGroup().getName()}" />

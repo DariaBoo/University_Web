@@ -1,18 +1,20 @@
 package ua.foxminded.university.service.implementation;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.GroupDAO;
-import ua.foxminded.university.dao.exception.DAOException;
+import ua.foxminded.university.dao.LessonDAO;
+import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.entities.Group;
-import ua.foxminded.university.service.exception.ServiceException;
+import ua.foxminded.university.service.entities.Lesson;
 
 /**
  * @version 1.0
@@ -25,6 +27,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private GroupDAO groupDAO;
+    @Autowired
+    private LessonDAO lessonDAO;
 
     int result = 0;
 
@@ -33,91 +37,15 @@ public class GroupServiceImpl implements GroupService {
      */
     @Override
     @Transactional
-    public int addGroup(Group group) {
+    public boolean addGroup(Group group) {
         try {
-            result = groupDAO.addGroup(group);
-            log.debug("Add a Group - {} and take an id - {}", group, result);
-        } catch (DAOException e) {
+            groupDAO.save(group);
+            log.info("Add group");
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getMessage(), e.getCause());
-            throw new ServiceException(e.getMessage());
+            throw new UniqueConstraintViolationException("Group with name - [" + group.getName() + "] already exists");
         }
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional
-    public boolean deleteGroup(int groupID) {
-        return groupDAO.deleteGroup(groupID);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional
-    public void assignLessonToGroup(int groupID, int lessonID) {
-        groupDAO.assignLessonToGroup(groupID, lessonID);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional
-    public void deleteLessonFromGroup(int groupID, int lessonID) {
-        groupDAO.deleteLessonFromGroup(groupID, lessonID);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional
-    public List<Group> findAllGroups() {
-        List<Group> resultList = groupDAO.findAllGroups()
-                .orElseThrow(() -> new IllegalArgumentException("Error occured while searching all groups"));
-        log.debug("Find all groups and return a list of groups - {}", resultList);
-        return resultList;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional
-    public Group findById(int groupID) {
-        Group resultGroup = groupDAO.findById(groupID).orElseThrow(
-                () -> new IllegalArgumentException("Error occured while searching group by id: " + groupID));
-        log.debug("Find group by id - {} and return group - {}", groupID, resultGroup);
-        return resultGroup;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional
-    public Set<Group> findGroupsByLessonId(int lessonID) {
-        Set<Group> resultSet = groupDAO.findGroupsByLessonId(lessonID).orElseThrow(
-                () -> new IllegalArgumentException("Error occured while searching group by lesson id " + lessonID));
-        log.debug("Find groups by lesson id - {} and return a list of groups - {}", lessonID, resultSet);
-        return resultSet;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional
-    public List<Group> findGroupsByTeacherId(int teacherID) {
-        List<Group> resultList = groupDAO.findGroupsByTeacherId(teacherID)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Error occured while searching group by teacher id - {} " + teacherID));
-        log.debug("Find groups by teacher id - {} and return a list of groups - {}", teacherID, resultList);
-        return resultList;
+        return groupDAO.existsById(group.getId());
     }
 
     /**
@@ -127,11 +55,96 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public void updateGroup(Group group) {
         try {
-            groupDAO.updateGroup(group);
-            log.debug("Update the group - {}", group);
-        } catch (DAOException e) {
+            groupDAO.save(group);
+            log.info("Update group with id :: {}", group.getId());
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getMessage(), e.getCause());
-            throw new ServiceException(e.getMessage());
+            throw new UniqueConstraintViolationException("Group with name - [" + group.getName() + "] already exists");
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public boolean deleteGroup(int groupId) {
+        groupDAO.deleteById(groupId);
+        return !groupDAO.existsById(groupId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public boolean assignLessonToGroup(int groupId, int lessonId) {
+        Optional<Group> group = groupDAO.findById(groupId);
+        Optional<Lesson> lesson = lessonDAO.findById(lessonId);
+        if (group.isPresent() && lesson.isPresent()) {
+            group.get().getLessons().add(lesson.get());
+            groupDAO.save(group.get());
+            if (group.get().getLessons().contains(lesson.get())) {
+                log.info("Lesson with id :: {} was added to group with id :: {}", lessonId, groupId);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public boolean deleteLessonFromGroup(int groupId, int lessonId) {
+        Optional<Group> group = groupDAO.findById(groupId);
+        Optional<Lesson> lesson = lessonDAO.findById(lessonId);
+        if (group.isPresent() && lesson.isPresent()) {
+            group.get().getLessons().remove(lesson.get());
+            groupDAO.save(group.get());
+            if (!group.get().getLessons().contains(lesson.get())) {
+                log.info("Lesson with id :: {} was removed from group with id :: {}", lessonId, groupId);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    @Cacheable("groups")
+    public List<Group> findAllGroups() {
+        List<Group> resultList = groupDAO.findAll();
+        log.debug("Found all groups, list size :: {}", resultList.size());
+        return resultList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Group findById(int groupId) {
+        Group resultGroup = groupDAO.findById(groupId).orElseThrow(
+                () -> new IllegalArgumentException("Error occured while searching group by id: " + groupId));
+        log.debug("Found group with id :: {}", groupId);
+        return resultGroup;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<Group> findGroupsByTeacherId(int teacherId) {
+        List<Group> resultList = groupDAO.findByLessons_Teachers_Id(teacherId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Error occured while searching group by teacher id - {} " + teacherId));
+        log.debug("Found groups (count - {}) by teacher id - {}", resultList.size(), teacherId);
+        return resultList;
     }
 }

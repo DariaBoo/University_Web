@@ -7,20 +7,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
-import ua.foxminded.university.config.HibernateConfigTest;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.exception.ServiceException;
+import ua.foxminded.university.springboot.AppSpringBoot;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { HibernateConfigTest.class }, loader = AnnotationConfigContextLoader.class)
+@SpringBootTest(classes = AppSpringBoot.class)
+//@Sql({"/schema.sql", "/data.sql"})
+@ActiveProfiles("test")
 @Transactional
 class GroupServiceImplTest {
     
@@ -40,14 +42,14 @@ class GroupServiceImplTest {
 
     @Test
     void addGroup_shouldReturnResult_whenInputCorrectGroupName() throws ServiceException {
-        group = Group.builder().name("AA-00").departmentID(1).build();
+        group = Group.builder().name("AA-00").departmentId(1).build();
         assertEquals(7, groupService.addGroup(group));
     }
     @Test
     void addGroup_shouldThrowServiceExceptionMessage_whenInputNotUniqueName() {
-        group = Group.builder().name("AA-00").departmentID(1).build();
+        group = Group.builder().name("AA-00").departmentId(1).build();
         groupService.addGroup(group);
-        Group group2 = Group.builder().name("AA-00").departmentID(1).build();
+        Group group2 = Group.builder().name("AA-00").departmentId(1).build();
         exception = assertThrows(ServiceException.class, () -> groupService.addGroup(group2));
         expectedMessage = "Group with name AA-00 already exists!";
         actualMessage = exception.getMessage();

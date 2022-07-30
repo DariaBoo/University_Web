@@ -1,7 +1,6 @@
 package ua.foxminded.university.service.entities;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,9 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
-import javax.persistence.NamedEntityGraphs;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -26,17 +22,17 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
-@NamedEntityGraphs({ @NamedEntityGraph(name = "graph.groupLessons", attributeNodes = @NamedAttributeNode("lessons")),
-        @NamedEntityGraph(name = "graph.groupStudents", attributeNodes = @NamedAttributeNode("students")) })
+@ToString
 @Entity
 @Getter
-@Setter 
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(exclude = {"students", "lessons", "timetable"})
-@Table(name = "timetable.groups")
+@EqualsAndHashCode(exclude = { "students", "lessons", "timetable" })
+@Table(name = "groups")
 public class Group {
 
     @Id
@@ -48,18 +44,20 @@ public class Group {
     private String name;
 
     @Column(name = "department_id")
-    private int departmentID;
+    private int departmentId;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "group")
-    private Set<Student> students = new HashSet<>();
+    private List<Student> students;
 
+    @ToString.Exclude
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinTable(name = "timetable.groups_lessons", joinColumns = {
-            @JoinColumn(name = "group_id") }, inverseJoinColumns = {
-                    @JoinColumn(name = "lesson_id") }, uniqueConstraints = @UniqueConstraint(columnNames = { "group_id",
-                            "lesson_id" }))
-    private Set<Lesson> lessons = new HashSet<>();
+    @JoinTable(name = "groups_lessons", joinColumns = { @JoinColumn(name = "group_id") }, inverseJoinColumns = {
+            @JoinColumn(name = "lesson_id") }, uniqueConstraints = @UniqueConstraint(columnNames = { "group_id",
+                    "lesson_id" }))
+    private List<Lesson> lessons;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, targetEntity = Timetable.class)
-    private Set<Timetable> timetable;
+    private List<Timetable> timetable;
 }

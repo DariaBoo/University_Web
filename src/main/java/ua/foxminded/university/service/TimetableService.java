@@ -21,23 +21,23 @@ public interface TimetableService {
      * @param timetable 
      * @return count of added rows otherwise 0
      */
-    int scheduleTimetable(Timetable timetable);
+    Timetable scheduleTimetable(Timetable timetable);
 
     /**
      * Returns list of DayTimetable for all groups and teachers by period of dates
      * 
      * @param day
-     * @return list of dayTimetable
+     * @return list of dayTimetables
      */
     List<Timetable> showTimetable(Day day);
     
     /**
      * Deletes scheduled timetable by timetable id
      * 
-     * @param timetableID
-     * @return true is deleted otherwise false
+     * @param timetableId
+     * @return true or false
      */
-    boolean deleteTimetable(int timetableID);
+    boolean deleteTimetable(int timetableId);
 
     /**
      * Returns list of Optional DayTimetable by date and teacher

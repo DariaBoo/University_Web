@@ -16,26 +16,26 @@ public interface StudentService {
      * otherwise returns 0
      * 
      * @param student
-     * @return 1 or 0
+     * @return is added true, otherwise - false
      */
-    int addStudent(Student student);
+    boolean addStudent(Student student);
 
     /**
      * Delete existed student from the timetable.students, if student was deleted
      * returns 1 otherwise returns 0
      * 
-     * @param studentID
-     * @return true or false
+     * @param studentId
+     * @return is deleted true, otherwise - false
      */
-    boolean deleteStudent(int studentID);
+    boolean deleteStudent(int studentId);
 
     /**
      * The method finds a student by student id
      * 
-     * @param studentID existed student id
-     * @return optional student
+     * @param studentId existed student id
+     * @return student
      */
-    Student findByID(int studentID);
+    Student findById(int studentId);
 
     /**
      * The method finds all students from the timetable.students
@@ -45,26 +45,17 @@ public interface StudentService {
     List<Student> findAllStudents();
 
     /**
-     * The method finds students by group id
-     * 
-     * @return optional list of students
-     */
-    List<Student> findStudentsByGroup(int groupID);
-
-    /**
      * The method changes password by student id
      * 
-     * @param studentID
+     * @param studentId
      * @param newPassword
-     * @return true or false
      */
-    boolean changePassword(int studentID, String newPassword);
+    void changePassword(int studentId, String newPassword);
 
     /**
      * The method updates student name and surname
      * 
      * @param student
-     * @return count of updated rows otherwise 0
      */
     void updateStudent(Student student);
 }

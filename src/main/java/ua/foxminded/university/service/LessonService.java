@@ -1,7 +1,6 @@
 package ua.foxminded.university.service;
 
 import java.util.List;
-import java.util.Set;
 
 import ua.foxminded.university.service.entities.Lesson;
 
@@ -14,47 +13,34 @@ public interface LessonService {
      * The method adds lesson to the timetable.lessons table
      * 
      * @param lesson
-     * @return Lesson id
+     * @return true or false
      */
-    int addLesson(Lesson lesson);
+    boolean addLesson(Lesson lesson);
 
     /**
      * The method lets update lesson's name and description and returns count of updated rows otherwise zero
      * @param lesson
-     * @return count of updated rows otherwise zero
      */
     void updateLesson(Lesson lesson) ;
     
     /**
      * Deletes lesson from the timetable.lessons
      * 
-     * @param lessonID
+     * @param lessonId
      * @return true or false
      */
-    boolean deleteLesson(int lessonID);
+    boolean deleteLesson(int lessonId);
     
     /**
      * The method finds a lesson by id and returns optional lesson
-     * @param lessonID
-     * @return optional lesson
+     * @param lessonId
+     * @return lesson
      */
-    Lesson findByID(int lessonID);
+    Lesson findById(int lessonId);
 
     /**
      * The method finds all lessons and returns optional list of lessons
-     * @return optional list of lessons
+     * @return  list of lessons
      */
     List<Lesson> findAllLessons();
-    
-    /**
-     * The method finds teachers lessons by teacher id
-     * @return list of lessons
-     */
-    Set<Lesson> findLessonsByTeacherId(int teacherID);
-    
-    /**
-     * The method finds groups lessons by group id
-     * @return list of lessons
-     */
-    Set<Lesson> findLessonsByGroupId(int groupID);
 }
