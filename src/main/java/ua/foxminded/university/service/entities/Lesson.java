@@ -14,8 +14,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.UniqueElements;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -49,17 +47,14 @@ public class Lesson {
     private String description;
     
     @ToString.Exclude
-    @UniqueElements
     @ManyToMany(mappedBy = "lessons")
     private List<Teacher> teachers;
     
     @ToString.Exclude
-    @UniqueElements
     @ManyToMany(mappedBy = "lessons")
     private List<Group> groups;
     
     @ToString.Exclude
-    @UniqueElements
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, targetEntity = Timetable.class)
     private List<Timetable> timetable;
 }

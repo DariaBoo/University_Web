@@ -19,7 +19,6 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -58,7 +57,6 @@ public class Teacher extends User {
     private List<Day> absentPeriod;
     
     @ToString.Exclude
-    @UniqueElements
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE) 
     @JoinTable(
             name = "lessons_teachers", 
@@ -68,7 +66,6 @@ public class Teacher extends User {
     private List<Lesson> lessons;
     
     @ToString.Exclude
-    @UniqueElements
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, targetEntity = Timetable.class)
     private List<Timetable> timetable;
 }
