@@ -5,6 +5,10 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -54,7 +58,7 @@ public class TimetableServiceImpl implements TimetableService {
     public Timetable scheduleTimetable(Timetable timetable) {
         LocalDate day = timetable.getDate();
         Timetable savedTimetable = new Timetable();
-        Teacher teacher = teacherService.findById(timetable.getTeacher().getId());
+        int teacherId = timetable.getTeacher().getId();
         if (isWeekend(day)) {
             log.error("Can't schedule timetable for weekend. Attempt to schedule {}.", day);
             throw new ServiceException("Can't schedule timetable for weekend! Attempt to schedule (" + day + ")");
@@ -63,17 +67,27 @@ public class TimetableServiceImpl implements TimetableService {
             log.error("Can't schedule timetable for holiday. Attempt to schedule {}", day);
             throw new ServiceException("Can't schedule timetable for holiday! Attempt to schedule (" + day + ")");
         }
-        if (teacherService.checkIsAbsent(timetable.getDate(), teacher)) {
+        if (teacherId != 0 && teacherService.checkIsAbsent(timetable.getDate(), teacherId)) {
             log.error("Teacher [id::{}] is absent [date::{}]", timetable.getTeacher().getId(), timetable.getDate());
             throw new NoSuchElementException("Teacher [id::" + timetable.getTeacher().getId() + "] is absent [date::"
                     + timetable.getDate() + "]. Try again.");
         }
         try {
+            if(timetable.getGroup().getId() != 0) {
             savedTimetable = timetableDAO.saveAndFlush(timetable);
             log.debug("Timetable [date::{}, time::{}] is scheduled", savedTimetable.getDate(),
                     savedTimetable.getLessonTimePeriod());
+            }
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             throwCorrectException(e, timetable);
+        } catch (ConstraintViolationException e) {
+            Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+            for (ConstraintViolation<?> violation : violations) {
+                if (violation != null) {
+                    log.error(violation.getMessageTemplate());
+                    throw new ServiceException(violation.getMessageTemplate());
+                }
+            }
         }
         return savedTimetable;
     }

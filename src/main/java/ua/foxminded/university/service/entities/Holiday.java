@@ -8,6 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -29,10 +32,13 @@ public class Holiday {
     @Column(name = "id")
     private int id;
 
+    @NotNull(message = "Date may not be null.")
     @Column(name = "date", unique = true)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
     
-    @Column(name = "holiday", length = 20)
+    @NotBlank(message = "Holiday name may not be blank.")
+    @Size(max = 20, message = "Holiday name must be equals or less then 20 characters long")
+    @Column(name = "holiday")
     private String name;
 }

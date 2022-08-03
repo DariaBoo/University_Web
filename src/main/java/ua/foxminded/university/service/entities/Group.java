@@ -15,6 +15,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,7 +43,10 @@ public class Group {
     @Column(name = "group_id")
     private int id;
 
-    @Column(name = "group_name", length = 5, unique = true)
+    @NotBlank(message = "Group name may not be blank")
+    @Size(max = 5, message = "Group name must be equals or less than 5 characters long")
+    @Pattern(regexp = "(\\S+)-(\\d+)", message = "Group name should contain 2 characters, hyphen, 2 numbers")
+    @Column(name = "group_name", unique = true)
     private String name;
 
     @Column(name = "department_id")

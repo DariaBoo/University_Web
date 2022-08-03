@@ -12,8 +12,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -35,7 +40,14 @@ import lombok.experimental.SuperBuilder;
 @DynamicUpdate
 public class Teacher extends User {
 
-    @Column(name = "position", length = 30, nullable = false)
+    @Generated(GenerationTime.INSERT)
+    @ColumnDefault(value = "'555'")
+    @Column(name = "password", length = 10)
+    private String password;
+    
+    @NotBlank(message = "Position may not be blank")
+    @Size(max = 30, message = "Position must be equals or less than 30 characters long")
+    @Column(name = "position")
     private String position;
     
     @Column(name = "department_id")

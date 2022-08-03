@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,9 +38,11 @@ public class Lesson {
     @Column(name = "lesson_id")
     private int id;
 
-    @Column(name = "lesson_name", length = 20, unique = true)
+    @NotBlank(message = "Name may not be blank")
+    @Size(max = 20, message = "Lesson name must be equals or less than 20 characters long")
+    @Column(name = "lesson_name", unique = true)
     private String name;
-
+    
     @Column(name = "description", length = 100)
     private String description;
     

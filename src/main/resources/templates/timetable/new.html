@@ -194,9 +194,10 @@ div.hidden {
 					</div>
 					<br>
 					<div class="form_r">
-						<label for="teacher">Select Teacher: </label> <select
+						<label for="teacher">Select Teacher: </label> 
+						<select
 							th:field="*{teacher.id}" th:value="${teacher.id}" required>
-							<option value="0">Teacher</option>
+							<option value="" th:value="0">Teacher</option>
 							<option th:each="teacher : ${teachers}"
 								th:value="${teacher.getId()}"
 								th:text="${teacher.getFirstName() + ' ' + teacher.getLastName()}">Teachers</option>
@@ -206,7 +207,8 @@ div.hidden {
 					<div class="form_r" th:switch="${#lists.size(rooms)}">
 						<span th:case="'0'">No Suitable Rooms For This Group!</span>
 						<div th:case="*">
-							<label for="room">Select Room: </label> <select
+							<label for="room">Select Room: </label> 
+							<select
 								th:field="*{room.number}" th:value="${room.number}" required>
 								<option value="0">Room</option>
 								<option th:each="room : ${rooms}" th:value="${room.getNumber()}"

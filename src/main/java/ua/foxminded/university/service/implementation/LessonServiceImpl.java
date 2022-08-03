@@ -1,6 +1,10 @@
 package ua.foxminded.university.service.implementation;
 
 import java.util.List;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -12,6 +16,7 @@ import ua.foxminded.university.dao.LessonDAO;
 import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.LessonService;
 import ua.foxminded.university.service.entities.Lesson;
+import ua.foxminded.university.service.exception.ServiceException;
 
 /**
  * @version 1.0
@@ -21,8 +26,7 @@ import ua.foxminded.university.service.entities.Lesson;
 @Slf4j
 @Service
 public class LessonServiceImpl implements LessonService {
-     
-    
+
     @Autowired
     private LessonDAO lessonDAO;
 
@@ -31,13 +35,21 @@ public class LessonServiceImpl implements LessonService {
      */
     @Override
     @Transactional
-    public boolean addLesson(Lesson lesson) {  
-        try {     
+    public boolean addLesson(Lesson lesson) {
+        try {
             lessonDAO.save(lesson);
             log.info("Save lesson with id :: {}", lesson.getId());
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getMessage(), e.getCause());
             throw new UniqueConstraintViolationException("Lesson with name [" + lesson.getName() + "] already exists!");
+        } catch (ConstraintViolationException e) {
+            Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+            for (ConstraintViolation<?> violation : violations) {
+                if (violation != null) {
+                    log.error(violation.getMessageTemplate());
+                    throw new ServiceException(violation.getMessageTemplate());
+                }
+            }
         }
         return lessonDAO.existsById(lesson.getId());
     }
@@ -60,8 +72,8 @@ public class LessonServiceImpl implements LessonService {
     @Transactional
     public void updateLesson(Lesson lesson) {
         try {
-        log.info("Update lesson with id :: {}", lesson.getId());
-        lessonDAO.save(lesson);
+            log.info("Update lesson with id :: {}", lesson.getId());
+            lessonDAO.save(lesson);
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getMessage(), e.getCause());
             throw new UniqueConstraintViolationException("Lesson with name [" + lesson.getName() + "] already exists!");
@@ -74,7 +86,8 @@ public class LessonServiceImpl implements LessonService {
     @Override
     @Transactional(readOnly = true)
     public Lesson findById(int lessonId) {
-        Lesson resultLesson = lessonDAO.findById(lessonId).orElseThrow(() -> new IllegalArgumentException("Error occured while searching lesson by id"));
+        Lesson resultLesson = lessonDAO.findById(lessonId)
+                .orElseThrow(() -> new IllegalArgumentException("Error occured while searching lesson by id"));
         log.debug("Found lesson by id :: {}", lessonId);
         return resultLesson;
     }

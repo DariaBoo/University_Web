@@ -3,7 +3,11 @@ package ua.foxminded.university.service.implementation;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,6 +22,7 @@ import ua.foxminded.university.service.TeacherService;
 import ua.foxminded.university.service.entities.Day;
 import ua.foxminded.university.service.entities.Lesson;
 import ua.foxminded.university.service.entities.Teacher;
+import ua.foxminded.university.service.exception.ServiceException;
 
 /**
  * @version 1.0
@@ -48,8 +53,16 @@ public class TeacherServiceImpl implements TeacherService {
             log.info("Save teacher with id :: {}", teacher.getId());
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getMessage(), e.getCause());
-            throw new UniqueConstraintViolationException("Teacher with first name [" + teacher.getFirstName() + "] and last name ["
-                    + teacher.getLastName() + "] already exists!");
+            throw new UniqueConstraintViolationException("Teacher with first name [" + teacher.getFirstName()
+                    + "] and last name [" + teacher.getLastName() + "] already exists!");
+        } catch (ConstraintViolationException e) {
+            Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+            for (ConstraintViolation<?> violation : violations) {
+                if (violation != null) {
+                    log.error(violation.getMessageTemplate());
+                    throw new ServiceException(violation.getMessageTemplate());
+                }
+            }
         }
         return teacherDAO.existsById(teacher.getId());
     }
@@ -65,14 +78,23 @@ public class TeacherServiceImpl implements TeacherService {
             log.info("Update teacher with id :: {}", teacher.getId());
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getMessage(), e.getCause());
-            throw new UniqueConstraintViolationException("Teacher with first name [" + teacher.getFirstName() + "] and last name ["
-                    + teacher.getLastName() + "] already exists!");
+            throw new UniqueConstraintViolationException("Teacher with first name [" + teacher.getFirstName()
+                    + "] and last name [" + teacher.getLastName() + "] already exists!");
+        } catch (ConstraintViolationException e) {
+            Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+            for (ConstraintViolation<?> violation : violations) {
+                if (violation != null) {
+                    log.error(violation.getMessageTemplate());
+                    throw new ServiceException(violation.getMessageTemplate());
+                }
+            }
         }
     }
 
     /**
      * {@inheritDoc}
-     * @return 
+     * 
+     * @return
      */
     @Override
     @Transactional
@@ -179,22 +201,26 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     @Transactional
     public void changePassword(int teacherId, String newPassword) {
-        Teacher teacher = findById(teacherId);        
+        Teacher teacher = findById(teacherId);
         teacher.setPassword(newPassword);
         teacherDAO.save(teacher);
         log.debug("Password changed. Teacher id :: {}", teacherId);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    @Transactional()    
-    public boolean checkIsAbsent(LocalDate date, Teacher teacher) {
-        Predicate<Day> isBefore = day ->  day.getDateOne().minusDays(1).isBefore(date);
-        Predicate<Day> isAfter = day ->  day.getDateTwo().plusDays(1).isAfter(date);
-        boolean isAbsent = teacher.getAbsentPeriod().stream().anyMatch(isBefore.and(isAfter));
-        log.info("Check is teacher [id::{}] absent [date::{}]", teacher.getId(), date);
-        return isAbsent;
+    @Transactional()
+    public boolean checkIsAbsent(LocalDate date, int teacherId) {
+//        boolean isAbsent = true;
+//        if (teacherId != 0) {
+            Teacher teacher = findById(teacherId);
+            Predicate<Day> isBefore = day -> day.getDateOne().minusDays(1).isBefore(date);
+            Predicate<Day> isAfter = day -> day.getDateTwo().plusDays(1).isAfter(date);
+            boolean isAbsent = teacher.getAbsentPeriod().stream().anyMatch(isBefore.and(isAfter));
+            log.info("Check if teacher [id::{}] is absent [date::{}] - {}", teacher.getId(), date, isAbsent);
+//        }
+            return isAbsent;
     }
 }

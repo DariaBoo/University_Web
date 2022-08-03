@@ -1,6 +1,10 @@
 package ua.foxminded.university.service.implementation;
 
 import java.util.List;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -12,6 +16,7 @@ import ua.foxminded.university.dao.StudentDAO;
 import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.StudentService;
 import ua.foxminded.university.service.entities.Student;
+import ua.foxminded.university.service.exception.ServiceException;
 
 /**
  * @version 1.0
@@ -35,11 +40,20 @@ public class StudentServiceImpl implements StudentService {
     public boolean addStudent(Student student) {
         try {
             studentDAO.save(student);
-            log.info("Add new student");
+            log.info("Add new student with id::{}", student.getId());
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            log.error(e.getMessage(), e.getCause());
-            throw new UniqueConstraintViolationException("Student with first name - [" + student.getFirstName() + "], last name - ["
-                    + student.getLastName() + "] and id card - [" + student.getIdCard() + "] already exists!");
+            log.error(e.getLocalizedMessage(), e.getCause());
+            throw new UniqueConstraintViolationException(
+                    "Student with first name - [" + student.getFirstName() + "], last name - [" + student.getLastName()
+                            + "] and id card - [" + student.getIdCard() + "] already exists!");
+        } catch (ConstraintViolationException e) {
+            Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+            for (ConstraintViolation<?> violation : violations) {
+                if (violation != null) {
+                    log.error(violation.getMessageTemplate());
+                    throw new ServiceException(violation.getMessageTemplate());
+                }
+            }
         }
         return studentDAO.existsById(student.getId());
     }
@@ -55,8 +69,17 @@ public class StudentServiceImpl implements StudentService {
             log.info("Update student with id :: {}", student.getId());
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getMessage(), e.getCause());
-            throw new UniqueConstraintViolationException("Student with first name - [" + student.getFirstName() + "], last name - ["
-                    + student.getLastName() + "] and id card - [" + student.getIdCard() + "] already exists!");
+            throw new UniqueConstraintViolationException(
+                    "Student with first name - [" + student.getFirstName() + "], last name - [" + student.getLastName()
+                            + "] and id card - [" + student.getIdCard() + "] already exists!");
+        } catch (ConstraintViolationException e) {
+            Set<ConstraintViolation<?>> violations = ((ConstraintViolationException) e.getCause()).getConstraintViolations();
+            for (ConstraintViolation<?> violation : violations) {
+                if (violation != null) {
+                    log.error(violation.getMessageTemplate());
+                    throw new ServiceException(violation.getMessageTemplate());
+                }
+            }
         }
     }
 

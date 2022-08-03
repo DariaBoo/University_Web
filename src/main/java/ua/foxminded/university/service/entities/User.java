@@ -5,6 +5,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,10 +22,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private int id;
-    @Column(name = "first_name", length = 30)
+    
+    @NotBlank(message = "First name may not be blank")
+    @Size(max = 30)
+    @Column(name = "first_name")
     private String firstName;
-    @Column(name = "last_name", length = 30)
+    
+    @NotBlank(message = "Last name may not be blank")
+    @Size(max = 30)
+    @Column(name = "last_name")
     private String lastName;
-    @Column(name = "password", length = 10)
-    private String password;
 }
