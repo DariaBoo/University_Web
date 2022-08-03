@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -26,8 +27,8 @@ import lombok.ToString;
 @Entity
 @Getter 
 @Setter 
-@RequiredArgsConstructor
 @NoArgsConstructor
+@RequiredArgsConstructor
 @EqualsAndHashCode(exclude = {"teacher"})
 @Table(name = "teacherabsent", uniqueConstraints = { @UniqueConstraint(name = "unique_dates", columnNames = {"teacher_id", "date_start", "date_end"})})
 public class Day {
@@ -37,11 +38,13 @@ public class Day {
     private int id;
     
     @NonNull
+    @NotNull(message = "Date may not be null")
     @Column(name = "date_start")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOne;
 
     @NonNull
+    @NotNull(message = "Date may not be null")
     @Column(name = "date_end")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateTwo;

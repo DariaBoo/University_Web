@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.HolidayService;
 import ua.foxminded.university.service.entities.Holiday;
 import ua.foxminded.university.service.exception.ServiceException;
@@ -57,7 +58,7 @@ public class HolidaysController {
             } else {
                 redirectAtt.addFlashAttribute(message, "Error to add holiday [ " + holiday.getName() + "]!");
             }
-        } catch (ServiceException e) {
+        } catch (UniqueConstraintViolationException | ServiceException e) {
             redirectAtt.addFlashAttribute(message, e.getMessage());
         }
         return "redirect:/holidays";

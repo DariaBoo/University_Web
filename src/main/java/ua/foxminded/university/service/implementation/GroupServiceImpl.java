@@ -2,6 +2,10 @@ package ua.foxminded.university.service.implementation;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -15,6 +19,7 @@ import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.entities.Lesson;
+import ua.foxminded.university.service.exception.ServiceException;
 
 /**
  * @version 1.0
@@ -44,6 +49,14 @@ public class GroupServiceImpl implements GroupService {
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getMessage(), e.getCause());
             throw new UniqueConstraintViolationException("Group with name - [" + group.getName() + "] already exists");
+        } catch (ConstraintViolationException e) {
+            Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+            for (ConstraintViolation<?> violation : violations) {
+                if (violation != null) {
+                    log.error(violation.getMessageTemplate());
+                    throw new ServiceException(violation.getMessageTemplate());
+                }
+            }
         }
         return groupDAO.existsById(group.getId());
     }

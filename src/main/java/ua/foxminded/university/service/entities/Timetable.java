@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -42,10 +43,12 @@ public class Timetable {
     @Column(name = "id")
     private int timetableId;
 
+    @NotNull(message = "Date may not be null")
     @Column(name = "date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
+    @NotNull(message = "Lesson time may not be null")
     @Column(name = "time_period", length = 13)
     private String lessonTimePeriod;
 

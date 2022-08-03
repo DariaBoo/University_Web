@@ -11,6 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.UniqueElements;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,21 +40,26 @@ public class Lesson {
     @Column(name = "lesson_id")
     private int id;
 
-    @Column(name = "lesson_name", length = 20, unique = true)
+    @NotBlank(message = "Name may not be blank")
+    @Size(max = 20, message = "Lesson name must be equals or less than 20 characters long")
+    @Column(name = "lesson_name", unique = true)
     private String name;
-
+    
     @Column(name = "description", length = 100)
     private String description;
     
     @ToString.Exclude
+    @UniqueElements
     @ManyToMany(mappedBy = "lessons")
     private List<Teacher> teachers;
     
     @ToString.Exclude
+    @UniqueElements
     @ManyToMany(mappedBy = "lessons")
     private List<Group> groups;
     
     @ToString.Exclude
+    @UniqueElements
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, targetEntity = Timetable.class)
     private List<Timetable> timetable;
 }

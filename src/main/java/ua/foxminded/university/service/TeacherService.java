@@ -102,5 +102,5 @@ public interface TeacherService {
      * @param teacher
      * @return true or false
      */
-    boolean checkIsAbsent(LocalDate date, Teacher teacher);
+    boolean checkIsAbsent(LocalDate date, int teacherId);
 }

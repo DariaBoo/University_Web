@@ -1,6 +1,7 @@
 package ua.foxminded.university.controller;
 
 import java.time.LocalDate;
+import java.util.NoSuchElementException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -109,7 +110,7 @@ public class TimetableController {
             redirectAtt.addFlashAttribute(message, "Timetable was scheduled!!!");
             redirectAtt.addFlashAttribute("day", day.getDateOne());
             redirectAtt.addFlashAttribute("timetables", timetableService.showTimetable(day));
-        } catch (ServiceException | UniqueConstraintViolationException e) {
+        } catch (NoSuchElementException | ServiceException | UniqueConstraintViolationException e) {
             redirectAtt.addFlashAttribute(message, e.getMessage());
         }
         return "redirect:/timetable/schedule";

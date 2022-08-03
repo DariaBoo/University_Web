@@ -5,7 +5,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +15,7 @@ import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.StudentService;
 import ua.foxminded.university.service.entities.Student;
+import ua.foxminded.university.service.exception.ServiceException;
 
 @Slf4j
 @Controller
@@ -53,7 +53,7 @@ public class StudentsController {
         try {
             studentService.addStudent(student);
             redirectAtt.addFlashAttribute(message, "Student was added!");
-        } catch (UniqueConstraintViolationException e) {
+        } catch (UniqueConstraintViolationException | ServiceException e) {
             log.error(e.getMessage());
             redirectAtt.addFlashAttribute(message, e.getMessage());
         }
@@ -77,12 +77,12 @@ public class StudentsController {
         return "students/edit";
     }
 
-    @PatchMapping("/{id}")
+    @PostMapping("/{id}")
     public String update(@ModelAttribute("student") Student student, RedirectAttributes redirectAtt) {
         try {
             studentService.updateStudent(student);
             redirectAtt.addFlashAttribute(message, "Student was updated!");
-        } catch (UniqueConstraintViolationException e) {
+        } catch (UniqueConstraintViolationException | ServiceException e) {
             log.error(e.getMessage());
             redirectAtt.addFlashAttribute(message, e.getMessage());
         }
