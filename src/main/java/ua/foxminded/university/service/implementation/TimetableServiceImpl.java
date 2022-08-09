@@ -4,11 +4,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.HolidayDAO;
 import ua.foxminded.university.dao.TimetableDAO;
-import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.TeacherService;
 import ua.foxminded.university.service.TimetableService;
 import ua.foxminded.university.service.entities.Day;
@@ -27,6 +21,7 @@ import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.entities.Timetable;
 import ua.foxminded.university.service.exception.ServiceException;
+import ua.foxminded.university.service.validator.EntityValidator;
 
 /**
  * @version 1.0
@@ -45,7 +40,9 @@ public class TimetableServiceImpl implements TimetableService {
     @Autowired
     private TeacherService teacherService;
 
-    private final String illegalArgumentExceptionMessage = "No timetable for ";
+    private EntityValidator validator;
+
+    private static final String illegalArgumentExceptionMessage = "No timetable for ";
     private static final String uniqueGroupDateTime = "unique_group_date_time";
     private static final String uniqueTeacherDateTime = "unique_teacher_date_time";
     private static final String uniqueRoomDateTime = "unique_room_date_time";
@@ -55,69 +52,84 @@ public class TimetableServiceImpl implements TimetableService {
      */
     @Override
     @Transactional
-    public Timetable scheduleTimetable(Timetable timetable) {
-        LocalDate day = timetable.getDate();
-        Timetable savedTimetable = new Timetable();
-        int teacherId = timetable.getTeacher().getId();
-        if (isWeekend(day)) {
-            log.error("Can't schedule timetable for weekend. Attempt to schedule {}.", day);
-            throw new ServiceException("Can't schedule timetable for weekend! Attempt to schedule (" + day + ")");
-        }
-        if (isHoliday(day)) {
-            log.error("Can't schedule timetable for holiday. Attempt to schedule {}", day);
-            throw new ServiceException("Can't schedule timetable for holiday! Attempt to schedule (" + day + ")");
-        }
-        if (teacherId != 0 && teacherService.checkIsAbsent(timetable.getDate(), teacherId)) {
-            log.error("Teacher [id::{}] is absent [date::{}]", timetable.getTeacher().getId(), timetable.getDate());
-            throw new NoSuchElementException("Teacher [id::" + timetable.getTeacher().getId() + "] is absent [date::"
-                    + timetable.getDate() + "]. Try again.");
-        }
+    public String scheduleTimetable(Timetable timetable) {        
+        validateTimetable(timetable);
         try {
-            if(timetable.getGroup().getId() != 0) {
-            savedTimetable = timetableDAO.saveAndFlush(timetable);
-            log.debug("Timetable [date::{}, time::{}] is scheduled", savedTimetable.getDate(),
-                    savedTimetable.getLessonTimePeriod());
+            if (!validator.hasErrors()) {
+                timetableDAO.saveAndFlush(timetable);
+                log.debug("Timetable [date::{}, time::{}] is scheduled", timetable.getDate(),
+                        timetable.getLessonTimePeriod());
+            } else {
+                return validator.getErrors();
             }
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            throwCorrectException(e, timetable);
-        } catch (ConstraintViolationException e) {
-            Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
-            for (ConstraintViolation<?> violation : violations) {
-                if (violation != null) {
-                    log.error(violation.getMessageTemplate());
-                    throw new ServiceException(violation.getMessageTemplate());
-                }
-            }
+        } catch (DataIntegrityViolationException exception) {
+            validateUniqueConstraint(exception, timetable);
+            throw new ServiceException(validator.getErrors(), exception);
         }
-        return savedTimetable;
+        return "Timetable was scheduled!!!";
     }
 
-    private void throwCorrectException(DataIntegrityViolationException exception, Timetable timetable) {
-        if (exception.getMostSpecificCause().getMessage().contains(uniqueGroupDateTime)) {
-            log.error(
-                    "ConstraintViolationException: date - {}, lesson time period - {}, group id - {} violate the unique primary keys condition - {}",
-                    timetable.getDate(), timetable.getLessonTimePeriod(), timetable.getGroup().getId(),
-                    uniqueGroupDateTime);
-            throw new UniqueConstraintViolationException(
-                    "Group with id: " + timetable.getGroup().getId() + " is already scheduled (date:"
-                            + timetable.getDate() + ", time:" + timetable.getLessonTimePeriod() + ")!",
-                    exception);
-        } else if (exception.getMostSpecificCause().getMessage().contains(uniqueTeacherDateTime)) {
-            log.error(
-                    "ConstraintViolationException: date - {}, lesson time period - {}, teacher id - {} violate the unique primary keys condition - {}",
-                    timetable.getDate(), timetable.getLessonTimePeriod(), timetable.getTeacher().getId(),
-                    uniqueTeacherDateTime);
-            throw new UniqueConstraintViolationException("Teacher with id: " + timetable.getTeacher().getId()
-                    + " is already scheduled (" + timetable.getDate() + ", " + timetable.getLessonTimePeriod() + ")!",
-                    exception);
-        } else if (exception.getMostSpecificCause().getMessage().contains(uniqueRoomDateTime)) {
-            log.error(
-                    "ConstraintViolationException: date - {}, lesson time period - {}, room id - {} violate the unique primary keys condition - {}",
-                    timetable.getDate(), timetable.getLessonTimePeriod(), timetable.getRoom().getNumber(),
-                    uniqueRoomDateTime);
-            throw new UniqueConstraintViolationException("Room number: " + timetable.getRoom().getNumber()
-                    + " is already scheduled (" + timetable.getDate() + ", " + timetable.getLessonTimePeriod() + ")!",
-                    exception);
+    private void recordError(String error) {        
+        log.error(error);
+        validator.addError(error);
+    }
+
+    private void validateTimetable(Timetable timetable) {
+        validator = new EntityValidator();
+        if (timetable.getGroup().getId() < 0) {
+            recordError("Group is missing");
+        }
+        if (timetable.getLesson() == null) {
+            recordError("Lesson is missing");
+        }        
+        validateDate(timetable);
+        
+        if (timetable.getLessonTimePeriod().isEmpty() || timetable.getLessonTimePeriod() == null) {
+            recordError("Lesson time is missing");
+        }        
+        validateTeacher(timetable);
+        
+        if (timetable.getRoom().getNumber() == 0) {
+            recordError("Room is missing");
+        }
+    }
+
+    private void validateDate(Timetable timetable) {
+        if (timetable.getDate() == null) {
+            recordError("Date is missing");
+            return;
+        }
+        LocalDate day = timetable.getDate();
+        if (isWeekend(day)) {
+            recordError(day + " is a weekend. Can't schedule timetable!");
+        }
+        if (isHoliday(day)) {
+            recordError(day + " is a holiday. Can't schedule timetable!");
+        }
+    }
+
+    private void validateTeacher(Timetable timetable) {
+        int teacherId = timetable.getTeacher().getId();
+        if (teacherId == 0) {
+            recordError("Teacher is missing");
+        } else if (teacherService.checkIsAbsent(timetable.getDate(), teacherId)) {
+            recordError("Teacher [id::" + timetable.getTeacher().getId() + "] is absent [date::" + timetable.getDate()
+                    + "].");
+        }
+    }
+
+    private void validateUniqueConstraint(DataIntegrityViolationException exception, Timetable timetable) {
+        validator = new EntityValidator();
+        String message = exception.getMostSpecificCause().getMessage();
+        if (message.contains(uniqueGroupDateTime)) {
+            recordError("Group with id: " + timetable.getGroup().getId() + " is already scheduled (date:"
+                    + timetable.getDate() + ", time:" + timetable.getLessonTimePeriod() + ")!");
+        } else if (message.contains(uniqueTeacherDateTime)) {
+            recordError("Teacher with id: " + timetable.getTeacher().getId() + " is already scheduled ("
+                    + timetable.getDate() + ", " + timetable.getLessonTimePeriod() + ")!");
+        } else if (message.contains(uniqueRoomDateTime)) {
+            recordError("Room number: " + timetable.getRoom().getNumber() + " is already scheduled ("
+                    + timetable.getDate() + ", " + timetable.getLessonTimePeriod() + ")!");
         }
     }
 

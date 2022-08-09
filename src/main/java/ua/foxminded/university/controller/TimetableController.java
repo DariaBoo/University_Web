@@ -1,7 +1,6 @@
 package ua.foxminded.university.controller;
 
 import java.time.LocalDate;
-import java.util.NoSuchElementException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.LessonService;
 import ua.foxminded.university.service.RoomService;
@@ -57,7 +55,9 @@ public class TimetableController {
     public String showTimetable(HttpServletRequest request, Model model) {
         LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
         LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
-        Day day = new Day(setDateOne, setDateTwo);
+        Day day = new Day();
+        day.setDateOne(setDateOne);
+        day.setDateTwo(setDateTwo);
         try {
             model.addAttribute("timetables", timetableService.showTimetable(day));
         } catch (IllegalArgumentException e) {
@@ -102,17 +102,18 @@ public class TimetableController {
     @RequestMapping(value = "/timetable/schedule", method = RequestMethod.POST)
     public String saveTimetable(@ModelAttribute("timetable") Timetable timetable, RedirectAttributes redirectAtt,
             Model model) {
-        Day day = new Day();
+        Day day = new Day();  
+        String result = "";
+        try {
+        result = timetableService.scheduleTimetable(timetable);
+        } catch (ServiceException e) {
+            result = e.getMessage();
+        }
         day.setDateOne(timetable.getDate());
         day.setDateTwo(timetable.getDate());
-        try {
-            timetableService.scheduleTimetable(timetable);
-            redirectAtt.addFlashAttribute(message, "Timetable was scheduled!!!");
-            redirectAtt.addFlashAttribute("day", day.getDateOne());
-            redirectAtt.addFlashAttribute("timetables", timetableService.showTimetable(day));
-        } catch (NoSuchElementException | ServiceException | UniqueConstraintViolationException e) {
-            redirectAtt.addFlashAttribute(message, e.getMessage());
-        }
+        redirectAtt.addFlashAttribute(message, result);
+        redirectAtt.addFlashAttribute("day", day.getDateOne());
+        redirectAtt.addFlashAttribute("timetables", timetableService.showTimetable(day));
         return "redirect:/timetable/schedule";
     }
 
@@ -132,7 +133,9 @@ public class TimetableController {
         LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
         LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
         Student student = studentService.findById(studentId);
-        Day day = new Day(setDateOne, setDateTwo);
+        Day day = new Day();
+        day.setDateOne(setDateOne);
+        day.setDateTwo(setDateTwo);
         try {
             model.addAttribute("timetables", timetableService.getStudentTimetable(day, student));
         } catch (IllegalArgumentException e) {
@@ -146,7 +149,9 @@ public class TimetableController {
         LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
         LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
         Teacher teacher = Teacher.builder().id(teacherId).build();
-        Day day = new Day(setDateOne, setDateTwo);
+        Day day = new Day();
+        day.setDateOne(setDateOne);
+        day.setDateTwo(setDateTwo);
         try {
             model.addAttribute("timetables", timetableService.getTeacherTimetable(day, teacher));
         } catch (IllegalArgumentException e) {
