@@ -1,10 +1,15 @@
 package ua.foxminded.university.controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +23,7 @@ import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.LessonService;
 import ua.foxminded.university.service.RoomService;
 import ua.foxminded.university.service.StudentService;
+import ua.foxminded.university.service.TeacherService;
 import ua.foxminded.university.service.TimetableService;
 import ua.foxminded.university.service.entities.Day;
 import ua.foxminded.university.service.entities.Group;
@@ -45,25 +51,30 @@ public class TimetableController {
     private RoomService roomService;
     @Autowired
     private StudentService studentService;
+    @Autowired
+    private TeacherService teacherService;
 
     @RequestMapping("/timetable")
     public String chooseDatePeriod(Model model) {
         return "timetable/index";
     }
 
-    @RequestMapping("/timetable/show")
-    public String showTimetable(HttpServletRequest request, Model model) {
+    @RequestMapping(path = "/timetable/show")
+    public ResponseEntity<List<Timetable>> showTimetable(HttpServletRequest request, Model model) {
         LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
         LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
         Day day = new Day();
         day.setDateOne(setDateOne);
         day.setDateTwo(setDateTwo);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("show_timetable", "test");
+        List<Timetable> timetable = new ArrayList<>();
         try {
-            model.addAttribute("timetables", timetableService.showTimetable(day));
+            timetable = timetableService.showTimetable(day);
+            return new ResponseEntity<>(timetable, headers, HttpStatus.FOUND);
         } catch (IllegalArgumentException e) {
-            model.addAttribute(message, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return "timetable/index";
     }
 
     @GetMapping("/timetable/schedule")
@@ -100,36 +111,34 @@ public class TimetableController {
     }
 
     @RequestMapping(value = "/timetable/schedule", method = RequestMethod.POST)
-    public String saveTimetable(@ModelAttribute("timetable") Timetable timetable, RedirectAttributes redirectAtt,
-            Model model) {
+    public ResponseEntity<String> saveTimetable(@ModelAttribute("timetable") Timetable timetable, RedirectAttributes redirectAtt) {
         Day day = new Day();  
-        String result = "";
+        String body = "";
         try {
-        result = timetableService.scheduleTimetable(timetable);
+        body = timetableService.scheduleTimetable(timetable);
         } catch (ServiceException e) {
-            result = e.getMessage();
+            body = e.getMessage();
         }
         day.setDateOne(timetable.getDate());
         day.setDateTwo(timetable.getDate());
-        redirectAtt.addFlashAttribute(message, result);
+        redirectAtt.addFlashAttribute(message, body);
         redirectAtt.addFlashAttribute("day", day.getDateOne());
         redirectAtt.addFlashAttribute("timetables", timetableService.showTimetable(day));
-        return "redirect:/timetable/schedule";
+        return new ResponseEntity<>(body, HttpStatus.CREATED);
     }
 
     @RequestMapping("timetable/delete/{id}")
-    public String deleteTimetable(@PathVariable Integer id, RedirectAttributes redirectAtt) {
+    public ResponseEntity<String> deleteTimetable(@PathVariable Integer id) {
         boolean isDeleted = timetableService.deleteTimetable(id);
         if (isDeleted) {
-            redirectAtt.addFlashAttribute(message, "Timetable was deleted!");
+            return new ResponseEntity<>("Timetable was deleted!", HttpStatus.OK);
         } else {
-            redirectAtt.addFlashAttribute(message, "Can't delete past timetable!");
+            return new ResponseEntity<>("Can't delete past timetable!", HttpStatus.BAD_REQUEST);
         }
-        return "redirect:/timetable";
     }
 
     @RequestMapping("/student/timetable")
-    public String showStudentTimetable(HttpServletRequest request, Model model) {
+    public ResponseEntity<List<Timetable>> showStudentTimetable(HttpServletRequest request, Model model) {
         LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
         LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
         Student student = studentService.findById(studentId);
@@ -137,26 +146,26 @@ public class TimetableController {
         day.setDateOne(setDateOne);
         day.setDateTwo(setDateTwo);
         try {
-            model.addAttribute("timetables", timetableService.getStudentTimetable(day, student));
+            List<Timetable> body = timetableService.getStudentTimetable(day, student);
+            return new ResponseEntity<>(body, HttpStatus.FOUND);
         } catch (IllegalArgumentException e) {
-            model.addAttribute(message, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return "students/studentPage";
     }
 
     @RequestMapping("/teacher/timetable")
-    public String showTeacherTimetable(HttpServletRequest request, Model model) {
+    public ResponseEntity<List<Timetable>> showTeacherTimetable(HttpServletRequest request, Model model) {
         LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
         LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
-        Teacher teacher = Teacher.builder().id(teacherId).build();
+        Teacher teacher = teacherService.findById(teacherId);
         Day day = new Day();
         day.setDateOne(setDateOne);
         day.setDateTwo(setDateTwo);
         try {
-            model.addAttribute("timetables", timetableService.getTeacherTimetable(day, teacher));
+            List<Timetable> body = timetableService.getTeacherTimetable(day, teacher);
+            return new ResponseEntity<>(body, HttpStatus.FOUND);
         } catch (IllegalArgumentException e) {
-            model.addAttribute(message, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return "teachers/teacherPage";
     }
 }

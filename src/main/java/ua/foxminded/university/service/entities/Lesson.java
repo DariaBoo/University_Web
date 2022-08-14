@@ -14,6 +14,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -46,14 +48,17 @@ public class Lesson {
     @Column(name = "description", length = 100)
     private String description;
     
+    @JsonIgnore
     @ToString.Exclude
     @ManyToMany(mappedBy = "lessons")
     private List<Teacher> teachers;
     
+    @JsonIgnore
     @ToString.Exclude
     @ManyToMany(mappedBy = "lessons")
     private List<Group> groups;
     
+    @JsonIgnore
     @ToString.Exclude
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, targetEntity = Timetable.class)
     private List<Timetable> timetable;

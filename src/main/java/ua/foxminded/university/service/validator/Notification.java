@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EntityValidator {
+public class Notification {
 
     private List<String> errors = new ArrayList<>();        
 

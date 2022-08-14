@@ -37,18 +37,15 @@ public class UniversityController {
         String userName = request.getParameter("uname");
         String password = request.getParameter("psw");
         String message;
-        if (userName != null && !userName.equals("") && userName.equals("admin") && password != null
-                && !password.equals("") && password.equals("admin")) {
+        if (userName.equals("admin") && password.equals("admin")) {
             message = "Welcome " + userName + ".";
             return "/home";
-        } else if (userName != null && !userName.equals("") && userName.matches("[a-zA-Z]+#\\d+") && password != null
-                && !password.equals("") && password.equals("555")) {
+        } else if (userName.matches("[a-zA-Z]+#\\d+") && password.equals("555")) {
             int id = Integer.parseInt(userName.split("#")[1]);
             TimetableController.teacherId = id;
             model.addAttribute("teacher", teacherService.findById(id));
             return "teachers/teacherPage";
-        } else if (userName != null && !userName.equals("") && userName.matches("[a-zA-Z]+_\\d+") && password != null
-                && !password.equals("") && password.equals("1234")) {
+        } else if (userName.matches("[a-zA-Z]+_\\d+") && password.equals("1234")) {
             int id = Integer.parseInt(userName.split("_")[1]);
             TimetableController.studentId = id;
             model.addAttribute("student", studentService.findById(id));

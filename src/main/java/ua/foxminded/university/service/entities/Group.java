@@ -19,6 +19,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -52,10 +54,12 @@ public class Group {
     @Column(name = "department_id")
     private int departmentId;
 
+    @JsonIgnore
     @ToString.Exclude
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
     private List<Student> students;
 
+    @JsonIgnore
     @ToString.Exclude
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "groups_lessons", joinColumns = { @JoinColumn(name = "group_id") }, inverseJoinColumns = {
@@ -63,6 +67,7 @@ public class Group {
                     "lesson_id" }))
     private List<Lesson> lessons;
 
+    @JsonIgnore
     @ToString.Exclude
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, targetEntity = Timetable.class)
     private List<Timetable> timetable;

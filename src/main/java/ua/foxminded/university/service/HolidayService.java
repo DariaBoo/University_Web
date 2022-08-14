@@ -4,6 +4,11 @@ import java.util.List;
 
 import ua.foxminded.university.service.entities.Holiday;
 
+/**
+ * @version 1.0
+ * @author Bogush Daria
+ *
+ */
 public interface HolidayService {
     /**
      * The method finds all holidays from the database
