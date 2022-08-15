@@ -18,8 +18,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -28,7 +26,6 @@ import lombok.ToString;
 @Getter 
 @Setter 
 @NoArgsConstructor
-@RequiredArgsConstructor
 @EqualsAndHashCode(exclude = {"teacher"})
 @Table(name = "teacherabsent", uniqueConstraints = { @UniqueConstraint(name = "unique_dates", columnNames = {"teacher_id", "date_start", "date_end"})})
 public class Day {
@@ -37,13 +34,11 @@ public class Day {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     
-    @NonNull
     @NotNull(message = "Date may not be null")
     @Column(name = "date_start")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOne;
 
-    @NonNull
     @NotNull(message = "Date may not be null")
     @Column(name = "date_end")
     @DateTimeFormat(pattern = "yyyy-MM-dd")

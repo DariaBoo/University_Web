@@ -20,6 +20,8 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -40,6 +42,7 @@ import lombok.experimental.SuperBuilder;
 @DynamicUpdate
 public class Teacher extends User {
 
+    @JsonIgnore
     @Generated(GenerationTime.INSERT)
     @ColumnDefault(value = "'555'")
     @Column(name = "password", length = 10)
@@ -53,9 +56,11 @@ public class Teacher extends User {
     @Column(name = "department_id")
     private int departmentId;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "teacher")
     private List<Day> absentPeriod;
     
+    @JsonIgnore
     @ToString.Exclude
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE) 
     @JoinTable(
@@ -65,6 +70,7 @@ public class Teacher extends User {
             "lesson_id" }))
     private List<Lesson> lessons;
     
+    @JsonIgnore
     @ToString.Exclude
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, targetEntity = Timetable.class)
     private List<Timetable> timetable;

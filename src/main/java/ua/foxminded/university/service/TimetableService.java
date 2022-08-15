@@ -21,7 +21,7 @@ public interface TimetableService {
      * @param timetable 
      * @return count of added rows otherwise 0
      */
-    Timetable scheduleTimetable(Timetable timetable);
+    String scheduleTimetable(Timetable timetable);
 
     /**
      * Returns list of DayTimetable for all groups and teachers by period of dates

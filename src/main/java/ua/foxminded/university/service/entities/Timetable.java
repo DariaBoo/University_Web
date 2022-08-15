@@ -26,8 +26,8 @@ import lombok.ToString;
 
 @ToString
 @Entity
-@Getter 
-@Setter 
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -43,12 +43,12 @@ public class Timetable {
     @Column(name = "id")
     private int timetableId;
 
-    @NotNull(message = "Date may not be null")
+    @NotNull
     @Column(name = "date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
-    @NotNull(message = "Lesson time may not be null")
+    @NotNull
     @Column(name = "time_period", length = 13)
     private String lessonTimePeriod;
 
@@ -66,5 +66,5 @@ public class Timetable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lesson_id")
-    private Lesson lesson;    
+    private Lesson lesson;
 }
