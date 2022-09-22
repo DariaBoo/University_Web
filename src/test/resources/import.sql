@@ -1,7 +1,7 @@
-CREATE SCHEMA IF NOT EXISTS timetable AUTHORIZATION sa;
+--CREATE SCHEMA IF NOT EXISTS timetable AUTHORIZATION sa;
 
-DROP TABLE IF EXISTS timetable.groups CASCADE;
-CREATE TABLE timetable.groups
+DROP TABLE IF EXISTS groups CASCADE;
+CREATE TABLE groups
 (
     group_id SERIAL,
     group_name VARCHAR(5) UNIQUE NOT NULL,
@@ -10,8 +10,8 @@ CREATE TABLE timetable.groups
     PRIMARY KEY(group_id)
 );
 
-DROP TABLE IF EXISTS timetable.lessons CASCADE;
-CREATE TABLE timetable.lessons
+DROP TABLE IF EXISTS lessons CASCADE;
+CREATE TABLE lessons
 (
     lesson_id SERIAL,
     lesson_name VARCHAR(20) UNIQUE NOT NULL,
@@ -20,13 +20,13 @@ CREATE TABLE timetable.lessons
     PRIMARY KEY (lesson_id)
 );
 
-DROP TABLE IF EXISTS timetable.students CASCADE;
-CREATE TABLE timetable.students
+DROP TABLE IF EXISTS students CASCADE;
+CREATE TABLE students
 (
     id SERIAL NOT NULL,    
     first_name VARCHAR(30)  NOT NULL,
     last_name VARCHAR(30)  NOT NULL,
-    group_id INT references timetable.groups(group_id),
+    group_id INT references groups(group_id),
     password VARCHAR(10) NOT NULL,
     id_card VARCHAR(5) UNIQUE NOT NULL,
     isActive BOOLEAN,
@@ -35,8 +35,8 @@ CREATE TABLE timetable.students
     UNIQUE (first_name, last_name, id_card)
 );
 
-DROP TABLE IF EXISTS timetable.teachers CASCADE;
-CREATE TABLE timetable.teachers
+DROP TABLE IF EXISTS teachers CASCADE;
+CREATE TABLE teachers
 (
      id SERIAL,
      first_name VARCHAR(30)  NOT NULL,
@@ -49,43 +49,43 @@ CREATE TABLE timetable.teachers
      UNIQUE (first_name, last_name)
 );
 
-DROP TABLE IF EXISTS timetable.rooms CASCADE;
-CREATE TABLE timetable.rooms
+DROP TABLE IF EXISTS rooms CASCADE;
+CREATE TABLE rooms
 (
     room_id INT NOT NULL,
     capacity INT NOT NULL,
     CONSTRAINT rooms_pkey PRIMARY KEY (room_id)
  );
 
-DROP TABLE IF EXISTS timetable.groups_lessons CASCADE;
-CREATE TABLE timetable.groups_lessons
+DROP TABLE IF EXISTS groups_lessons CASCADE;
+CREATE TABLE groups_lessons
 (    
-    group_id INT REFERENCES timetable.groups (group_id) ON UPDATE CASCADE ON DELETE CASCADE,
-    lesson_id INT REFERENCES timetable.lessons (lesson_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    group_id INT REFERENCES groups (group_id) ON UPDATE CASCADE,
+    lesson_id INT REFERENCES lessons (lesson_id) ON UPDATE CASCADE,
     PRIMARY KEY (group_id, lesson_id)  
 );
 
-DROP TABLE IF EXISTS timetable.lessons_teachers CASCADE;
-CREATE TABLE IF NOT EXISTS timetable.lessons_teachers
+DROP TABLE IF EXISTS lessons_teachers CASCADE;
+CREATE TABLE IF NOT EXISTS lessons_teachers
 (    
-    lesson_id INT REFERENCES timetable.lessons (lesson_id) ON UPDATE CASCADE ON DELETE CASCADE,
-    teacher_id INT REFERENCES timetable.teachers (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    lesson_id INT REFERENCES lessons (lesson_id) ON UPDATE CASCADE,
+    teacher_id INT REFERENCES teachers (id) ON UPDATE CASCADE,
     PRIMARY KEY (lesson_id, teacher_id)  
 );
 
-DROP TABLE IF EXISTS timetable.teacherAbsent CASCADE;
-CREATE TABLE timetable.teacherAbsent
+DROP TABLE IF EXISTS teacherAbsent CASCADE;
+CREATE TABLE teacherAbsent
 (
     id SERIAL,
-    teacher_id INT REFERENCES timetable.teachers (id) ON UPDATE CASCADE,
+    teacher_id INT REFERENCES teachers (id) ON UPDATE CASCADE,
     date_start DATE NOT NULL,
     date_end DATE NOT NULL,
     reason VARCHAR(30) ,
     CONSTRAINT teacherAbsent_pkey PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS timetable.timetable;
-CREATE TABLE timetable.timetable
+DROP TABLE IF EXISTS timetable;
+CREATE TABLE timetable
 (
     id SERIAL,
     date DATE NOT NULL,

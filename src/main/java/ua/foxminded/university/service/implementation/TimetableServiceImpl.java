@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.TimetableDAO;
+import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.HolidayService;
 import ua.foxminded.university.service.TeacherService;
 import ua.foxminded.university.service.TimetableService;
@@ -17,7 +18,6 @@ import ua.foxminded.university.service.entities.Day;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.entities.Timetable;
-import ua.foxminded.university.service.exception.ServiceException;
 import ua.foxminded.university.service.validator.Notification;
 import ua.foxminded.university.service.validator.TimetableValidator;
 
@@ -61,7 +61,7 @@ public class TimetableServiceImpl implements TimetableService {
             }
         } catch (DataIntegrityViolationException exception) {
             notification = validator.validateUniqueConstraint(exception, timetable);
-            throw new ServiceException(notification.getErrors(), exception);
+            throw new UniqueConstraintViolationException(notification.getErrors(), exception);
         }
         return "Timetable was scheduled!!!";
     }

@@ -27,8 +27,10 @@ CREATE TABLE timetable.students
     first_name VARCHAR(30)  NOT NULL,
     last_name VARCHAR(30)  NOT NULL,
     group_id INT references timetable.groups(group_id),
-    password VARCHAR(10) NOT NULL,
+    user_name VARCHAR(30)  NOT NULL,
+    password VARCHAR(255) NOT NULL,
     id_card VARCHAR(5) NOT NULL,
+    role VARCHAR(10) NOT NULL,    
     isActive BOOLEAN,
     CONSTRAINT students_pkey PRIMARY KEY (id)
 );
@@ -40,10 +42,26 @@ CREATE TABLE timetable.teachers
      first_name VARCHAR(30)  NOT NULL,
      last_name VARCHAR(30)  NOT NULL,
      position VARCHAR(30) NOT NULL,
-     password VARCHAR(10) NOT NULL,
+     user_name VARCHAR(30)  NOT NULL,
+     password VARCHAR(255) NOT NULL,
      department_id INT,
+     role VARCHAR(10) NOT NULL,
      isActive BOOLEAN,
      CONSTRAINT teachers_pkey PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS timetable.staff CASCADE;
+CREATE TABLE timetable.staff
+(
+     id SERIAL,
+     first_name VARCHAR(30)  NOT NULL,
+     last_name VARCHAR(30)  NOT NULL,
+     position VARCHAR(30) NOT NULL,
+     user_name VARCHAR(30)  NOT NULL,
+     password VARCHAR(255) NOT NULL,
+     role VARCHAR(10) NOT NULL,
+     isActive BOOLEAN,
+     CONSTRAINT staff_pkey PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS timetable.rooms CASCADE;

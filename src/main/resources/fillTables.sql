@@ -33,7 +33,7 @@ insert into timetable.rooms (room_id, capacity) values (302, 26);
 insert into timetable.rooms (room_id, capacity) values (303, 25);
 insert into timetable.rooms (room_id, capacity) values (401, 19);
 
-
+incorrect data!!!!!!!!
 INSERT INTO timetable.students (first_name, last_name, group_id, password, id_card, isActive) VALUES ('Harry', 'Potter', 1, 1234, '1IE', 'true');
 INSERT INTO timetable.students (first_name, last_name, group_id, password, id_card, isActive) VALUES ('Mandy', 'Finch-Fletchley', 1, 1234, '2WC', 'true');
 INSERT INTO timetable.students (first_name, last_name, group_id, password, id_card, isActive) VALUES ('Pansy', 'Brocklehurst', 1, 1234, '3SN', 'true');
@@ -248,7 +248,7 @@ INSERT INTO timetable.students (first_name, last_name, group_id, password, id_ca
 INSERT INTO timetable.students (first_name, last_name, group_id, password, id_card, isActive) VALUES ('Mandy', 'Nott', 10, 1234, '240CR', 'true');
 INSERT INTO timetable.students (first_name, last_name, group_id, password, id_card, isActive) VALUES ('Ernie', 'Finnigan', 10, 1234, '250KM', 'true');
 
-
+incorrect data!!!!!!!!
 INSERT INTO timetable.teachers (first_name, last_name, position, password, department_id, isActive) VALUES ('Albus', 'Dumbledore', 'professor', 555, 1, 'true');
 INSERT INTO timetable.teachers (first_name, last_name, position, password, department_id, isActive) VALUES ('Minerva', 'McGonagall', 'lecturer', 555, 1, 'true');
 INSERT INTO timetable.teachers (first_name, last_name, position, password, department_id, isActive) VALUES ('Severus', 'Snape', 'professor', 555, 1, 'true');

@@ -11,6 +11,7 @@ import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.TeacherService;
 import ua.foxminded.university.service.entities.Day;
 import ua.foxminded.university.service.entities.Lesson;
+import ua.foxminded.university.service.entities.Role;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.exception.ServiceException;
 
@@ -34,13 +36,13 @@ import ua.foxminded.university.service.exception.ServiceException;
 @Service
 public class TeacherServiceImpl implements TeacherService {
 
-    int result = 0;
-
+    private final String defaultPassword = "555";
     @Autowired
     private TeacherDAO teacherDAO;
-
     @Autowired
     private LessonDAO lessonDAO;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     /**
      * {@inheritDoc}
@@ -49,6 +51,8 @@ public class TeacherServiceImpl implements TeacherService {
     @Transactional
     public boolean addTeacher(Teacher teacher) {
         try {
+            teacher.setRole(Role.USER);
+            teacher.setPassword(passwordEncoder.encode(defaultPassword));
             teacherDAO.save(teacher);
             log.info("Save teacher with id :: {}", teacher.getId());
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
@@ -202,7 +206,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Transactional
     public void changePassword(int teacherId, String newPassword) {
         Teacher teacher = findById(teacherId);
-        teacher.setPassword(newPassword);
+        teacher.setPassword(passwordEncoder.encode(newPassword));
         teacherDAO.save(teacher);
         log.debug("Password changed. Teacher id :: {}", teacherId);
     }

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.LessonService;
 import ua.foxminded.university.service.RoomService;
@@ -79,7 +80,11 @@ public class TimetableController {
 
     @GetMapping("/timetable/schedule")
     public String scheduleTimetable(Model model) {
+        try {
         model.addAttribute("groups", groupService.findAllGroups());
+        } catch (UniqueConstraintViolationException e) {
+            System.out.println("ERROR");
+        }
         return timetableNew;
     }
 
@@ -136,7 +141,7 @@ public class TimetableController {
             return new ResponseEntity<>("Can't delete past timetable!", HttpStatus.BAD_REQUEST);
         }
     }
-
+    
     @RequestMapping("/student/timetable")
     public ResponseEntity<List<Timetable>> showStudentTimetable(HttpServletRequest request, Model model) {
         LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
@@ -147,7 +152,7 @@ public class TimetableController {
         day.setDateTwo(setDateTwo);
         try {
             List<Timetable> body = timetableService.getStudentTimetable(day, student);
-            return new ResponseEntity<>(body, HttpStatus.FOUND);
+            return new ResponseEntity<>(body, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -163,7 +168,7 @@ public class TimetableController {
         day.setDateTwo(setDateTwo);
         try {
             List<Timetable> body = timetableService.getTeacherTimetable(day, teacher);
-            return new ResponseEntity<>(body, HttpStatus.FOUND);
+            return new ResponseEntity<>(body, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

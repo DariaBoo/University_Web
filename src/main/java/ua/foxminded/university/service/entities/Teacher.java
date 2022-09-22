@@ -15,10 +15,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -41,12 +38,6 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "teachers", uniqueConstraints = { @UniqueConstraint(name = "unique_name_surname", columnNames = {"first_name", "last_name"})})
 @DynamicUpdate
 public class Teacher extends User {
-
-    @JsonIgnore
-    @Generated(GenerationTime.INSERT)
-    @ColumnDefault(value = "'555'")
-    @Column(name = "password", length = 10)
-    private String password;
     
     @NotBlank(message = "Position may not be blank")
     @Size(max = 30, message = "Position must be equals or less than 30 characters long")

@@ -94,7 +94,13 @@ h1 {
 	<div class="form_bg">
 		<form th:method="POST" th:action="@{/students}" th:object="${student}">
 			<div class="form_container">
-				<h1>Create Student:</h1>
+				<h1>Create New Student:</h1>
+				<br>
+                <div class="form_r">
+                    <label for="userName">User name: </label> <input type="text"
+                        th:field="*{userName}" id="userName"
+                        placeholder="Enter User Name" maxlength="30" required />
+                </div>
 				<br>
 				<div class="form_r">
 					<label for="firstName">First name: </label> <input type="text"

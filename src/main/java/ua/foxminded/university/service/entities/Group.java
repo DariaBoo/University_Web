@@ -2,7 +2,6 @@ package ua.foxminded.university.service.entities;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -61,7 +60,7 @@ public class Group {
 
     @JsonIgnore
     @ToString.Exclude
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.LAZY)//, cascade = CascadeType.MERGE
     @JoinTable(name = "groups_lessons", joinColumns = { @JoinColumn(name = "group_id") }, inverseJoinColumns = {
             @JoinColumn(name = "lesson_id") }, uniqueConstraints = @UniqueConstraint(columnNames = { "group_id",
                     "lesson_id" }))
@@ -69,6 +68,6 @@ public class Group {
 
     @JsonIgnore
     @ToString.Exclude
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, targetEntity = Timetable.class)
+    @OneToMany(mappedBy = "group", targetEntity = Timetable.class)//, cascade = CascadeType.ALL
     private List<Timetable> timetable;
 }

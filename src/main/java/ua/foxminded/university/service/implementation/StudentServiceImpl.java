@@ -8,6 +8,7 @@ import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.StudentDAO;
 import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.StudentService;
+import ua.foxminded.university.service.entities.Role;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.exception.ServiceException;
 
@@ -29,8 +31,11 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private StudentDAO studentDAO;
+    
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
-    int result = 0;
+    private final String defaultPassword = "1234";
 
     /**
      * {@inheritDoc}
@@ -39,6 +44,8 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public boolean addStudent(Student student) {
         try {
+            student.setRole(Role.USER);
+            student.setPassword(passwordEncoder.encode(defaultPassword));
             studentDAO.save(student);
             log.info("Add new student with id::{}", student.getId());
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
@@ -101,7 +108,7 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public void changePassword(int studentId, String newPassword) {
         Student student = findById(studentId);
-        student.setPassword(newPassword);
+        student.setPassword(passwordEncoder.encode(newPassword));
         studentDAO.save(student);
         log.debug("Password changed. Student id :: {}", studentId);
     }

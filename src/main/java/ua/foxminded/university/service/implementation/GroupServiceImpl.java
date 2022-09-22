@@ -44,8 +44,8 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public boolean addGroup(Group group) {
         try {
-            groupDAO.save(group);
             log.info("Add group");
+            groupDAO.save(group);
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getMessage(), e.getCause());
             throw new UniqueConstraintViolationException("Group with name - [" + group.getName() + "] already exists");
@@ -54,7 +54,7 @@ public class GroupServiceImpl implements GroupService {
             for (ConstraintViolation<?> violation : violations) {
                 if (violation != null) {
                     log.error(violation.getMessageTemplate());
-                    throw new ServiceException(violation.getMessageTemplate());
+                    throw new ServiceException(violation.getMessageTemplate());//rename to EntityConstraintViolationException
                 }
             }
         }

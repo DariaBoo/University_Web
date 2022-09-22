@@ -57,10 +57,13 @@ div.container {
 }
 </style>
 <body>
+	<ul>
+		<li><a href="#" th:href="@{/logout}">Logout</a></li>
+	</ul>
 	<div class="bg">
 		<div th:if="${student}" role="alert">
 			<p
-				th:text="Welcome + ' ' + ${student.getFirstName()} + ' ' + ${student.getLastName()} + '!'" />
+				th:text="Welcome + ', ' + ${student.getFirstName()} + ' ' + ${student.getLastName()} + '!'" />
 		</div>
 		<br>
 		<div class="container">
