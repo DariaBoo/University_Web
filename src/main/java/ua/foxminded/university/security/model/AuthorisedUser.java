@@ -20,7 +20,8 @@ import ua.foxminded.university.service.entities.User;
  *
  */
 public class AuthorisedUser implements UserDetails {
-    
+
+    private static final long serialVersionUID = 1L;
     private User user;
     
     public AuthorisedUser(User user) {
@@ -29,7 +30,7 @@ public class AuthorisedUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        final List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        final List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(user.getRole().name()));
         return authorities;
     }

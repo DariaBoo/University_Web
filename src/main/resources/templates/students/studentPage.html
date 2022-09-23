@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Welcome</title>
+<title>Welcome student page</title>
 
 </head>
 <style>
@@ -35,9 +35,22 @@ div.container {
 	top: 130%;
 }
 
-#chg_psw {
+#logout {
+	border: 1px solid black;
+	color: white;
+	background-color: #cc0000;
+    border-radius: 4px;
 	position: absolute;
 	left: 85%;
+}
+
+#chg_psw {
+	border: 1px solid black;
+	color: white;
+	background-color: #45454a;
+    border-radius: 4px;
+	position: absolute;
+	left: 75%;
 }
 
 .btn_show {
@@ -57,10 +70,8 @@ div.container {
 }
 </style>
 <body>
-	<ul>
-		<li><a href="#" th:href="@{/logout}">Logout</a></li>
-	</ul>
 	<div class="bg">
+	<h2>Welcome to Hogwarts!</h2>
 		<div th:if="${student}" role="alert">
 			<p
 				th:text="Welcome + ', ' + ${student.getFirstName()} + ' ' + ${student.getLastName()} + '!'" />
@@ -74,6 +85,9 @@ div.container {
 						id="to" name="to" />
 					<button type="submit" class="btn_show">Show</button>
 				</form>
+			</div>
+			<div id="logout">
+				<a th:href="@{/user/logout}"><button type="submit" class="btn">Logout</button></a>
 			</div>
 			<div id="chg_psw">
 				<a th:href="@{/students/change_password}"><button type="submit"
