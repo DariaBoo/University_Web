@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.StudentDAO;
 import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.StudentService;
-import ua.foxminded.university.service.entities.Role;
+import ua.foxminded.university.service.entities.RoleEnum;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.exception.ServiceException;
 
@@ -44,7 +44,7 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public boolean addStudent(Student student) {
         try {
-            student.setRole(Role.USER);
+//            student.setRole(RoleEnum.USER);
             student.setPassword(passwordEncoder.encode(defaultPassword));
             studentDAO.save(student);
             log.info("Add new student with id::{}", student.getId());

@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import ua.foxminded.university.service.entities.Staff;
 import ua.foxminded.university.service.entities.User;
 
 /**
@@ -22,16 +23,16 @@ import ua.foxminded.university.service.entities.User;
 public class AuthorisedUser implements UserDetails {
 
     private static final long serialVersionUID = 1L;
-    private User user;
+    private Staff user;
     
-    public AuthorisedUser(User user) {
+    public AuthorisedUser(Staff user) {
         this.user = user;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         final List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(user.getRole().name()));
+        authorities.add(new SimpleGrantedAuthority(user.getRoles().get(0).getName()));
         return authorities;
     }
 
@@ -66,7 +67,7 @@ public class AuthorisedUser implements UserDetails {
         return true;
     }
 
-    public User getUser() {
+    public Staff getUser() {
         return user;
     }
 }

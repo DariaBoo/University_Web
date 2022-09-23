@@ -33,6 +33,13 @@ insert into timetable.rooms (room_id, capacity) values (302, 26);
 insert into timetable.rooms (room_id, capacity) values (303, 25);
 insert into timetable.rooms (room_id, capacity) values (401, 19);
 
+INSERT INTO timetable.roles VALUES (1, 'ADMIN');
+INSERT INTO timetable.roles VALUES (2, 'USER');
+INSERT INTO timetable.roles VALUES (3, 'STAFF');
+
+INSERT INTO timetable.staff_roles VALUES (1, 2, 1);
+
+
 incorrect data!!!!!!!!
 INSERT INTO timetable.students (first_name, last_name, group_id, password, id_card, isActive) VALUES ('Harry', 'Potter', 1, 1234, '1IE', 'true');
 INSERT INTO timetable.students (first_name, last_name, group_id, password, id_card, isActive) VALUES ('Mandy', 'Finch-Fletchley', 1, 1234, '2WC', 'true');

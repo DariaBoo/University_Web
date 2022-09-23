@@ -1,11 +1,16 @@
 package ua.foxminded.university.service.entities;
 
+import java.util.List;
+import java.util.Set;
+
 import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -30,10 +35,10 @@ public class User {
     @NotBlank(message = "User name may not be blank")
     @Column(name = "user_name", unique = true)
     private String username;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role")
-    private Role role;
+
+//    @ManyToMany(fetch = FetchType.EAGER)
+//    @JoinTable(name = "staff_roles", joinColumns = @JoinColumn(name = "staff_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+//    private List<Role> roles;
     
     @NotBlank(message = "First name may not be blank")
     @Size(max = 30)

@@ -22,7 +22,7 @@ import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.TeacherService;
 import ua.foxminded.university.service.entities.Day;
 import ua.foxminded.university.service.entities.Lesson;
-import ua.foxminded.university.service.entities.Role;
+import ua.foxminded.university.service.entities.RoleEnum;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.exception.ServiceException;
 
@@ -51,7 +51,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Transactional
     public boolean addTeacher(Teacher teacher) {
         try {
-            teacher.setRole(Role.USER);
+//            teacher.setRole(RoleEnum.USER);
             teacher.setPassword(passwordEncoder.encode(defaultPassword));
             teacherDAO.save(teacher);
             log.info("Save teacher with id :: {}", teacher.getId());

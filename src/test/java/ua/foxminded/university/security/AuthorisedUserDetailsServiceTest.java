@@ -13,7 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import ua.foxminded.university.security.model.AuthorisedUser;
 import ua.foxminded.university.service.entities.Group;
-import ua.foxminded.university.service.entities.Role;
+import ua.foxminded.university.service.entities.RoleEnum;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.User;
 import ua.foxminded.university.springboot.AppSpringBoot;
@@ -35,7 +35,7 @@ class AuthorisedUserDetailsServiceTest {
     void test() {
         group.setId(1);
         String test = "$2a$10$cS44nbWAC4VRI47tJchy3emzaf.HrGmjEOFpi2zXFCNeo84eXgSqu";
-        User user = (User) Student.builder().password(test).role(Role.USER).username(studentUsername).build();
+        User user = (User) Student.builder().password(test).role(RoleEnum.USER).username(studentUsername).build();
         AuthorisedUser authorisedUser = new AuthorisedUser(user);
         assertEquals(authorisedUser , service.loadUserByUsername(studentUsername));
     }

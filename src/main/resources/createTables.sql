@@ -59,9 +59,25 @@ CREATE TABLE timetable.staff
      position VARCHAR(30) NOT NULL,
      user_name VARCHAR(30)  NOT NULL,
      password VARCHAR(255) NOT NULL,
-     role VARCHAR(10) NOT NULL,
      isActive BOOLEAN,
      CONSTRAINT staff_pkey PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS timetable.roles CASCADE;
+CREATE TABLE timetable.roles
+(
+     id SERIAL,
+     name VARCHAR(10) UNIQUE NOT NULL,
+     CONSTRAINT roles_pkey PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS timetable.staff_roles CASCADE;
+CREATE TABLE timetable.staff_roles
+(
+     id SERIAL,
+     staff_id INT references timetable.staff(id),
+     role_id INT references timetable.roles(id),
+     CONSTRAINT staff_roles_pkey PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS timetable.rooms CASCADE;
