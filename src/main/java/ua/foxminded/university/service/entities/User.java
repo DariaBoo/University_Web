@@ -15,6 +15,8 @@ import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import org.hibernate.engine.jdbc.SerializableBlobProxy;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;

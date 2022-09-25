@@ -8,11 +8,12 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.StaffDAO;
+import ua.foxminded.university.security.model.AuthorisedUser;
 import ua.foxminded.university.service.entities.Staff;
 
 @Slf4j
 @Service
-public class AuthorisedUserDetailsService implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
 //    @Autowired
 //    private StudentDAO studentDAO;
@@ -25,13 +26,14 @@ public class AuthorisedUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         Staff user = staffDAO.findByUsername(username);
-        log.info("LOGIN AS ADMIN-------------------------------------------");
+        log.info("LOGIN AS ADMIN/USER-------------------------------------------");
         if (user == null) {
-            throw new UsernameNotFoundException("User not found for email" + username);
+            throw new UsernameNotFoundException("User not found for username" + username);
         }
-        log.info("ADMIN DATA------------------------------" + user.getRoles().get(0).getName());
+        log.info("ADMIN/USER ROLE------------------------------" + user.getRoles().get(0).getName());
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
                 user.getRoles());
+//        return new AuthorisedUser(user);
     }
     
 //    @Override
