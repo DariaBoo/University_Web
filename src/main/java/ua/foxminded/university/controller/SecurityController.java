@@ -57,7 +57,7 @@ public class SecurityController {
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
-        return "redirect:/welcome";
+        return "user_page";
     }
     
     @PostMapping("/admin/login")

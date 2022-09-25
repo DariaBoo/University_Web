@@ -36,20 +36,17 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-        .httpBasic().and()
         .csrf().disable()
         .authorizeRequests()
-        .antMatchers("/", "/login", "/welcome", "/student/login", "teacher/login", "/admin", "/admin/login", "/home", "/user/logout").permitAll()
+        .antMatchers("/", "/login", "/welcome", "/student/login", "teacher/login", "/admin", "/admin/login").permitAll()
         .and()
         .authorizeRequests()
-        .antMatchers("/student", "/teacher", "/timetable").hasAuthority("ADMIN")
+        .antMatchers("/student", "/teacher", "/timetable", "/home").hasAuthority("ADMIN")
         .anyRequest().denyAll() 
-//        .and()
-//        .httpBasic().disable()
         .and()
         .logout()
         .logoutUrl("/user/logout")
-        .logoutSuccessUrl("/welcome");//invalidateHttpSession(true)
+        .logoutSuccessUrl("/welcome");//.invalidateHttpSession(true)
 //        .deleteCookies("JSESSIONID");
 //        .authorizeRequests()
 //        .mvcMatchers("/welcome").permitAll()
