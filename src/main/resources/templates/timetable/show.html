@@ -138,13 +138,13 @@
 								th:text="${timetable.getTeacher().getFirstName()} + ' ' + ${timetable.getTeacher().getLastName()}" />
 							<td th:text="${timetable.getRoomNumber()}" />
 							<td><a href="#"
-								th:href="@{/timetable/delete/} + ${timetable.getId()}"><button
+								th:href="@{/app/timetable/delete/} + ${timetable.getId()}"><button
 										class="button_delete">Delete</button></a></td>
 						</tr>
 					</tbody>
 				</table>
 				<div class="div_button_schedule">
-					<a th:href="@{timetable/schedule}"><button
+					<a th:href="@{/app/timetable/schedule}"><button
 							class="button_schedule">Schedule</button></a>
 				</div>
 			</div>			

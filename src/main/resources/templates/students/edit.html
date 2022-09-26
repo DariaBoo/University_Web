@@ -91,7 +91,7 @@ h1 {
 <body>
 	<div class="form_bg">
 		<form th:method="PATCH"
-			th:action="@{/students/{id}(id=${student.getId()})}"
+			th:action="@{/app/students/{id}(id=${student.getId()})}"
 			th:object="${student}">
 			<div class="form_container">
 				<h1>Update Student:</h1>

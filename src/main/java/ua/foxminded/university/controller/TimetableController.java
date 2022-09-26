@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import ua.foxminded.university.controller.urls.URL;
 import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.LessonService;
@@ -55,12 +56,12 @@ public class TimetableController {
     @Autowired
     private TeacherService teacherService;
 
-    @RequestMapping("/timetable")
+    @RequestMapping(URL.APP_TIMETABLE)
     public String chooseDatePeriod(Model model) {
         return "timetable/index";
     }
 
-    @RequestMapping(path = "/timetable/show")
+    @RequestMapping(URL.APP_TIMETABLE_SHOW)
     public ResponseEntity<List<Timetable>> showTimetable(HttpServletRequest request, Model model) {
         LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
         LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
@@ -78,7 +79,7 @@ public class TimetableController {
         }
     }
 
-    @GetMapping("/timetable/schedule")
+    @GetMapping(URL.APP_TIMETABLE_SCHEDULE)
     public String scheduleTimetable(Model model) {
         try {
         model.addAttribute("groups", groupService.findAllGroups());
@@ -88,7 +89,7 @@ public class TimetableController {
         return timetableNew;
     }
 
-    @GetMapping("/timetable/schedule/{groupId}")
+    @GetMapping(URL.APP_TIMETABLE_SCHEDULE_GROUP)
     public String scheduleTimetableForGroup(@PathVariable("groupId") int id, Model model) {
         Group group = groupService.findById(id);
         model.addAttribute("group", group);
@@ -97,7 +98,7 @@ public class TimetableController {
         return timetableNew;
     }
 
-    @GetMapping("/timetable/schedule/{groupId}/{lessonId}")
+    @GetMapping(URL.APP_TIMETABLE_SCHEDULE_GROUP_LESSON)
     public String scheduleTimetableForLesson(@PathVariable("lessonId") int lessonId,
             @PathVariable("groupId") int groupId, Model model) {
         Group group = groupService.findById(groupId);
@@ -115,7 +116,7 @@ public class TimetableController {
         return timetableNew;
     }
 
-    @RequestMapping(value = "/timetable/schedule", method = RequestMethod.POST)
+    @RequestMapping(value = URL.APP_TIMETABLE_SCHEDULE, method = RequestMethod.POST)
     public ResponseEntity<String> saveTimetable(@ModelAttribute("timetable") Timetable timetable, RedirectAttributes redirectAtt) {
         Day day = new Day();  
         String body = "";
@@ -132,7 +133,7 @@ public class TimetableController {
         return new ResponseEntity<>(body, HttpStatus.CREATED);
     }
 
-    @RequestMapping("timetable/delete/{id}")
+    @RequestMapping(URL.APP_TIMETABLE_DELETE)
     public ResponseEntity<String> deleteTimetable(@PathVariable Integer id) {
         boolean isDeleted = timetableService.deleteTimetable(id);
         if (isDeleted) {
@@ -142,7 +143,7 @@ public class TimetableController {
         }
     }
     
-    @RequestMapping("/student/timetable")
+    @RequestMapping(URL.STUDENT_TIMETABLE)
     public ResponseEntity<List<Timetable>> showStudentTimetable(HttpServletRequest request, Model model) {
         LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
         LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
@@ -158,7 +159,7 @@ public class TimetableController {
         }
     }
 
-    @RequestMapping("/teacher/timetable")
+    @RequestMapping(URL.TEACHER_TIMETABLE)
     public ResponseEntity<List<Timetable>> showTeacherTimetable(HttpServletRequest request, Model model) {
         LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
         LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));

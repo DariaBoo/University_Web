@@ -54,12 +54,12 @@ td {
 			<h1>Student information:</h1>
 			<table>
 				<tr>
-					<td class="btn"><a href="@{/students}"
-						th:href="@{/students/edit/} + ${student.getId()}">
+					<td class="btn"><a href="@{/app/students}"
+						th:href="@{/app/students/edit/} + ${student.getId()}">
 							<button class="button_edit">Update</button>
 					</a></td>
-					<td class="btn"><a href="@{/students}"
-						th:href="@{/students/delete/} + ${student.getId()}">
+					<td class="btn"><a href="@{/app/students}"
+						th:href="@{/app/students/delete/} + ${student.getId()}">
 							<button class="button_delete">Delete</button>
 					</a></td>
 				</tr>

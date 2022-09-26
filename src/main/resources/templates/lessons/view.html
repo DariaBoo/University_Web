@@ -127,15 +127,15 @@ td {
 			<h1>Lesson details:</h1>
 			<br>
 			<div class="div_button_back">
-				<a th:href="@{/lessons}"><button class="button_back">Back
+				<a th:href="@{/app/lessons}"><button class="button_back">Back
 						To Lessons</button></a>
 			</div>
 			<div class="div_btn_edit">
-				<a href="#" th:href="@{/lessons/edit/} + ${lesson.getId()}"><button
+				<a href="#" th:href="@{/app/lessons/edit/} + ${lesson.getId()}"><button
 						class="button_edit">Edit</button></a>
 			</div>
 			<div class="div_btn_delete">
-				<a href="#" th:href="@{/lessons/delete/} + ${lesson.getId()}"><button
+				<a href="#" th:href="@{/app/lessons/delete/} + ${lesson.getId()}"><button
 						class="button_delete">Delete</button></a>
 			</div>
 			<table>
@@ -155,7 +155,7 @@ td {
 							<b>Teachers:</b>
 						</summary>
 						<ul th:each="teacher : ${teachers}">
-							<li><a th:href="@{/teachers/} + ${teacher.getId()}"
+							<li><a th:href="@{/app/teachers/} + ${teacher.getId()}"
 								th:text="${teacher.getFirstName()} + ' ' + ${teacher.getLastName()}"></a></li>
 						</ul>
 					</details>
@@ -165,7 +165,7 @@ td {
 							<b>Groups:</b>
 						</summary>
 						<ul th:each="group : ${groups}">
-							<li><a th:href="@{/groups/} + ${group.getId()}"
+							<li><a th:href="@{/app/groups/} + ${group.getId()}"
 								th:text="${group.getName()}"></a></li>
 						</ul>
 					</details>

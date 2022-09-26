@@ -10,13 +10,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import ua.foxminded.university.controller.urls.URL;
 import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.HolidayService;
 import ua.foxminded.university.service.entities.Holiday;
 import ua.foxminded.university.service.exception.ServiceException;
 
 @Controller
-@RequestMapping("/holidays")
+@RequestMapping(URL.APP_HOLIDAYS)
 public class HolidaysController {
 
     private String message = "message";
@@ -30,24 +31,19 @@ public class HolidaysController {
         return "holidays/list";
     }
 
-    @RequestMapping("/holiday/delete/{id}")
+    @RequestMapping(URL.APP_DELETE_HOLIDAY_BY_ID)
     public String deleteHolidayById(@PathVariable Integer id, RedirectAttributes redirectAtt) {
         if (holidayService.deleteHoliday(id)) {
             redirectAtt.addFlashAttribute(message, "Holiday was deleted!");
         } else {
             redirectAtt.addFlashAttribute(message, "Can't delete past holiday!");
         }
-        return "redirect:/holidays";
+        return "redirect:/app/holidays";
     }
 
-    @GetMapping("/new")
+    @GetMapping(URL.APP_NEW_HOLIDAY)
     public String createNewHoliday(@ModelAttribute("holiday") Holiday holiday) {
         return "holidays/new";
-    }
-
-    @RequestMapping("/timetable")
-    public String chooseDatePeriod() {
-        return "holidays/list";
     }
 
     @PostMapping()
@@ -61,6 +57,6 @@ public class HolidaysController {
         } catch (UniqueConstraintViolationException | ServiceException e) {
             redirectAtt.addFlashAttribute(message, e.getMessage());
         }
-        return "redirect:/holidays";
+        return "redirect:/app/holidays";
     }
 }

@@ -159,11 +159,11 @@ td {
 		<div class="group">
 			<h1>Group details:</h1>
 			<div class="div_btn_edit">
-				<a href="#" th:href="@{/groups/edit/} + ${group.getId()}"><button
+				<a href="#" th:href="@{/app/groups/edit/} + ${group.getId()}"><button
 						class="button_edit">Update</button></a>
 			</div>
 			<div class="div_btn_delete">
-				<a href="#" th:href="@{/groups/delete/} + ${group.getId()}"><button
+				<a href="#" th:href="@{/app/groups/delete/} + ${group.getId()}"><button
 						class="button_delete">Delete</button></a>
 			</div>
 			<table>
@@ -182,16 +182,16 @@ td {
 					<details class="lessons-list">
 						<summary>Lessons: </summary>
 						<ul th:each="lesson : ${lessons}">
-							<li><a th:href="@{/lessons/} + ${lesson.getId()}"
+							<li><a th:href="@{/app/lessons/} + ${lesson.getId()}"
 								th:text="${lesson.getName()}"></a></li>
 						</ul>
 					</details>
 					<div class="div_btn_newL">
-						<a th:href="@{groups/group/assign_lesson}"><button
+						<a th:href="@{/app/groups/group/assign_lesson}"><button
 								class="button_new">Add Lesson</button></a>
 					</div>
 					<div class="div_btn_deleteL">
-						<a th:href="@{groups/group/delete_lesson}"><button
+						<a th:href="@{/app/groups/group/delete_lesson}"><button
 								class="button_delete">Delete Lesson</button></a>
 					</div>
 				</div>
@@ -201,13 +201,13 @@ td {
 					<summary>Students: </summary>
 
 					<ul th:each="student : ${students}">
-						<li><a th:href="@{/students/} + ${student.getId()}"
+						<li><a th:href="@{/app/students/} + ${student.getId()}"
 							th:text="${student.getFirstName()} + ' ' + ${student.getLastName()}"></a></li>
 					</ul>
 				</details>
 			</div>
 			<div class="div_button_back">
-				<a th:href="@{/groups}"><button class="button_back">Back
+				<a th:href="@{/app/groups}"><button class="button_back">Back
 						To Groups</button></a>
 			</div>
 		</div>

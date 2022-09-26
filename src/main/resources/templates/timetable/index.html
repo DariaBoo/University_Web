@@ -154,7 +154,7 @@ th {
                 </div>
         
 			<div class="from_to">
-				<form id="form" action="/university/timetable/show" method="post">
+				<form id="form" action="/university/app/timetable/show" method="post">
 					<label for="from">From: </label> <input type="date" id="from"
 						name="from" required /> <label for="to"> To: </label> <input
 						type="date" id="to" name="to" required />
@@ -162,7 +162,7 @@ th {
 				</form>
 			</div>
 			<div class="div_button_schedule">
-				<a th:href="@{/timetable/schedule}"><button
+				<a th:href="@{/app/timetable/schedule}"><button
 						class="button_schedule">Schedule</button></a>
 			</div>
 			<div class="table_message" th:if="${timetables}"
@@ -196,7 +196,7 @@ th {
 									th:text="${timetable.getTeacher().getFirstName()} + ' ' + ${timetable.getTeacher().getLastName()}" />
 								<td th:text="${timetable.getRoom().getNumber()}" />
 								<td><a href="#"
-									th:href="@{/timetable/delete/} + ${timetable.getTimetableId()}"><button
+									th:href="@{/app/timetable/delete/} + ${timetable.getTimetableId()}"><button
 											class="button_delete">Delete</button></a></td>
 							</tr>
 						</tbody>

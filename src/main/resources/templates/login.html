@@ -2,16 +2,27 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="ISO-8859-1">
-<title>Admin Login</title>
+<title>Login</title>
+<style>
+.login_form {
+    position: absolute;
+    top: 35%;
+    left: 40%;
+}
+.message {
+    position: absolute;
+    top: 10%;
+    left: 10%;
+}
+</style>
 </head>
 <body>
-<form th:action="@{/login}" method="post" style="max-width: 400px; margin: 0 auto;">
-    <h2>Admin Login</h2>
-     
-    <div th:if="${param.error}">
-        <h4 style="color: red">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</h4>
+    <div class="message" th:if="${message}">
+            <p th:text="${message}">error message</p>
     </div>
-             
+<div class="login_form">    
+<form th:action="@{/login}" method="post" style="max-width: 400px; margin: 0 auto;">
+    <h2>Login</h2>             
     <table>
         <tr>
             <td>Username: </td>
@@ -27,5 +38,6 @@
         </tr>
     </table>
 </form>
+</div>
 </body>
 </html>

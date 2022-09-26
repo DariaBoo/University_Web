@@ -13,12 +13,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ua.foxminded.university.security.UserDetailsServiceImpl;
 
 @Configuration
-//@ComponentScan(basePackages = { "ua.foxminded.university.security" })
 @EnableWebSecurity
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String ADMIN = "ADMIN";
-    private static final String USER = "USER";
+    private static final String TEACHER = "TEACHER";
+    private static final String STUDENT = "STUDENT";
+    private static final String STUDENT_URL = "/student/**";
+    private static final String TEACHER_URL = "/teacher/**";
+    private static final String ADMIN_URL = "/app/**";
+    private static final String HOME_URL = "/dashboard";
+    private static final String WELCOME_URL = "/";
+    private static final String LOGIN_URL = "/login";
+    private static final String LOGIN_ERROR_URL = "/logout_error";
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
@@ -38,41 +45,17 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http
         .csrf().disable()
         .authorizeRequests()
-        .antMatchers("/", "/login", "/welcome", "/student/login", "teacher/login", "/admin", "/admin/login").permitAll()
-        .and()
-        .authorizeRequests()
-        .antMatchers("/student", "/teacher", "/timetable", "/home").hasAuthority("ADMIN")
+        .antMatchers(STUDENT_URL).hasAnyAuthority(ADMIN, STUDENT)
+        .antMatchers(TEACHER_URL).hasAnyAuthority(ADMIN, TEACHER)
+        .antMatchers(ADMIN_URL).hasAuthority(ADMIN)
+        .antMatchers(HOME_URL).hasAnyAuthority(ADMIN, TEACHER, STUDENT)
+        .antMatchers(WELCOME_URL, LOGIN_ERROR_URL).permitAll()
         .anyRequest().denyAll() 
         .and()
+        .formLogin().loginPage(LOGIN_URL).loginProcessingUrl(LOGIN_URL).defaultSuccessUrl(HOME_URL).failureUrl(LOGIN_ERROR_URL)
+        .and()
         .logout()
-        .logoutUrl("/user/logout")
-        .logoutSuccessUrl("/welcome");//.invalidateHttpSession(true)
-//        .deleteCookies("JSESSIONID");
-//        .authorizeRequests()
-//        .mvcMatchers("/welcome").permitAll()
-//        .mvcMatchers("/welcome/student/login").hasRole(ADMIN)
-//                .antMatchers("/login", "/").hasAnyRole(USER, ADMIN)
-//                .antMatchers("/login", "/").permitAll()
-//                .antMatchers("/welcome/student/login").hasAnyRole(USER, ADMIN)
-//                .anyRequest().denyAll()
-//                .and().logout().logoutSuccessUrl("/");
-//        .antMatchers("/university/welcome/student/login").hasAnyRole(USER, ADMIN)
-//        .antMatchers("/university/welcome/teacher/login").hasAnyRole(USER, ADMIN)
-//        .antMatchers("/university/welcome").permitAll()        
-//        .antMatchers("/university/student/timetable").hasAnyRole(USER, ADMIN)
-//        .antMatchers("/university/teacher/timetable").hasAnyRole(USER, ADMIN) 
-//        .antMatchers("/university/timetable/**").hasRole(ADMIN)
-//        .antMatchers("/university/admin").permitAll()
-//        .antMatchers("/university/admin/login").hasRole(ADMIN)
-//        .antMatchers("/university/admin/**").hasRole(ADMIN)
-//        .antMatchers("/university/**").hasRole(ADMIN)
-//        .anyRequest().authenticated()
-//        .and().sessionManagement().maximumSessions(3);
-//        .anyRequest().authenticated();
-//        .and()
-//        .logout()
-//        .logoutSuccessUrl("/university").invalidateHttpSession(true)//.clearAuthentication(true)
-//        .deleteCookies("JSESSIONID");
+        .logoutSuccessUrl(WELCOME_URL);    
     }
 
     @Bean

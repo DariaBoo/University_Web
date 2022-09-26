@@ -60,13 +60,13 @@ tr:nth-child(even) {
 						<td th:text="${holiday.getName()}"></td>
 						<td th:text="${holiday.getDate()}"></td>
 						<td style="text-align: center;"><a href="#"
-							th:href="@{holidays/holiday/delete/} + ${holiday.getId()}"><button
+							th:href="@{/app/holidays/holiday/delete/} + ${holiday.getId()}"><button
 									class="button_delete">Delete</button></a></td>
 					</tr>
 				</tbody>
 			</table>
 			<div class="div_button_add">
-				<a th:href="@{holidays/new}"><button class="button_add">New</button></a>
+				<a th:href="@{/app/holidays/new}"><button class="button_add">New</button></a>
 			</div>
 		</div>
 	</div>

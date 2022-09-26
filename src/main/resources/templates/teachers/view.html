@@ -210,11 +210,11 @@ h3 {
 				<table id="btn_table">
 					<tr>
 						<td class="table_btn"><a href="#"
-							th:href="@{/teachers/edit/} + ${teacher.getId()}">
+							th:href="@{/app/teachers/edit/} + ${teacher.getId()}">
 								<button class="button_edit">Update</button>
 						</a></td>
 						<td class="table_btn"><a href="#"
-							th:href="@{/teachers/delete/} + ${teacher.getId()}"><button
+							th:href="@{/app/teachers/delete/} + ${teacher.getId()}"><button
 									class="button_delete">Delete</button></a></td>
 					</tr>
 				</table>
@@ -253,7 +253,7 @@ h3 {
 					</tr>
 				</table>
 				<div class="div_button_back">
-					<a th:href="@{/teachers}"><button class="button_back">Back
+					<a th:href="@{/app/teachers}"><button class="button_back">Back
 							To Teachers</button></a>
 				</div>
 			</div>
@@ -263,11 +263,11 @@ h3 {
 					<table id="btn_table">
 						<tr>
 							<td class="table_btn"><a href="#"
-								th:href="@{/teachers/absent/add}">
+								th:href="@{/app/teachers/absent/add}">
 									<button class="button_new">Add</button>
 							</a></td>
 							<td class="table_btn"><a href="#"
-								th:href="@{/teachers/absent/delete}"><button
+								th:href="@{/app/teachers/absent/delete}"><button
 										class="button_delete">Delete</button></a></td>
 						</tr>
 					</table>
@@ -292,16 +292,16 @@ h3 {
 						<details class="lessons-list">
 							<summary>Lessons: </summary>
 							<ul th:each="lesson : ${lessons}">
-								<li><a th:href="@{/lessons/} + ${lesson.getId()}"
+								<li><a th:href="@{/app/lessons/} + ${lesson.getId()}"
 									th:text="${lesson.getName()}"></a></li>
 							</ul>
 						</details>
 						<div class="div_btn_newL">
-							<a th:href="@{teachers/teacher/assign_lesson}"><button
+							<a th:href="@{/app/teachers/teacher/assign_lesson}"><button
 									class="button_new">Add Lesson</button></a>
 						</div>
 						<div class="div_btn_deleteL">
-							<a th:href="@{teachers/teacher/delete_lesson}"><button
+							<a th:href="@{/app/teachers/teacher/delete_lesson}"><button
 									class="button_delete">Delete Lesson</button></a>
 						</div>
 					</div>
@@ -309,7 +309,7 @@ h3 {
 					<details class="groups-list">
 						<summary>Groups: </summary>
 						<ul th:each="group : ${groups}">
-							<li><a th:href="@{/groups/} + ${group.getId()}"
+							<li><a th:href="@{/app/groups/} + ${group.getId()}"
 								th:text="${group.getName()} + ' ' + ${group.getDepartmentId()}"></a></li>
 						</ul>
 					</details>
