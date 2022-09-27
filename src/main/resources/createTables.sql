@@ -20,18 +20,25 @@ CREATE TABLE timetable.lessons
     PRIMARY KEY (lesson_id)
 );
 
+DROP TABLE IF EXISTS timetable.users CASCADE;
+CREATE TABLE timetable.users
+(
+    id SERIAL,  
+    user_name VARCHAR(30) UNIQUE NOT NULL,
+    first_name VARCHAR(30)  NOT NULL,
+    last_name VARCHAR(30)  NOT NULL,    
+    password VARCHAR(255) NOT NULL,
+    isActive BOOLEAN,
+    CONSTRAINT users_pkey PRIMARY KEY (id)
+);
+
 DROP TABLE IF EXISTS timetable.students CASCADE;
 CREATE TABLE timetable.students
 (
     id SERIAL,    
-    first_name VARCHAR(30)  NOT NULL,
-    last_name VARCHAR(30)  NOT NULL,
+    user_id INT references timetable.users(id),
     group_id INT references timetable.groups(group_id),
-    user_name VARCHAR(30)  NOT NULL,
-    password VARCHAR(255) NOT NULL,
     id_card VARCHAR(5) NOT NULL,
-    role VARCHAR(10) NOT NULL,    
-    isActive BOOLEAN,
     CONSTRAINT students_pkey PRIMARY KEY (id)
 );
 
@@ -39,14 +46,9 @@ DROP TABLE IF EXISTS timetable.teachers CASCADE;
 CREATE TABLE timetable.teachers
 (
      id SERIAL,
-     first_name VARCHAR(30)  NOT NULL,
-     last_name VARCHAR(30)  NOT NULL,
+     user_id INT references timetable.users(id),
      position VARCHAR(30) NOT NULL,
-     user_name VARCHAR(30)  NOT NULL,
-     password VARCHAR(255) NOT NULL,
      department_id INT,
-     role VARCHAR(10) NOT NULL,
-     isActive BOOLEAN,
      CONSTRAINT teachers_pkey PRIMARY KEY (id)
 );
 
@@ -54,12 +56,8 @@ DROP TABLE IF EXISTS timetable.staff CASCADE;
 CREATE TABLE timetable.staff
 (
      id SERIAL,
-     first_name VARCHAR(30)  NOT NULL,
-     last_name VARCHAR(30)  NOT NULL,
+     user_id INT references timetable.users(id),     
      position VARCHAR(30) NOT NULL,
-     user_name VARCHAR(30)  NOT NULL,
-     password VARCHAR(255) NOT NULL,
-     isActive BOOLEAN,
      CONSTRAINT staff_pkey PRIMARY KEY (id)
 );
 
@@ -71,13 +69,13 @@ CREATE TABLE timetable.roles
      CONSTRAINT roles_pkey PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS timetable.staff_roles CASCADE;
-CREATE TABLE timetable.staff_roles
+DROP TABLE IF EXISTS timetable.users_roles CASCADE;
+CREATE TABLE timetable.users_roles
 (
      id SERIAL,
-     staff_id INT references timetable.staff(id),
+     user_id INT references timetable.users(id),
      role_id INT references timetable.roles(id),
-     CONSTRAINT staff_roles_pkey PRIMARY KEY (id)
+     CONSTRAINT users_roles_pkey PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS timetable.rooms CASCADE;

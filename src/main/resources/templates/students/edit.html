@@ -98,12 +98,12 @@ h1 {
 				<br>
 				<div class="form_r">
 					<label for="firstName">First Name: </label> <input type="text"
-						th:field="*{firstName}" maxlength="30" id="firstName" />
+						th:field="*{user.firstName}" maxlength="30" id="firstName" />
 				</div>
 				<br>
 				<div class="form_r">
 					<label for="lastName">Last Name: </label> <input type="text"
-						th:field="*{lastName}" maxlength="30" id="lastName" />
+						th:field="*{user.lastName}" maxlength="30" id="lastName" />
 				</div>
 				<br>
 				<div class="form_r">
@@ -121,7 +121,7 @@ h1 {
 				<br>
                 <div class="form_r">
                     <input type="hidden"
-                        th:field="*{password}" id="idCard" />
+                        th:field="*{user.password}" id="idCard" />
                 </div>
 				<br>
 				<div class="form_r">

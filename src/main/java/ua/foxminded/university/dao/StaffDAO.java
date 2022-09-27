@@ -12,5 +12,5 @@ import ua.foxminded.university.service.entities.Staff;
  */
 public interface StaffDAO  extends JpaRepository<Staff, Integer> {
     
-    Staff findByUsername(String username);
+    Staff findByUserUsername(String username);
 }

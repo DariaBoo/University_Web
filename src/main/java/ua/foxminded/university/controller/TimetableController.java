@@ -9,7 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ua.foxminded.university.controller.urls.URL;
 import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
+import ua.foxminded.university.security.model.AuthorisedUser;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.LessonService;
 import ua.foxminded.university.service.RoomService;
@@ -38,8 +41,7 @@ import ua.foxminded.university.service.exception.ServiceException;
 
 @Controller
 public class TimetableController {
-    static int studentId;
-    static int teacherId;
+
     private static String message = "message";
     private static String timetableNew = "timetable/new";
 
@@ -141,29 +143,31 @@ public class TimetableController {
         } else {
             return new ResponseEntity<>("Can't delete past timetable!", HttpStatus.BAD_REQUEST);
         }
-    }
-    
+    }    
+
     @RequestMapping(URL.STUDENT_TIMETABLE)
     public ResponseEntity<List<Timetable>> showStudentTimetable(HttpServletRequest request, Model model) {
         LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
         LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
-        Student student = studentService.findById(studentId);
+        AuthorisedUser user = (AuthorisedUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Student student = studentService.findByUsername(user.getUsername());
         Day day = new Day();
         day.setDateOne(setDateOne);
         day.setDateTwo(setDateTwo);
         try {
             List<Timetable> body = timetableService.getStudentTimetable(day, student);
-            return new ResponseEntity<>(body, HttpStatus.OK);
+            return ResponseEntity.ok().contentType(MediaType.ALL).body(body);//new ResponseEntity<>(body, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
+    
     @RequestMapping(URL.TEACHER_TIMETABLE)
     public ResponseEntity<List<Timetable>> showTeacherTimetable(HttpServletRequest request, Model model) {
         LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
         LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
-        Teacher teacher = teacherService.findById(teacherId);
+        AuthorisedUser user = (AuthorisedUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Teacher teacher = teacherService.findByUsername(user.getUsername());
         Day day = new Day();
         day.setDateOne(setDateOne);
         day.setDateTwo(setDateTwo);

@@ -1,6 +1,7 @@
 package ua.foxminded.university.service.implementation;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -22,9 +23,10 @@ import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.TeacherService;
 import ua.foxminded.university.service.entities.Day;
 import ua.foxminded.university.service.entities.Lesson;
-import ua.foxminded.university.service.entities.RoleEnum;
+import ua.foxminded.university.service.entities.Role;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.exception.ServiceException;
+import ua.foxminded.university.service.exception.UserNotFoundException;
 
 /**
  * @version 1.0
@@ -37,6 +39,8 @@ import ua.foxminded.university.service.exception.ServiceException;
 public class TeacherServiceImpl implements TeacherService {
 
     private final String defaultPassword = "555";
+    private final String defaultRole = "TEACHER";
+    private final List<Role> roles = new ArrayList<>();
     @Autowired
     private TeacherDAO teacherDAO;
     @Autowired
@@ -51,14 +55,15 @@ public class TeacherServiceImpl implements TeacherService {
     @Transactional
     public boolean addTeacher(Teacher teacher) {
         try {
-//            teacher.setRole(RoleEnum.USER);
-            teacher.setPassword(passwordEncoder.encode(defaultPassword));
+            roles.add(new Role(defaultRole));
+            teacher.getUser().setRoles(roles);
+            teacher.getUser().setPassword(passwordEncoder.encode(defaultPassword));
             teacherDAO.save(teacher);
             log.info("Save teacher with id :: {}", teacher.getId());
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getMessage(), e.getCause());
-            throw new UniqueConstraintViolationException("Teacher with first name [" + teacher.getFirstName()
-                    + "] and last name [" + teacher.getLastName() + "] already exists!");
+            throw new UniqueConstraintViolationException("Teacher with first name [" + teacher.getUser().getFirstName()
+                    + "] and last name [" + teacher.getUser().getLastName() + "] already exists!");
         } catch (ConstraintViolationException e) {
             Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
             for (ConstraintViolation<?> violation : violations) {
@@ -82,8 +87,8 @@ public class TeacherServiceImpl implements TeacherService {
             log.info("Update teacher with id :: {}", teacher.getId());
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getMessage(), e.getCause());
-            throw new UniqueConstraintViolationException("Teacher with first name [" + teacher.getFirstName()
-                    + "] and last name [" + teacher.getLastName() + "] already exists!");
+            throw new UniqueConstraintViolationException("Teacher with first name [" + teacher.getUser().getFirstName()
+                    + "] and last name [" + teacher.getUser().getLastName() + "] already exists!");
         } catch (ConstraintViolationException e) {
             Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
             for (ConstraintViolation<?> violation : violations) {
@@ -206,7 +211,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Transactional
     public void changePassword(int teacherId, String newPassword) {
         Teacher teacher = findById(teacherId);
-        teacher.setPassword(passwordEncoder.encode(newPassword));
+        teacher.getUser().setPassword(passwordEncoder.encode(newPassword));
         teacherDAO.save(teacher);
         log.debug("Password changed. Teacher id :: {}", teacherId);
     }
@@ -226,5 +231,14 @@ public class TeacherServiceImpl implements TeacherService {
             log.info("Check if teacher [id::{}] is absent [date::{}] - {}", teacher.getId(), date, isAbsent);
 //        }
             return isAbsent;
+    }
+
+    @Override
+    public Teacher findByUsername(String username) {
+        Teacher teacher = teacherDAO.findByUserUsername(username);
+        if(teacher == null) {
+            throw new UserNotFoundException("Teacher with username " + username + " is not exist");
+        }
+        return teacher;
     }
 }

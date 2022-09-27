@@ -103,4 +103,6 @@ public interface TeacherService {
      * @return true or false
      */
     boolean checkIsAbsent(LocalDate date, int teacherId);
+    
+    Teacher findByUsername(String username);
 }

@@ -1,5 +1,6 @@
 package ua.foxminded.university.service.implementation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -15,10 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.StudentDAO;
 import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
+import ua.foxminded.university.service.RoleService;
 import ua.foxminded.university.service.StudentService;
-import ua.foxminded.university.service.entities.RoleEnum;
+import ua.foxminded.university.service.entities.Role;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.exception.ServiceException;
+import ua.foxminded.university.service.exception.UserNotFoundException;
 
 /**
  * @version 1.0
@@ -31,11 +34,14 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private StudentDAO studentDAO;
-    
+    @Autowired
+    private RoleService roleService;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
     private final String defaultPassword = "1234";
+    private final String defaultRole = "STUDENT";
+    private final List<Role> roles = new ArrayList<>();
 
     /**
      * {@inheritDoc}
@@ -43,15 +49,16 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public boolean addStudent(Student student) {
-        try {
-//            student.setRole(RoleEnum.USER);
-            student.setPassword(passwordEncoder.encode(defaultPassword));
+        try {  
+            roles.add(roleService.findByName(defaultRole));
+            student.getUser().setRoles(roles);
+            student.getUser().setPassword(passwordEncoder.encode(defaultPassword));
             studentDAO.save(student);
             log.info("Add new student with id::{}", student.getId());
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getLocalizedMessage(), e.getCause());
             throw new UniqueConstraintViolationException(
-                    "Student with first name - [" + student.getFirstName() + "], last name - [" + student.getLastName()
+                    "Student with first name - [" + student.getUser().getFirstName() + "], last name - [" + student.getUser().getLastName()
                             + "] and id card - [" + student.getIdCard() + "] already exists!");
         } catch (ConstraintViolationException e) {
             Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
@@ -77,7 +84,7 @@ public class StudentServiceImpl implements StudentService {
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error(e.getMessage(), e.getCause());
             throw new UniqueConstraintViolationException(
-                    "Student with first name - [" + student.getFirstName() + "], last name - [" + student.getLastName()
+                    "Student with first name - [" + student.getUser().getFirstName() + "], last name - [" + student.getUser().getLastName()
                             + "] and id card - [" + student.getIdCard() + "] already exists!");
         } catch (ConstraintViolationException e) {
             Set<ConstraintViolation<?>> violations = ((ConstraintViolationException) e.getCause()).getConstraintViolations();
@@ -108,7 +115,7 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public void changePassword(int studentId, String newPassword) {
         Student student = findById(studentId);
-        student.setPassword(passwordEncoder.encode(newPassword));
+        student.getUser().setPassword(passwordEncoder.encode(newPassword));
         studentDAO.save(student);
         log.debug("Password changed. Student id :: {}", studentId);
     }
@@ -135,5 +142,18 @@ public class StudentServiceImpl implements StudentService {
         List<Student> resultList = studentDAO.findAll();
         log.debug("Found all students, list size :: {}", resultList.size());
         return resultList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Student findByUsername(String username) {
+        Student student = studentDAO.findByUserUsername(username);
+        if(student == null) {
+            throw new UserNotFoundException("Student with username " + username + " is not exist");
+        }
+        return student;
     }
 }

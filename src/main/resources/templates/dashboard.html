@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <title>Welcome</title>
+
 <link rel="stylesheet" href="/university/css/styles.css">
 <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-</head>
+
+
 <style>
 body, html {
 	height: 100%;
@@ -70,12 +72,15 @@ div.container {
 	background-color: #6f6f76;
 }
 </style>
+</head>
 <body>
 	<div class="bg">
-	<h2>Welcome to Hogwarts!</h2>
+	<h2></h2>
 		<div th:if="${username}" role="alert">
-			<p th:text="Welcome + ', ' + ${username} + '!'" />
+			<p th:text="Welcome + ' to Hogwarts, ' + ${username} +'!'" />
 		</div>
+		    <br>
+            <br>
 			<a href="/university/student">Students Timetable</a>
 			<br>
 			<br>

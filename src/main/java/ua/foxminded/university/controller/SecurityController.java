@@ -30,12 +30,9 @@ public class SecurityController {
     }
     
     @PostMapping(URL.LOGIN)
-    public String login(AuthenticationDto userDto, RedirectAttributes redirectAtt) {
-        System.out.println("CONTROLLER STARTS-----------------------------------------------" + userDto.getUsername() + userDto.getPassword());
+    public String login(AuthenticationDto userDto) { 
         boolean response = securityService.login(userDto.getUsername(), userDto.getPassword());
         if(response) {
-            System.out.println("CONTROLLER REDIRECT TO /dashboard---------------------------------");
-            redirectAtt.addFlashAttribute("username", userDto.getUsername());
             return "redirect:/dashboard";
         }
         return "redirect:/login_error";
@@ -44,7 +41,6 @@ public class SecurityController {
     @GetMapping(URL.LOGOUT)
     public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("ADMIN LOGOUT METHOD------------------------" + auth);
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
@@ -53,7 +49,6 @@ public class SecurityController {
     
     @RequestMapping(URL.LOGOUT_ERROR)
     public String errorLogin(RedirectAttributes redirectAtt) {
-        System.out.println("CONTROLLER ERROR MESSAGE-------------------------------");
         redirectAtt.addFlashAttribute("message", "You have no authority to access");
         return "login";
     }

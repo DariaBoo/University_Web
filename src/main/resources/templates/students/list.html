@@ -65,8 +65,8 @@
 				<tbody>
 					<tr th:each="student:${students}">
 						<td th:text="${student.getId()} + '.'" />
-						<td th:text="${student.getFirstName()}" />
-						<td th:text="${student.getLastName()}" />
+						<td th:text="${student.getUser().getFirstName()}" />
+						<td th:text="${student.getUser().getLastName()}" />
 						<td th:text="${student.getGroup().getId()}" />
 						<td><a href="#" th:href="@{/app/students/} + ${student.getId()}"><button
 									class="button_view">View</button></a></td>

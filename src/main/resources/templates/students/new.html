@@ -98,19 +98,19 @@ h1 {
 				<br>
                 <div class="form_r">
                     <label for="userName">User name: </label> <input type="text"
-                        th:field="*{userName}" id="userName"
+                        th:field="*{user.username}" id="userName"
                         placeholder="Enter User Name" maxlength="30" required />
                 </div>
 				<br>
 				<div class="form_r">
 					<label for="firstName">First name: </label> <input type="text"
-						th:field="*{firstName}" id="firstName"
+						th:field="*{user.firstName}" id="firstName"
 						placeholder="Enter First Name" maxlength="30" required />
 				</div>
 				<br>
 				<div class="form_r">
 					<label for="lastName">Last name: </label> <input type="text"
-						th:field="*{lastName}" id="lastName" placeholder="Enter Last Name"
+						th:field="*{user.lastName}" id="lastName" placeholder="Enter Last Name"
 						maxlength="30" required />
 				</div>
 				<br>
@@ -130,7 +130,7 @@ h1 {
 				<br>
                 <div class="form_r">
                     <input type="hidden"
-                        th:field="*{password}" id="password" maxlength="5"
+                        th:field="*{user.password}" id="password" maxlength="5"
                         value="1234"/>
                 </div>				
 				<br>

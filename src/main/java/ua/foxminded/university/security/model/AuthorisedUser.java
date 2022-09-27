@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import ua.foxminded.university.service.entities.Staff;
 import ua.foxminded.university.service.entities.User;
 
 /**
@@ -23,9 +22,9 @@ import ua.foxminded.university.service.entities.User;
 public class AuthorisedUser implements UserDetails {
 
     private static final long serialVersionUID = 1L;
-    private Staff user;
+    private User user;
     
-    public AuthorisedUser(Staff user) {
+    public AuthorisedUser(User user) {
         this.user = user;
     }
 
@@ -67,7 +66,7 @@ public class AuthorisedUser implements UserDetails {
         return true;
     }
 
-    public Staff getUser() {
+    public User getUser() {
         return user;
     }
 }

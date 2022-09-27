@@ -10,5 +10,5 @@ import ua.foxminded.university.service.entities.Student;
  */
 public interface StudentDAO extends JpaRepository<Student, Integer> {
 
-    Student findByUsername(String username);
+    Student findByUserUsername(String username);
 }

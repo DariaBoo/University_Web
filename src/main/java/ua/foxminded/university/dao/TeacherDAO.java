@@ -12,5 +12,5 @@ import ua.foxminded.university.service.entities.Teacher;
  */
 public interface TeacherDAO  extends JpaRepository<Teacher, Integer> {
 
-    Teacher findByUsername(String username);
+    Teacher findByUserUsername(String username);
 }

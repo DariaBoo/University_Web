@@ -58,4 +58,6 @@ public interface StudentService {
      * @param student
      */
     void updateStudent(Student student);
+    
+    Student findByUsername(String username);
 }

@@ -27,6 +27,6 @@ class StaffDAOTest {
     
     @Test
     void findByUsername() {
-        assertEquals(USERNAME, repository.findByUsername(USERNAME).getUsername());
+        assertEquals(USERNAME, repository.findByUserUsername(USERNAME).getUser().getUsername());
     }
 }

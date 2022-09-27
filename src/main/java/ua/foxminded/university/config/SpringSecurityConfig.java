@@ -26,6 +26,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String WELCOME_URL = "/";
     private static final String LOGIN_URL = "/login";
     private static final String LOGIN_ERROR_URL = "/logout_error";
+    private static final String[] staticResources = {"/css/**", "/img/**", "/navbar/**"};
+
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
@@ -45,6 +47,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http
         .csrf().disable()
         .authorizeRequests()
+        .antMatchers(staticResources).permitAll()
         .antMatchers(STUDENT_URL).hasAnyAuthority(ADMIN, STUDENT)
         .antMatchers(TEACHER_URL).hasAnyAuthority(ADMIN, TEACHER)
         .antMatchers(ADMIN_URL).hasAuthority(ADMIN)
@@ -52,10 +55,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(WELCOME_URL, LOGIN_ERROR_URL).permitAll()
         .anyRequest().denyAll() 
         .and()
-        .formLogin().loginPage(LOGIN_URL).loginProcessingUrl(LOGIN_URL).defaultSuccessUrl(HOME_URL).failureUrl(LOGIN_ERROR_URL)
+        .formLogin().loginPage(LOGIN_URL).defaultSuccessUrl(HOME_URL).failureUrl(LOGIN_ERROR_URL)
         .and()
-        .logout()
-        .logoutSuccessUrl(WELCOME_URL);    
+        .logout().logoutUrl("/logout")
+        .logoutSuccessUrl(WELCOME_URL)
+        .invalidateHttpSession(true)
+        .deleteCookies("JSESSIONID");    
     }
 
     @Bean
