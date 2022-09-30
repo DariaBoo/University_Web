@@ -19,13 +19,16 @@ import ua.foxminded.university.service.entities.User;
  * @version 1.0
  *
  */
-public class AuthorisedUser implements UserDetails {
+public class AuthenticatedUser implements UserDetails {
 
     private static final long serialVersionUID = 1L;
     private User user;
     
-    public AuthorisedUser(User user) {
+    public AuthenticatedUser(User user) {
         this.user = user;
+    }
+    
+    public AuthenticatedUser() {
     }
 
     @Override

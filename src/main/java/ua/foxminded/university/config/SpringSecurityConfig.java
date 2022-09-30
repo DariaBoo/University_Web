@@ -8,9 +8,13 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import ua.foxminded.university.security.UserDetailsServiceImpl;
+import ua.foxminded.university.security.jwt.JwtAuthenticationEntryPoint;
+import ua.foxminded.university.security.jwt.JwtTokenFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -30,6 +34,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    private JwtTokenFilter jwtTokenFilter;
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Override
     @Bean
@@ -47,20 +55,23 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http
         .csrf().disable()
         .authorizeRequests()
-        .antMatchers(staticResources).permitAll()
-        .antMatchers(STUDENT_URL).hasAnyAuthority(ADMIN, STUDENT)
-        .antMatchers(TEACHER_URL).hasAnyAuthority(ADMIN, TEACHER)
-        .antMatchers(ADMIN_URL).hasAuthority(ADMIN)
-        .antMatchers(HOME_URL).hasAnyAuthority(ADMIN, TEACHER, STUDENT)
-        .antMatchers(WELCOME_URL, LOGIN_ERROR_URL).permitAll()
-        .anyRequest().denyAll() 
-        .and()
-        .formLogin().loginPage(LOGIN_URL).defaultSuccessUrl(HOME_URL).failureUrl(LOGIN_ERROR_URL)
+        .mvcMatchers(staticResources).permitAll()
+        .mvcMatchers(STUDENT_URL).hasAnyAuthority(ADMIN, STUDENT)
+        .mvcMatchers(TEACHER_URL).hasAnyAuthority(ADMIN, TEACHER)
+        .mvcMatchers(ADMIN_URL).hasAuthority(ADMIN)
+        .mvcMatchers(HOME_URL).hasAnyAuthority(ADMIN, TEACHER, STUDENT)
+        .mvcMatchers(WELCOME_URL, LOGIN_ERROR_URL, LOGIN_URL).permitAll()
+        .mvcMatchers().denyAll() 
+//        .and()
+//        .formLogin().loginPage(LOGIN_URL)//.defaultSuccessUrl(HOME_URL).failureUrl(LOGIN_ERROR_URL)
         .and()
         .logout().logoutUrl("/logout")
         .logoutSuccessUrl(WELCOME_URL)
         .invalidateHttpSession(true)
         .deleteCookies("JSESSIONID");    
+        http.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+        .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

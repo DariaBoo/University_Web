@@ -6,7 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import ua.foxminded.university.controller.urls.URL;
-import ua.foxminded.university.security.model.AuthorisedUser;
+import ua.foxminded.university.security.model.AuthenticatedUser;
 
 @Controller
 public class UniversityController {
@@ -28,7 +28,7 @@ public class UniversityController {
     
     @GetMapping(URL.HOME)
     public String showDashboardPage(Model model) {
-        AuthorisedUser user = (AuthorisedUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        AuthenticatedUser user = (AuthenticatedUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("username", user.getUsername());
         return "/dashboard";
     }

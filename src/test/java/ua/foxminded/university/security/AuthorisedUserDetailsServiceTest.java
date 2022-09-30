@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import ua.foxminded.university.security.model.AuthorisedUser;
+import ua.foxminded.university.security.model.AuthenticatedUser;
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.entities.RoleEnum;
 import ua.foxminded.university.service.entities.Student;

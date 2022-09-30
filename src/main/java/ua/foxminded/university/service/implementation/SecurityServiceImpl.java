@@ -1,32 +1,43 @@
 package ua.foxminded.university.service.implementation;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import ua.foxminded.university.security.UserDetailsServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.service.SecurityService;
-import ua.foxminded.university.service.exception.ServiceException;
+import ua.foxminded.university.service.exception.InvalidUserException;
+import ua.foxminded.university.service.exception.UserNotFoundException;
 
+@Slf4j
 @Service
 public class SecurityServiceImpl implements SecurityService {
 
     @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private AuthenticationManager authenticationManager;
 
     @Override
-    public boolean login(String username, String password) {
+    public boolean isAuthenticated(String username, String password) throws InvalidUserException {
         try {
-            UserDetails authorisedUser = userDetailsService.loadUserByUsername(username);
-            System.out.println("SERVICE------------------------" + authorisedUser.getUsername()
-                    + authorisedUser.getPassword() + authorisedUser.getAuthorities());
-            if (authorisedUser.getUsername().equalsIgnoreCase(username)) {
-                return true;
-            }
+            doAuthenticate(username, password);
+            return true;
         } catch (UsernameNotFoundException e) {
-            throw new ServiceException(e.getMessage());
-        }
-        return false;
+            log.error("[ON isAuthenticated]:: user is not authenticated");
+            throw new UserNotFoundException(e.getMessage());
+        } catch(AuthenticationException e) {
+            log.error("[ON isAuthenticated]:: invalid credentials");
+            throw new InvalidUserException(e.getMessage());
+        }        
+    }
+    
+    private void doAuthenticate(String username, String password) {
+            log.info("[ON authenticate]:: authenticating by UsernamePasswordAuthenticationToken...");
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            log.info(
+                    "[ON authenticate]:: user with username [ {} ] is authenticated by UsernamePasswordAuthenticationToken successfully",
+                    username);
     }
 }

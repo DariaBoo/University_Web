@@ -23,7 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ua.foxminded.university.controller.urls.URL;
 import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
-import ua.foxminded.university.security.model.AuthorisedUser;
+import ua.foxminded.university.security.model.AuthenticatedUser;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.LessonService;
 import ua.foxminded.university.service.RoomService;
@@ -149,14 +149,15 @@ public class TimetableController {
     public ResponseEntity<List<Timetable>> showStudentTimetable(HttpServletRequest request, Model model) {
         LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
         LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
-        AuthorisedUser user = (AuthorisedUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        AuthenticatedUser user = (AuthenticatedUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Student student = studentService.findByUsername(user.getUsername());
         Day day = new Day();
         day.setDateOne(setDateOne);
         day.setDateTwo(setDateTwo);
         try {
             List<Timetable> body = timetableService.getStudentTimetable(day, student);
-            return ResponseEntity.ok().contentType(MediaType.ALL).body(body);//new ResponseEntity<>(body, HttpStatus.OK);
+            System.out.println("CONTROLLER BODY-------------" + body);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(body);//new ResponseEntity<>(body, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -166,7 +167,7 @@ public class TimetableController {
     public ResponseEntity<List<Timetable>> showTeacherTimetable(HttpServletRequest request, Model model) {
         LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
         LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
-        AuthorisedUser user = (AuthorisedUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        AuthenticatedUser user = (AuthenticatedUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Teacher teacher = teacherService.findByUsername(user.getUsername());
         Day day = new Day();
         day.setDateOne(setDateOne);

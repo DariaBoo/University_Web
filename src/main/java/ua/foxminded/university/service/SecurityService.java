@@ -1,6 +1,8 @@
 package ua.foxminded.university.service;
 
+import ua.foxminded.university.service.exception.InvalidUserException;
+
 public interface SecurityService {
 
-    boolean login(String username, String password);
+    boolean isAuthenticated(String username, String password)  throws InvalidUserException;
 }

@@ -100,7 +100,7 @@ public class LessonServiceImpl implements LessonService {
     @Cacheable("lessons")
     public List<Lesson> findAllLessons() {
         List<Lesson> resultList = lessonDAO.findAll();
-        log.debug("Found all lessons, list size :: ", resultList.size());
+        log.debug("Found all lessons, list size :: {}", resultList.size());
         return resultList;
     }
 }
