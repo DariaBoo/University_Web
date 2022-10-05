@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.controller.urls.URL;
 import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.security.model.AuthenticatedUser;
@@ -39,6 +40,7 @@ import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.entities.Timetable;
 import ua.foxminded.university.service.exception.ServiceException;
 
+@Slf4j
 @Controller
 public class TimetableController {
 
@@ -77,6 +79,7 @@ public class TimetableController {
             timetable = timetableService.showTimetable(day);
             return new ResponseEntity<>(timetable, headers, HttpStatus.FOUND);
         } catch (IllegalArgumentException e) {
+            log.error("[ON showTimetable]:: IllegalArgumentException {}", e.getLocalizedMessage());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -86,7 +89,7 @@ public class TimetableController {
         try {
         model.addAttribute("groups", groupService.findAllGroups());
         } catch (UniqueConstraintViolationException e) {
-            System.out.println("ERROR");
+            log.error("[ON scheduleTimetable]:: UniqueConstraintViolationException {}", e.getLocalizedMessage());
         }
         return timetableNew;
     }
@@ -125,6 +128,7 @@ public class TimetableController {
         try {
         body = timetableService.scheduleTimetable(timetable);
         } catch (ServiceException e) {
+            log.error("[ON saveTimetable]:: ServiceException {}", e.getLocalizedMessage());
             body = e.getMessage();
         }
         day.setDateOne(timetable.getDate());
@@ -141,6 +145,7 @@ public class TimetableController {
         if (isDeleted) {
             return new ResponseEntity<>("Timetable was deleted!", HttpStatus.OK);
         } else {
+            log.error("[ON deleteTimetable]:: bad request");
             return new ResponseEntity<>("Can't delete past timetable!", HttpStatus.BAD_REQUEST);
         }
     }    
@@ -156,9 +161,9 @@ public class TimetableController {
         day.setDateTwo(setDateTwo);
         try {
             List<Timetable> body = timetableService.getStudentTimetable(day, student);
-            System.out.println("CONTROLLER BODY-------------" + body);
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(body);//new ResponseEntity<>(body, HttpStatus.OK);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(body);
         } catch (IllegalArgumentException e) {
+            log.error("[ON showStudentTimetable]:: IllegalArgumentException {}", e.getLocalizedMessage());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -176,6 +181,7 @@ public class TimetableController {
             List<Timetable> body = timetableService.getTeacherTimetable(day, teacher);
             return new ResponseEntity<>(body, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
+            log.error("[ON showTeacherTimetable]:: IllegalArgumentException {}", e.getLocalizedMessage());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
