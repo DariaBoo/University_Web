@@ -4,7 +4,6 @@ public class URL {
 
     // UniversityController
     public static final String APP_HOME = "/app/home";
-    public static final String HOME = "/dashboard";
     public static final String HOME_STUDENT = "/student";
     public static final String HOME_TEACHER = "/teacher";
 

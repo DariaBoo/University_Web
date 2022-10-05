@@ -25,7 +25,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             log.error("User with username::[ {} ] not found", username);
             throw new UsernameNotFoundException("User not found for username - " + username);
         }
-        log.info("[ON loadUserByUsername]:: authenticatied user with username [ {} ] and roles [ {} ]",user.getUsername(), user.getRoles());
+        log.info("[ON loadUserByUsername]:: loaded user with username [ {} ] and roles [ {} ]",user.getUsername(), user.getRoles());
         return new AuthenticatedUser(user);
     }
 }

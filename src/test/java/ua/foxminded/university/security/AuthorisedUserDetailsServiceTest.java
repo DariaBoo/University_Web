@@ -11,12 +11,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import ua.foxminded.university.AppSpringBoot;
 import ua.foxminded.university.security.model.AuthenticatedUser;
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.entities.RoleEnum;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.User;
-import ua.foxminded.university.springboot.AppSpringBoot;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AppSpringBoot.class)

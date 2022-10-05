@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import ua.foxminded.university.springboot.AppSpringBoot;
+import ua.foxminded.university.AppSpringBoot;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AppSpringBoot.class)

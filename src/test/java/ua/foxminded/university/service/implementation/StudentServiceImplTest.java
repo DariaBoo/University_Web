@@ -17,12 +17,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
+import ua.foxminded.university.AppSpringBoot;
 import ua.foxminded.university.service.StudentService;
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.User;
 import ua.foxminded.university.service.exception.ServiceException;
-import ua.foxminded.university.springboot.AppSpringBoot;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AppSpringBoot.class)

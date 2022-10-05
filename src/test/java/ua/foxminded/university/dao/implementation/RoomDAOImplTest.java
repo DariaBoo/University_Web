@@ -11,8 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import ua.foxminded.university.AppSpringBoot;
 import ua.foxminded.university.dao.RoomDAO;
-import ua.foxminded.university.springboot.AppSpringBoot;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(SpringExtension.class)

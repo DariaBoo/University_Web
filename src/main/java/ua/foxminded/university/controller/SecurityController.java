@@ -40,7 +40,7 @@ public class SecurityController {
     }
 
     @PostMapping(URL.LOGIN)
-    public ResponseEntity<String> login(AuthenticationRequestDto userDto) {//@RequestParam String username, @RequestParam String password
+    public ResponseEntity<String> login(AuthenticationRequestDto userDto) {
         String username = userDto.getUsername();
         try {
             String token = null;
@@ -48,16 +48,12 @@ public class SecurityController {
             if (isAuthenticated) {
                 token = jwtTokenUtil.generateToken(username);
             }
+            log.info("[ON login]:: setting header and token to ResponseEntity");
             return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, token).body("Welcome to Hogwarst, " + username);
         } catch (UserNotFoundException | InvalidUserException e) {
             log.error("[ON login]:: {}", e.getLocalizedMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
-//        if(response) {
-//            return "redirect:/dashboard";
-//        }
-//        return "redirect:/login_error";
     }
 
     @GetMapping("/expired-jwt")
@@ -80,71 +76,4 @@ public class SecurityController {
         redirectAtt.addFlashAttribute("message", "You have no authority to access");
         return "login";
     }
-
-//    @PostMapping("/student/login")
-//    public String loginStudent(AuthenticationDto userDto) {
-//        System.out.println("CONTROLLER START---------------------------------------------");
-//        boolean response = securityService.login(userDto.getUsername(), userDto.getPassword());
-//        if(response) {
-//            return "redirect:/student";
-//        }
-//        return "user_page";
-//    }    
-
-//    @PostMapping("/teacher/login")
-//    public String loginTeacher(AuthenticationDto userDto) {        
-//        boolean response = securityService.login(userDto.getUsername(), userDto.getPassword());
-//        if(response) {
-//            return "redirect:/teacher";
-//        }
-//        return "user_page";
-//    }
-
-//    @GetMapping("/user/logout")
-//    public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        System.out.println("USER LOGOUT METHOD------------------------" + auth);
-//        if (auth != null) {
-//            new SecurityContextLogoutHandler().logout(request, response, auth);
-//        }
-//        return "redirect:/";
-//    }
-
-//    @PostMapping("/admin/login")
-//    public String showLoginForm(AuthenticationDto userDto) {   
-//        System.out.println("ADMIN CONTROLLER START---------------------------------------------");
-//        boolean response = securityService.login(userDto.getUsername(), userDto.getPassword());
-//        if(response) {
-//            System.out.println("REDIRECT TO HOME---------------------------------------------------");
-//            return "redirect:/home";
-//        }
-//        return "redirect:/admin";
-//    }    
-
-//    @GetMapping("/admin/logout")
-//    public String logoutAdminPage(HttpServletRequest request, HttpServletResponse response) {
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        System.out.println("ADMIN LOGOUT METHOD------------------------" + auth);
-//        if (auth != null) {
-//            new SecurityContextLogoutHandler().logout(request, response, auth);
-//        }
-//        return "redirect:/admin";
-//    }
-
-//    @GetMapping("/login?error")
-//    public String showLoginErrorPage() {
-//        return "/error_authorisation";
-//    }
-
-//    @PostMapping(value ="/login")
-//    public String login(AuthenticationDto userDto) {
-//        System.out.println("CONTROLLER STARTS-----------------------------------------------" + userDto.getUsername() + userDto.getPassword());
-//        User authorisedUser = securityService.login(userDto.getUsername(), userDto.getPassword());
-//        if(response) {
-//            System.out.println("CONTROLLER REDIRECT TO /STUDENT---------------------------------");
-//            
-//            return "redirect:/student";
-//        }
-//        return "/error_authorisation";
-//    }
 }

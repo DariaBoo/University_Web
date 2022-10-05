@@ -25,7 +25,7 @@ public class SecurityServiceImpl implements SecurityService {
             doAuthenticate(username, password);
             return true;
         } catch (UsernameNotFoundException e) {
-            log.error("[ON isAuthenticated]:: user is not authenticated");
+            log.error("[ON isAuthenticated]:: invalid username");
             throw new UserNotFoundException(e.getMessage());
         } catch(AuthenticationException e) {
             log.error("[ON isAuthenticated]:: invalid credentials");

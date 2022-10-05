@@ -13,11 +13,11 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import ua.foxminded.university.AppSpringBoot;
 import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.exception.ServiceException;
-import ua.foxminded.university.springboot.AppSpringBoot;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AppSpringBoot.class)

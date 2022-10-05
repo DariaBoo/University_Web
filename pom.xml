@@ -110,9 +110,6 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params 
-            <dependency> <groupId>org.junit.jupiter</groupId> <artifactId>junit-jupiter-params</artifactId> 
-            <scope>test</scope> </dependency> -->
         <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -124,10 +121,6 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- <dependency> <groupId>org.apache.ibatis</groupId> <artifactId>ibatis-core</artifactId> 
-            <version>${ibatis.core.version}</version> </dependency> <dependency> <groupId>ch.qos.logback</groupId> 
-            <artifactId>logback-core</artifactId> </dependency> <dependency> <groupId>ch.qos.logback</groupId> 
-            <artifactId>logback-classic</artifactId> </dependency> -->
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>bootstrap</artifactId>

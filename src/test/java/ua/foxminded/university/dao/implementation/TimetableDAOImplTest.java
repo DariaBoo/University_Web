@@ -15,13 +15,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import ua.foxminded.university.AppSpringBoot;
 import ua.foxminded.university.dao.TimetableDAO;
 import ua.foxminded.university.service.entities.Day;
 import ua.foxminded.university.service.entities.Room;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.entities.Timetable;
-import ua.foxminded.university.springboot.AppSpringBoot;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AppSpringBoot.class)
