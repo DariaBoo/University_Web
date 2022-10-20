@@ -2,7 +2,6 @@ package ua.foxminded.university.service.entities;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
@@ -20,16 +18,22 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@ToString(exclude = {"student", "teacher", "staff"})
+@ToString
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"student", "teacher", "staff"})
+@EqualsAndHashCode
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "users",  uniqueConstraints = { @UniqueConstraint(name = "unique_name_surname_username", columnNames = {"user_name", "first_name", "last_name"})})
 public class User {
 
@@ -38,11 +42,12 @@ public class User {
     @Column(nullable = false)
     private int id;
     
-    @NotBlank(message = "User name may not be blank")
+    @NotBlank(message = "Username may not be blank")
+    @Size(max = 30)
     @Column(name = "user_name", unique = true)
     private String username;
     
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles;
     
@@ -59,13 +64,4 @@ public class User {
     @JsonIgnore
     @Column(name = "password", length = 255)
     private String password;
-    
-    @OneToOne(mappedBy = "user")
-    private Student student;
-    
-    @OneToOne(mappedBy = "user")
-    private Teacher teacher;
-    
-    @OneToOne(mappedBy = "user")
-    private Staff staff;
 }

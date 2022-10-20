@@ -26,7 +26,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
     private final Map<String, String> roleTargetUrlMap = new HashMap<>();
-    
+
     {
         roleTargetUrlMap.put(Roles.ROLE_STUDENT, URL.HOME_STUDENT);
         roleTargetUrlMap.put(Roles.ROLE_TEACHER, URL.HOME_TEACHER);
@@ -39,24 +39,24 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         log.info("[ON onAuthenticationSuccess]:: authentication - {}", authentication);
         handle(request, response, authentication);
         clearAuthenticationAttributes(request);
-
     }
 
     protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException {
-        String targerUrl = determineTargerUrl(authentication);
+        String targetUrl = determineTargetUrl(authentication);
         if (response.isCommitted()) {
-            log.debug("Response has already been committed. Unable to redirect to " + targerUrl);
+            log.debug("Response has already been committed. Unable to redirect to " + targetUrl);
             return;
         }
-        log.info("[ON handle]:: redirecting to {}", targerUrl);
-        redirectStrategy.sendRedirect(request, response, targerUrl);
+        log.info("[ON handle]:: redirecting to {}", targetUrl);
+        redirectStrategy.sendRedirect(request, response, targetUrl);
     }
 
-    protected String determineTargerUrl(final Authentication authentication) {
+    protected String determineTargetUrl(final Authentication authentication) {
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         for (final GrantedAuthority grantedAuthority : authorities) {
             String authorityName = grantedAuthority.getAuthority();
+            log.info("[ON determineTargetUrl]:: authority name - {}", authorityName);
             if (roleTargetUrlMap.containsKey(authorityName)) {
                 return roleTargetUrlMap.get(authorityName);
             }

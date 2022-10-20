@@ -202,7 +202,7 @@ td {
 
 					<ul th:each="student : ${students}">
 						<li><a th:href="@{/app/students/} + ${student.getId()}"
-							th:text="${student.getFirstName()} + ' ' + ${student.getLastName()}"></a></li>
+							th:text="${student.getUser().getFirstName()} + ' ' + ${student.getUser().getLastName()}"></a></li>
 					</ul>
 				</details>
 			</div>

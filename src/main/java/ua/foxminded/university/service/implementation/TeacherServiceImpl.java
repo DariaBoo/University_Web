@@ -102,8 +102,6 @@ public class TeacherServiceImpl implements TeacherService {
 
     /**
      * {@inheritDoc}
-     * 
-     * @return
      */
     @Override
     @Transactional
@@ -222,21 +220,21 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     @Transactional()
     public boolean checkIsAbsent(LocalDate date, int teacherId) {
-//        boolean isAbsent = true;
-//        if (teacherId != 0) {
-            Teacher teacher = findById(teacherId);
-            Predicate<Day> isBefore = day -> day.getDateOne().minusDays(1).isBefore(date);
-            Predicate<Day> isAfter = day -> day.getDateTwo().plusDays(1).isAfter(date);
-            boolean isAbsent = teacher.getAbsentPeriod().stream().anyMatch(isBefore.and(isAfter));
-            log.info("Check if teacher [id::{}] is absent [date::{}] - {}", teacher.getId(), date, isAbsent);
-//        }
-            return isAbsent;
+        Teacher teacher = findById(teacherId);
+        Predicate<Day> isBefore = day -> day.getDateOne().minusDays(1).isBefore(date);
+        Predicate<Day> isAfter = day -> day.getDateTwo().plusDays(1).isAfter(date);
+        boolean isAbsent = teacher.getAbsentPeriod().stream().anyMatch(isBefore.and(isAfter));
+        log.info("Check if teacher [id::{}] is absent [date::{}] - {}", teacher.getId(), date, isAbsent);
+        return isAbsent;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Teacher findByUsername(String username) {
         Teacher teacher = teacherDAO.findByUserUsername(username);
-        if(teacher == null) {
+        if (teacher == null) {
             throw new UserNotFoundException("Teacher with username " + username + " is not exist");
         }
         return teacher;

@@ -2,6 +2,7 @@ package ua.foxminded.university.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -13,7 +14,8 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +42,7 @@ public class SecurityController {
     }
 
     @PostMapping(URL.LOGIN)
-    public ResponseEntity<String> login(AuthenticationRequestDto userDto) {
+    public ResponseEntity<String> login(@Valid @RequestBody AuthenticationRequestDto userDto) {
         String username = userDto.getUsername();
         try {
             String token = null;
@@ -49,14 +51,14 @@ public class SecurityController {
                 token = jwtTokenUtil.generateToken(username);
             }
             log.info("[ON login]:: setting header and token to ResponseEntity");
-            return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, token).body("Welcome to Hogwarst, " + username);
+            return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, token).body("Welcome to Hogwarts, " + username);
         } catch (UserNotFoundException | InvalidUserException e) {
             log.error("[ON login]:: {}", e.getLocalizedMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
-    @GetMapping("/expired-jwt")
+    @GetMapping(URL.EXPIRED_JWT)
     public ResponseEntity<String> showTokenExpired(HttpServletRequest request, HttpServletResponse response){
         return ResponseEntity.status(response.getStatus()).body("JWT Token expired. " + request.getAttribute("exception"));
     }
@@ -71,7 +73,8 @@ public class SecurityController {
         return "redirect:/";
     }
 
-    @RequestMapping(URL.LOGOUT_ERROR)
+    @GetMapping(URL.LOGIN_ERROR)
+    @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
     public String errorLogin(RedirectAttributes redirectAtt) {
         redirectAtt.addFlashAttribute("message", "You have no authority to access");
         return "login";

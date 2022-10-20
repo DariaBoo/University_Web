@@ -11,7 +11,8 @@ public class URL {
     public static final String WELCOME = "/";
     public static final String LOGIN = "/login";
     public static final String LOGOUT = "/logout";
-    public static final String LOGOUT_ERROR = "/logout_error";
+    public static final String LOGIN_ERROR = "/login_error";
+    public static final String EXPIRED_JWT = "/expired-jwt";
 
     // GroupsController
     public static final String APP_GROUPS = "/app/groups";

@@ -1,5 +1,7 @@
 package ua.foxminded.university.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.StudentService;
 import ua.foxminded.university.service.entities.Student;
+import ua.foxminded.university.service.exception.EntityConstraintViolationException;
 import ua.foxminded.university.service.exception.ServiceException;
 
 @Slf4j
@@ -56,7 +59,7 @@ public class StudentsController {
         try {
             studentService.addStudent(student);
             redirectAtt.addFlashAttribute(message, "Student was created!");
-        } catch (UniqueConstraintViolationException | ServiceException e) {
+        } catch (UniqueConstraintViolationException | EntityConstraintViolationException e) {
             log.error(e.getMessage());
             redirectAtt.addFlashAttribute(message, e.getMessage());
         }
@@ -81,7 +84,7 @@ public class StudentsController {
     }
 
     @PostMapping(URL.APP_STUDENTS_VIEW_BY_ID)
-    public String update(@ModelAttribute("student") Student student, RedirectAttributes redirectAtt) {
+    public String update(@Valid @ModelAttribute("student") Student student, RedirectAttributes redirectAtt) {
         try {
             studentService.updateStudent(student);
             redirectAtt.addFlashAttribute(message, "Student was updated!");
@@ -95,6 +98,6 @@ public class StudentsController {
     @PostMapping(URL.STUDENT_CHANGE_PASSWORD)
     public ResponseEntity<String> changePassword(@PathVariable int id, @RequestParam String newPassword) {
         studentService.changePassword(id, newPassword);
-        return new ResponseEntity<>("The password was changed successfully!", HttpStatus.OK);
+        return new ResponseEntity<>("Password was changed successfully!", HttpStatus.OK);
     }
 }

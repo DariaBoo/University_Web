@@ -7,39 +7,26 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.jdbc.Sql;
 
 import ua.foxminded.university.AppSpringBoot;
 import ua.foxminded.university.dao.TimetableDAO;
 import ua.foxminded.university.service.entities.Day;
-import ua.foxminded.university.service.entities.Room;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.entities.Timetable;
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AppSpringBoot.class)
-//@Sql({"/schema.sql", "/data.sql"})
-@ActiveProfiles("test")
+@Sql({"/timetable.sql"})
 class TimetableDAOImplTest {
     
     @Autowired
     private TimetableDAO timetableDAO;
 
     private Day day = new Day();
-    private Room room;
-
-    @BeforeEach
-    void init() {
-        room = new Room();
-        room.setNumber(101);
-    }
 
     @Test
     void getMonthTimetable_shouldReturnListOfTimetable_whenInputCorrectDateAndTeacherId() {
@@ -77,7 +64,7 @@ class TimetableDAOImplTest {
     void showMonthTimetable_shouldReturnSizeOfList_whenInputExestedDate() {
         day.setDateOne(LocalDate.of(2023, 04, 01));
         day.setDateTwo(LocalDate.of(2023, 04, 03));        
-        assertEquals(6, timetableDAO.findByDate(day.getDateOne(), day.getDateTwo()).get().size());
+        assertEquals(3, timetableDAO.findByDate(day.getDateOne(), day.getDateTwo()).get().size());
     }
     @Test
     void showMonthTimetable_shouldReturnIsEmptyTrue_whenInputNotExestedDate() {
@@ -89,6 +76,6 @@ class TimetableDAOImplTest {
     void showMonthTimetable_shouldReturnSizeOfList_whenInputTheSameDate() {
         day.setDateOne(LocalDate.of(2023, 04, 01));
         day.setDateTwo(LocalDate.of(2023, 04, 01));   
-        assertEquals(2, timetableDAO.findByDate(day.getDateOne(), day.getDateTwo()).get().size());
+        assertEquals(1, timetableDAO.findByDate(day.getDateOne(), day.getDateTwo()).get().size());
     }  
 }

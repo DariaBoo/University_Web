@@ -11,6 +11,7 @@ import ua.foxminded.university.service.entities.Teacher;
  * @author Bogush Daria
  */
 public interface TeacherService {
+    
     /**
      * The method adds Teacher to the timetable.teachers
      * 
@@ -20,11 +21,9 @@ public interface TeacherService {
     boolean addTeacher(Teacher teacher);
 
     /**
-     * The method lets update teacher's first name and last name and returns count
-     * of updated rows otherwise zero
+     * The method lets update teacher's first name and last name
      * 
      * @param teacher
-     * @return count of updated rows otherwise zero
      */
     void updateTeacher(Teacher teacher);
     
@@ -59,7 +58,7 @@ public interface TeacherService {
      * 
      * @param teacherId existed teacher id
      * @param day
-     * @return count of updated rows otherwise -1
+     * @return true or false
      */
     boolean setTeacherAbsent(int teacherId, Day day);
 
@@ -68,7 +67,7 @@ public interface TeacherService {
      * 
      * @param teacherId existed teacher id
      * @param day
-     * @return count of deleted rows otherwise zero
+     * @return true or false
      */
     boolean deleteTeacherAbsent(int teacherId, Day day);
 
@@ -92,7 +91,6 @@ public interface TeacherService {
      * 
      * @param teacherId
      * @param newPassword
-     * @return count of updated rows otherwise 0
      */
     void changePassword(int teacherId, String newPassword);
     
@@ -104,5 +102,10 @@ public interface TeacherService {
      */
     boolean checkIsAbsent(LocalDate date, int teacherId);
     
+    /**
+     * The method finds teacher by username
+     * @param username
+     * @return teacher
+     */
     Teacher findByUsername(String username);
 }

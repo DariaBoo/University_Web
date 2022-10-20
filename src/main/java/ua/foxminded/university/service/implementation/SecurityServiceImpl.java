@@ -12,6 +12,11 @@ import ua.foxminded.university.service.SecurityService;
 import ua.foxminded.university.service.exception.InvalidUserException;
 import ua.foxminded.university.service.exception.UserNotFoundException;
 
+/**
+ * @version 1.0
+ * @author Bogush Daria
+ *
+ */
 @Slf4j
 @Service
 public class SecurityServiceImpl implements SecurityService {
@@ -19,6 +24,9 @@ public class SecurityServiceImpl implements SecurityService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isAuthenticated(String username, String password) throws InvalidUserException {
         try {

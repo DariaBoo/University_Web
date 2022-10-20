@@ -10,9 +10,10 @@ import ua.foxminded.university.service.entities.Holiday;
  *
  */
 public interface HolidayService {
+    
     /**
      * The method finds all holidays from the database
-     * @return optional list of holidays
+     * @return list of holidays
      */
     List<Holiday> findAllHolidays();
     

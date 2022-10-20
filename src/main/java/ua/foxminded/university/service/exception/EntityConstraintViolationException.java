@@ -1,8 +1,6 @@
-package ua.foxminded.university.security.jwt;
+package ua.foxminded.university.service.exception;
 
-import io.jsonwebtoken.JwtException;
-
-public class InvalidTokenException extends JwtException {
+public class EntityConstraintViolationException extends RuntimeException {
     
     /**
      * Constructs a new exception with the specified detail message.
@@ -10,7 +8,7 @@ public class InvalidTokenException extends JwtException {
      * @author Bogush Daria
      * 
      */
-    public InvalidTokenException(String message) {
+    public EntityConstraintViolationException(String message) {
         super(message);
     }
 
@@ -19,7 +17,7 @@ public class InvalidTokenException extends JwtException {
      * 
      * @author Bogush Daria
      */
-    public InvalidTokenException(String message, Throwable cause) {
-        super(message);
+    public EntityConstraintViolationException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

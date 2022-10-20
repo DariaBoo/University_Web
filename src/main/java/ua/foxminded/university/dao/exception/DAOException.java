@@ -1,12 +1,7 @@
 package ua.foxminded.university.dao.exception;
 
-/**
- * @version 1.0
- * @author Bogush Daria
- *
- *
- */
 public class DAOException extends RuntimeException {
+    
     /**
      * Constructs a new exception with the specified detail message.
      * 

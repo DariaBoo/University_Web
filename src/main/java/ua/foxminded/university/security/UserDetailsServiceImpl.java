@@ -22,7 +22,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userDAO.findByUsername(username);
         if (user == null) {
-            log.error("User with username::[ {} ] not found", username);
+            log.error("[ON loadUserByUsername] User with username::[ {} ] not found", username);
             throw new UsernameNotFoundException("User not found for username - " + username);
         }
         log.info("[ON loadUserByUsername]:: loaded user with username [ {} ] and roles [ {} ]",user.getUsername(), user.getRoles());

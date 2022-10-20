@@ -10,6 +10,7 @@ import ua.foxminded.university.service.entities.Room;
  *
  */
 public interface RoomService {
+    
     /**
      * Shows all rooms
      * @return list of rooms

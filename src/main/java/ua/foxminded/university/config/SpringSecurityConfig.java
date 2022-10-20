@@ -27,7 +27,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String ADMIN_URL = "/app/**";
     private static final String WELCOME_URL = "/";
     private static final String LOGIN_URL = "/login";
-    private static final String LOGIN_ERROR_URL = "/logout_error";
+    private static final String LOGOUT_URL = "/logout";
+    private static final String LOGIN_ERROR_URL = "/login_error";
     private static final String[] staticResources = {"/css/**", "/img/**", "/navbar/**"};
 
     @Autowired
@@ -60,9 +61,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         .mvcMatchers(WELCOME_URL, LOGIN_ERROR_URL).permitAll()
         .mvcMatchers().denyAll() 
         .and()
-        .formLogin().loginPage(LOGIN_URL).successHandler(authenticationSuccessHandler())
+        .formLogin().loginPage(LOGIN_URL).successHandler(authenticationSuccessHandler()).failureUrl(LOGIN_ERROR_URL)
         .and()
-        .logout().logoutUrl("/logout")
+        .logout().logoutUrl(LOGOUT_URL)
         .logoutSuccessUrl(WELCOME_URL)
         .invalidateHttpSession(true)
         .deleteCookies("JSESSIONID");    

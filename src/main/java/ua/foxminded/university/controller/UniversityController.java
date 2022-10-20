@@ -14,12 +14,12 @@ public class UniversityController {
     }    
     
     @GetMapping(URL.HOME_STUDENT)
-    public String viewStudentPage() {
+    public String showStudentPage() {
         return "students/studentPage";
     }
     
     @GetMapping(URL.HOME_TEACHER)
-    public String viewTeacherPage() {
+    public String showTeacherPage() {
         return "teachers/teacherPage";
     }
 }

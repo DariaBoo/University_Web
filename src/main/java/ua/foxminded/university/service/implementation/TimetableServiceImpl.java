@@ -40,14 +40,13 @@ public class TimetableServiceImpl implements TimetableService {
 
     private TimetableValidator validator;
     private static final String illegalArgumentExceptionMessage = "No timetable for ";
-    
 
     /**
      * {@inheritDoc}
      */
     @Override
     @Transactional
-    public String scheduleTimetable(Timetable timetable) { 
+    public String scheduleTimetable(Timetable timetable) {
         validator = new TimetableValidator(holidayService, teacherService);
         Notification notification = new Notification();
         try {

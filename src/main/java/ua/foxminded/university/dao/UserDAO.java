@@ -12,5 +12,10 @@ import ua.foxminded.university.service.entities.User;
  */
 public interface UserDAO extends JpaRepository<User, Integer>{
     
+    /**
+     * Finds user by username
+     * @param username
+     * @return user
+     */
     User findByUsername(String username);
 }

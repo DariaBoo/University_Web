@@ -40,7 +40,7 @@ import lombok.ToString;
 public class Group {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "group_id")
     private int id;
 
@@ -60,7 +60,7 @@ public class Group {
 
     @JsonIgnore
     @ToString.Exclude
-    @ManyToMany(fetch = FetchType.LAZY)//, cascade = CascadeType.MERGE
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "groups_lessons", joinColumns = { @JoinColumn(name = "group_id") }, inverseJoinColumns = {
             @JoinColumn(name = "lesson_id") }, uniqueConstraints = @UniqueConstraint(columnNames = { "group_id",
                     "lesson_id" }))
@@ -68,6 +68,6 @@ public class Group {
 
     @JsonIgnore
     @ToString.Exclude
-    @OneToMany(mappedBy = "group", targetEntity = Timetable.class)//, cascade = CascadeType.ALL
+    @OneToMany(mappedBy = "group", targetEntity = Timetable.class)
     private List<Timetable> timetable;
 }

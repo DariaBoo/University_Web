@@ -16,9 +16,9 @@ public interface StudentService {
      * otherwise returns 0
      * 
      * @param student
-     * @return is added true, otherwise - false
+     * @return saved student
      */
-    boolean addStudent(Student student);
+    Student addStudent(Student student);
 
     /**
      * Delete existed student from the timetable.students, if student was deleted
@@ -40,7 +40,7 @@ public interface StudentService {
     /**
      * The method finds all students from the timetable.students
      * 
-     * @return optional list of students
+     * @return list of students
      */
     List<Student> findAllStudents();
 
@@ -59,5 +59,10 @@ public interface StudentService {
      */
     void updateStudent(Student student);
     
+    /**
+     * The method find student by username
+     * @param username
+     * @return student
+     */
     Student findByUsername(String username);
 }

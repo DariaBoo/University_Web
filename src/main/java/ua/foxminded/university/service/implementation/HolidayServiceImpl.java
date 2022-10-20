@@ -44,8 +44,6 @@ public class HolidayServiceImpl implements HolidayService {
 
     /**
      * {@inheritDoc}
-     * 
-     * @return
      */
     @Override
     @Transactional

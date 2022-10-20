@@ -19,7 +19,7 @@ public interface TimetableService {
      * time period
      * 
      * @param timetable 
-     * @return count of added rows otherwise 0
+     * @return result
      */
     String scheduleTimetable(Timetable timetable);
 

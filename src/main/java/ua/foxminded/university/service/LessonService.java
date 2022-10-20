@@ -9,8 +9,9 @@ import ua.foxminded.university.service.entities.Lesson;
  * @author Bogush Daria
  */
 public interface LessonService {
+    
     /**
-     * The method adds lesson to the timetable.lessons table
+     * The method adds lesson to the database
      * 
      * @param lesson
      * @return true or false
@@ -18,13 +19,13 @@ public interface LessonService {
     boolean addLesson(Lesson lesson);
 
     /**
-     * The method lets update lesson's name and description and returns count of updated rows otherwise zero
+     * The method lets update lesson's name and description
      * @param lesson
      */
     void updateLesson(Lesson lesson) ;
     
     /**
-     * Deletes lesson from the timetable.lessons
+     * Deletes lesson from the database
      * 
      * @param lessonId
      * @return true or false
@@ -32,7 +33,7 @@ public interface LessonService {
     boolean deleteLesson(int lessonId);
     
     /**
-     * The method finds a lesson by id and returns optional lesson
+     * The method finds a lesson by id and returns lesson
      * @param lessonId
      * @return lesson
      */
