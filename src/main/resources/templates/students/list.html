@@ -65,19 +65,19 @@
 				<tbody>
 					<tr th:each="student:${students}">
 						<td th:text="${student.getId()} + '.'" />
-						<td th:text="${student.getFirstName()}" />
-						<td th:text="${student.getLastName()}" />
+						<td th:text="${student.getUser().getFirstName()}" />
+						<td th:text="${student.getUser().getLastName()}" />
 						<td th:text="${student.getGroup().getId()}" />
-						<td><a href="#" th:href="@{/students/} + ${student.getId()}"><button
+						<td><a href="#" th:href="@{/app/students/} + ${student.getId()}"><button
 									class="button_view">View</button></a></td>
 						<td><a href="#"
-							th:href="@{/students/delete/} + ${student.getId()}"><button
+							th:href="@{/app/students/delete/} + ${student.getId()}"><button
 									class="button_delete">Delete</button></a></td>
 					</tr>
 				</tbody>
 			</table>
 			<div class="div_button_new">
-				<a th:href="@{students/new}"><button class="button_new">New</button></a>
+				<a th:href="@{/app/students/new}"><button class="button_new">New</button></a>
 			</div>
 		</div>
 

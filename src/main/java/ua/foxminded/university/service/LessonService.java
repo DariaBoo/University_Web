@@ -9,22 +9,24 @@ import ua.foxminded.university.service.entities.Lesson;
  * @author Bogush Daria
  */
 public interface LessonService {
-    /**
-     * The method adds lesson to the timetable.lessons table
-     * 
-     * @param lesson
-     * @return true or false
-     */
-    boolean addLesson(Lesson lesson);
-
-    /**
-     * The method lets update lesson's name and description and returns count of updated rows otherwise zero
-     * @param lesson
-     */
-    void updateLesson(Lesson lesson) ;
     
     /**
-     * Deletes lesson from the timetable.lessons
+     * The method adds lesson to the database
+     * 
+     * @param lesson
+     * @return saved lesson
+     */
+    Lesson addLesson(Lesson lesson);
+
+    /**
+     * The method lets update lesson's name and description
+     * @param lesson
+     * @return updated lesson
+     */
+    Lesson updateLesson(Lesson lesson) ;
+    
+    /**
+     * Deletes lesson from the database
      * 
      * @param lessonId
      * @return true or false
@@ -32,7 +34,7 @@ public interface LessonService {
     boolean deleteLesson(int lessonId);
     
     /**
-     * The method finds a lesson by id and returns optional lesson
+     * The method finds a lesson by id and returns lesson
      * @param lessonId
      * @return lesson
      */

@@ -1,19 +1,16 @@
-package ua.foxminded.university.dao.exception;
+package ua.foxminded.university.security.jwt;
 
-/**
- * @version 1.0
- * @author Bogush Daria
- *
- *
- */
-public class DAOException extends RuntimeException {
+import io.jsonwebtoken.JwtException;
+
+public class InvalidTokenException extends JwtException {
+    
     /**
      * Constructs a new exception with the specified detail message.
      * 
      * @author Bogush Daria
      * 
      */
-    public DAOException(String message) {
+    public InvalidTokenException(String message) {
         super(message);
     }
 
@@ -22,7 +19,7 @@ public class DAOException extends RuntimeException {
      * 
      * @author Bogush Daria
      */
-    public DAOException(String message, Throwable cause) {
-        super(message, cause);
+    public InvalidTokenException(String message, Throwable cause) {
+        super(message);
     }
 }

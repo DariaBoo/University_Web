@@ -1,13 +1,16 @@
-package ua.foxminded.university.dao.exception;
+package ua.foxminded.university.service.exception;
 
-public class UniqueConstraintViolationException extends RuntimeException {
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+public class UserNotFoundException extends UsernameNotFoundException {
+    
     /**
      * Constructs a new exception with the specified detail message.
      * 
      * @author Bogush Daria
      * 
      */
-    public UniqueConstraintViolationException(String message) {
+    public UserNotFoundException(String message) {
         super(message);
     }
 
@@ -16,7 +19,7 @@ public class UniqueConstraintViolationException extends RuntimeException {
      * 
      * @author Bogush Daria
      */
-    public UniqueConstraintViolationException(String message, Throwable cause) {
+    public UserNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
 }

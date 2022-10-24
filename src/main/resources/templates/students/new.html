@@ -92,19 +92,25 @@ h1 {
 </head>
 <body>
 	<div class="form_bg">
-		<form th:method="POST" th:action="@{/students}" th:object="${student}">
+		<form th:method="POST" th:action="@{/app/students}" th:object="${student}">
 			<div class="form_container">
-				<h1>Create Student:</h1>
+				<h1>Create New Student:</h1>
+				<br>
+                <div class="form_r">
+                    <label for="userName">User name: </label> <input type="text"
+                        th:field="*{user.username}" id="userName"
+                        placeholder="Enter Username" />
+                </div>
 				<br>
 				<div class="form_r">
 					<label for="firstName">First name: </label> <input type="text"
-						th:field="*{firstName}" id="firstName"
+						th:field="*{user.firstName}" id="firstName"
 						placeholder="Enter First Name" maxlength="30" required />
 				</div>
 				<br>
 				<div class="form_r">
 					<label for="lastName">Last name: </label> <input type="text"
-						th:field="*{lastName}" id="lastName" placeholder="Enter Last Name"
+						th:field="*{user.lastName}" id="lastName" placeholder="Enter Last Name"
 						maxlength="30" required />
 				</div>
 				<br>
@@ -119,12 +125,12 @@ h1 {
 				<div class="form_r">
 					<label for="idCard">Id card: </label> <input type="text"
 						th:field="*{idCard}" id="idCard" maxlength="5"
-						placeholder="Enter Id Card" required />
+						placeholder="Enter Id Card" />
 				</div>
 				<br>
                 <div class="form_r">
                     <input type="hidden"
-                        th:field="*{password}" id="password" maxlength="5"
+                        th:field="*{user.password}" id="password" maxlength="5"
                         value="1234"/>
                 </div>				
 				<br>

@@ -7,11 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import ua.foxminded.university.controller.urls.URL;
 import ua.foxminded.university.service.LessonService;
 import ua.foxminded.university.service.entities.Lesson;
 
 @Controller
-@RequestMapping("/lessons")
+@RequestMapping(URL.APP_LESSONS)
 public class LessonsController {
     
     @Autowired
@@ -23,7 +24,7 @@ public class LessonsController {
         return "lessons/list";
     }
 
-    @RequestMapping("/{id}")
+    @RequestMapping(URL.APP_LESSONS_VIEW_BY_ID)
     public String viewLessonById(@PathVariable Integer id, Model model) {
         Lesson lesson = lessonService.findById(id);
         model.addAttribute("lesson", lesson);

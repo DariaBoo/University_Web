@@ -2,10 +2,6 @@ package ua.foxminded.university.service.implementation;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -15,11 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.GroupDAO;
 import ua.foxminded.university.dao.LessonDAO;
-import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
+import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.entities.Lesson;
-import ua.foxminded.university.service.exception.ServiceException;
 
 /**
  * @version 1.0
@@ -42,23 +37,16 @@ public class GroupServiceImpl implements GroupService {
      */
     @Override
     @Transactional
-    public boolean addGroup(Group group) {
-        try {
-            groupDAO.save(group);
-            log.info("Add group");
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            log.error(e.getMessage(), e.getCause());
+    public Group addGroup(Group group) {
+        Group savedGroup = groupDAO.findByName(group.getName());
+        if(savedGroup == null) {
+            savedGroup = groupDAO.save(group);
+            log.info("Saved a new group with id [{}]", savedGroup.getId());
+        } else {
+            log.warn("Group with name [{}] already exists with id ::{}", savedGroup.getName(), savedGroup.getId());
             throw new UniqueConstraintViolationException("Group with name - [" + group.getName() + "] already exists");
-        } catch (ConstraintViolationException e) {
-            Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
-            for (ConstraintViolation<?> violation : violations) {
-                if (violation != null) {
-                    log.error(violation.getMessageTemplate());
-                    throw new ServiceException(violation.getMessageTemplate());
-                }
-            }
         }
-        return groupDAO.existsById(group.getId());
+        return savedGroup;
     }
 
     /**
@@ -66,14 +54,16 @@ public class GroupServiceImpl implements GroupService {
      */
     @Override
     @Transactional
-    public void updateGroup(Group group) {
-        try {
-            groupDAO.save(group);
+    public Group updateGroup(Group group) {
+        Group updatedGroup = groupDAO.findByName(group.getName());
+        if(updatedGroup == null) {
+            updatedGroup = groupDAO.save(group);
             log.info("Update group with id :: {}", group.getId());
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            log.error(e.getMessage(), e.getCause());
+        } else {
+            log.warn("Group with name [{}] already exists with id ::{}", updatedGroup.getName(), updatedGroup.getId());
             throw new UniqueConstraintViolationException("Group with name - [" + group.getName() + "] already exists");
         }
+        return updatedGroup;
     }
 
     /**

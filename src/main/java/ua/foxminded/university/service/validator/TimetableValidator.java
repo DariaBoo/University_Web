@@ -28,7 +28,7 @@ public class TimetableValidator {
 
     public Notification validateTimetable(Timetable timetable) {
         notification = new Notification();
-        if (timetable.getGroup().getId() < 0) {
+        if (timetable.getGroup() == null) {
             addError("Group is missing");
         }
         if (timetable.getLesson() == null) {
@@ -41,7 +41,7 @@ public class TimetableValidator {
         }
         validateTeacher(timetable);
 
-        if (timetable.getRoom().getNumber() == 0) {
+        if (timetable.getRoom() == null) {
             addError("Room is missing");
         }
         return notification;

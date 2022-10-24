@@ -1,10 +1,7 @@
 package ua.foxminded.university.service.implementation;
 
 import java.util.List;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -13,10 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.HolidayDAO;
-import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
+import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.HolidayService;
 import ua.foxminded.university.service.entities.Holiday;
-import ua.foxminded.university.service.exception.ServiceException;
 
 /**
  * @version 1.0
@@ -44,29 +40,16 @@ public class HolidayServiceImpl implements HolidayService {
 
     /**
      * {@inheritDoc}
-     * 
-     * @return
      */
     @Override
     @Transactional
-    public boolean addHoliday(Holiday holiday) {
-        try {
-            holidayDAO.save(holiday);
-            log.debug("Add a new holiday");
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            log.error(e.getMessage(), e.getCause());
-            throw new UniqueConstraintViolationException(
-                    "Holiday with date :: " + holiday.getDate() + " already exists!");
-        } catch (ConstraintViolationException e) {
-            Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
-            for (ConstraintViolation<?> violation : violations) {
-                if (violation != null) {
-                    log.error(violation.getMessageTemplate());
-                    throw new ServiceException(violation.getMessageTemplate());
-                }
-            }
+    public Holiday addHoliday(Holiday holiday) {
+        Optional<Holiday> savedHoliday = holidayDAO.findByDate(holiday.getDate());
+        if(savedHoliday.isPresent()) {
+            log.warn("Holiday with date :: {} already exists!", holiday.getDate());
+            throw new UniqueConstraintViolationException("Holiday with date :: " + holiday.getDate() + " already exists!");
         }
-        return holidayDAO.existsById(holiday.getId());
+        return holidayDAO.save(holiday);
     }
 
     /**

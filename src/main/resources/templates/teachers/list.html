@@ -55,19 +55,19 @@
 				<tbody>
 					<tr th:each="teacher:${teachers}">
 						<td th:text="${teacher.getId()} + '.'" />
-						<td th:text="${teacher.getFirstName()}" />
-						<td th:text="${teacher.getLastName()}" />
+						<td th:text="${teacher.getUser().getFirstName()}" />
+						<td th:text="${teacher.getUser().getLastName()}" />
 						<td th:text="${teacher.getPosition()}" />
-						<td><a href="#" th:href="@{/teachers/} + ${teacher.getId()}"><button
+						<td><a href="#" th:href="@{/app/teachers/} + ${teacher.getId()}"><button
 									class="button_view">View</button></a></td>
 						<td><a href="#"
-							th:href="@{/teachers/delete/} + ${teacher.getId()}"><button
+							th:href="@{/app/teachers/delete/} + ${teacher.getId()}"><button
 									class="button_delete">Delete</button></a></td>
 					</tr>
 				</tbody>
 			</table>
 			<div class="div_button_new">
-				<a th:href="@{students/create}"><button class="button_new">New</button></a>
+				<a th:href="@{/app/teachers/new}"><button class="button_new">New</button></a>
 			</div>
 		</div>
 		<script>

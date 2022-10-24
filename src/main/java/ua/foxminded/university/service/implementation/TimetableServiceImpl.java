@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.TimetableDAO;
+import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.HolidayService;
 import ua.foxminded.university.service.TeacherService;
 import ua.foxminded.university.service.TimetableService;
@@ -17,7 +18,6 @@ import ua.foxminded.university.service.entities.Day;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.entities.Timetable;
-import ua.foxminded.university.service.exception.ServiceException;
 import ua.foxminded.university.service.validator.Notification;
 import ua.foxminded.university.service.validator.TimetableValidator;
 
@@ -40,30 +40,34 @@ public class TimetableServiceImpl implements TimetableService {
 
     private TimetableValidator validator;
     private static final String illegalArgumentExceptionMessage = "No timetable for ";
-    
 
     /**
      * {@inheritDoc}
      */
     @Override
     @Transactional
-    public String scheduleTimetable(Timetable timetable) { 
+    public String scheduleTimetable(Timetable timetable) {
+        log.info("Adding timetable...");
         validator = new TimetableValidator(holidayService, teacherService);
         Notification notification = new Notification();
         try {
             notification = validator.validateTimetable(timetable);
+            log.info("Validating timetable...");
             if (!notification.hasErrors()) {
                 timetableDAO.saveAndFlush(timetable);
                 log.debug("Timetable [date::{}, time::{}] is scheduled", timetable.getDate(),
                         timetable.getLessonTimePeriod());
             } else {
-                return notification.getErrors();
+                String errors = notification.getErrors();
+                log.warn("Can't schedule timetable. Errors :: {}", errors);
+                return errors;
             }
         } catch (DataIntegrityViolationException exception) {
             notification = validator.validateUniqueConstraint(exception, timetable);
-            throw new ServiceException(notification.getErrors(), exception);
+            log.error("[ON scheduleTimetable]::DataIntegrityViolationException, error message - {}", notification.getErrors());
+            throw new UniqueConstraintViolationException(notification.getErrors(), exception);
         }
-        return "Timetable was scheduled!!!";
+        return "Timetable was scheduled successfully!";
     }
 
     /**
@@ -73,6 +77,7 @@ public class TimetableServiceImpl implements TimetableService {
     @Transactional
     public boolean deleteTimetable(int timetableId) {
         timetableDAO.deleteById(timetableId);
+        log.info("Delete timetable by id :: {}", timetableId);
         return timetableDAO.existsById(timetableId);
     }
 

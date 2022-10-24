@@ -14,6 +14,7 @@ import ua.foxminded.university.service.entities.Room;
  * @author Bogush Daria
  */
 public interface RoomDAO extends JpaRepository<Room, Integer> {
+    
     /**
      * Shows all rooms
      * @return optional list of suitable rooms

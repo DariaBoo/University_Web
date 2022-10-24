@@ -91,19 +91,19 @@ h1 {
 <body>
 	<div class="form_bg">
 		<form th:method="PATCH"
-			th:action="@{/students/{id}(id=${student.getId()})}"
+			th:action="@{/app/students/{id}(id=${student.getId()})}"
 			th:object="${student}">
 			<div class="form_container">
 				<h1>Update Student:</h1>
 				<br>
 				<div class="form_r">
 					<label for="firstName">First Name: </label> <input type="text"
-						th:field="*{firstName}" maxlength="30" id="firstName" />
+						th:field="*{user.firstName}" maxlength="30" id="firstName" />
 				</div>
 				<br>
 				<div class="form_r">
 					<label for="lastName">Last Name: </label> <input type="text"
-						th:field="*{lastName}" maxlength="30" id="lastName" />
+						th:field="*{user.lastName}" maxlength="30" id="lastName" />
 				</div>
 				<br>
 				<div class="form_r">
@@ -121,7 +121,7 @@ h1 {
 				<br>
                 <div class="form_r">
                     <input type="hidden"
-                        th:field="*{password}" id="idCard" />
+                        th:field="*{user.password}" id="idCard" />
                 </div>
 				<br>
 				<div class="form_r">

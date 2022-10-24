@@ -1,4 +1,4 @@
-package ua.foxminded.university.springboot;
+package ua.foxminded.university;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,7 +12,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 public class AppSpringBoot extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
-        System.setProperty("server.servlet.context-path", "/university");
         SpringApplication.run(AppSpringBoot.class, args);
     }
 }

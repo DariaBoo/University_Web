@@ -136,7 +136,7 @@ div.hidden {
 
 			<script>
 				function createURLWithGroup(id) {
-					var url = '/university/timetable/schedule/' + id;
+					var url = '/university/app/timetable/schedule/' + id;
 					window.location.href = url;
 				}
 			</script>
@@ -153,7 +153,7 @@ div.hidden {
 		<br> <br>
 		<div class="column1">
 			<div th:if="${timetable}">
-				<form th:method="POST" th:action="@{/timetable/schedule}"
+				<form th:method="POST" th:action="@{/app/timetable/schedule}"
 					th:object="${timetable}">
 
 					<div class="form_r">
@@ -259,7 +259,7 @@ div.hidden {
 		</div>
 	</div>
 	<div class="div_button_back">
-		<a th:href="@{/timetable}"><button class="button_back">Back
+		<a th:href="@{/app/timetable}"><button class="button_back">Back
 				To Timetable</button></a>
 	</div>
 </body>

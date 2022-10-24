@@ -69,16 +69,16 @@ input, label {
 					<tr th:each="lesson : ${lessons}">
 						<td th:text="${lesson.getId()} + '.'" />
 						<td th:text="${lesson.getName()}" />
-						<td><a href="#" th:href="@{/lessons/} + ${lesson.getId()}"><button
+						<td><a href="#" th:href="@{/app/lessons/} + ${lesson.getId()}"><button
 									class="button_view">View</button></a></td>
 						<td><a href="#"
-							th:href="@{/lessons/delete/} + ${lesson.getId()}"><button
+							th:href="@{/app/lessons/delete/} + ${lesson.getId()}"><button
 									class="button_delete">Delete</button></a></td>
 					</tr>
 				</tbody>
 			</table>
 			<div class="div_button_new">
-				<a th:href="@{students/create}"><button class="button_new">New</button></a>
+				<a th:href="@{/app/lessons/new}"><button class="button_new">New</button></a>
 			</div>
 		</div>
 
@@ -89,7 +89,7 @@ input, label {
 			});
 		</script>
 
-		<a id="button" th:href="@{/home}"><button>Back</button></a>
+		<a id="button" th:href="@{/app/home}"><button>Back</button></a>
 	</div>
 </body>
 </html>

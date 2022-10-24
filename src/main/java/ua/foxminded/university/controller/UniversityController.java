@@ -1,59 +1,25 @@
 package ua.foxminded.university.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
-import ua.foxminded.university.service.StudentService;
-import ua.foxminded.university.service.TeacherService;
+import ua.foxminded.university.controller.urls.URL;
 
 @Controller
 public class UniversityController {
-    private final StudentService studentService;
-    private final TeacherService teacherService;
-
-    @Autowired
-    public UniversityController(StudentService studentService, TeacherService teacherService) {
-        this.studentService = studentService;
-        this.teacherService = teacherService;
-    }
-
-    @GetMapping("/")
-    public String showWelcomePage() {
-        return "/index";
-    }
-
-    @GetMapping("/home")
-    public String showAdminPage() {
+    
+    @GetMapping(URL.APP_HOME)
+    public String showHomePage() {
         return "/home";
+    }    
+    
+    @GetMapping(URL.HOME_STUDENT)
+    public String showStudentPage() {
+        return "students/studentPage";
     }
-
-    @RequestMapping("/login")
-    public String showLoginForm(HttpServletRequest request, Model model) {
-        String userName = request.getParameter("uname");
-        String password = request.getParameter("psw");
-        String message;
-        if (userName.equals("admin") && password.equals("admin")) {
-            message = "Welcome " + userName + ".";
-            return "/home";
-        } else if (userName.matches("[a-zA-Z]+#\\d+") && password.equals("555")) {
-            int id = Integer.parseInt(userName.split("#")[1]);
-            TimetableController.teacherId = id;
-            model.addAttribute("teacher", teacherService.findById(id));
-            return "teachers/teacherPage";
-        } else if (userName.matches("[a-zA-Z]+_\\d+") && password.equals("1234")) {
-            int id = Integer.parseInt(userName.split("_")[1]);
-            TimetableController.studentId = id;
-            model.addAttribute("student", studentService.findById(id));
-            return "students/studentPage";
-        } else {
-            message = "Wrong username or password!";
-            model.addAttribute("message", message);
-            return "index";
-        }
+    
+    @GetMapping(URL.HOME_TEACHER)
+    public String showTeacherPage() {
+        return "teachers/teacherPage";
     }
 }
