@@ -35,71 +35,71 @@ class UniversityControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"ADMIN"})
+    @WithMockUser(authorities = { "ADMIN" })
     void showHomePage_shouldReturn200Status_whenAccessAdmin() throws Exception {
         mvc.perform(get(URL.APP_HOME).with(csrf()).contentType(contentType)).andExpect(status().isOk());
     }
-    
+
     @Test
-    @WithMockUser(authorities = {"STUDENT"})
+    @WithMockUser(authorities = { "STUDENT" })
     void showHomePage_shouldReturn403Status_whenAccessStudent() throws Exception {
         mvc.perform(get(URL.APP_HOME).with(csrf()).contentType(contentType)).andExpect(status().isForbidden());
     }
-    
+
     @Test
-    @WithMockUser(authorities = {"TEACHER"})
+    @WithMockUser(authorities = { "TEACHER" })
     void showHomePage_shouldReturn403Status_whenAccessTeacher() throws Exception {
         mvc.perform(get(URL.APP_HOME).with(csrf()).contentType(contentType)).andExpect(status().isForbidden());
     }
-    
+
     @Test
     @WithMockUser
     void showHomePage_shouldReturn403Status_whenAccessUser() throws Exception {
         mvc.perform(get(URL.APP_HOME).with(csrf()).contentType(contentType)).andExpect(status().isForbidden());
     }
-    
+
     @Test
-    @WithMockUser(authorities = {"ADMIN"})
+    @WithMockUser(authorities = { "ADMIN" })
     void showStudentPage_shouldReturn200Status_whenAccessAdmin() throws Exception {
         mvc.perform(get(URL.HOME_STUDENT).with(csrf()).contentType(contentType)).andExpect(status().isOk());
     }
-    
+
     @Test
-    @WithMockUser(authorities = {"STUDENT"})
+    @WithMockUser(authorities = { "STUDENT" })
     void showStudentPage_shouldReturn200Status_whenAccessStudent() throws Exception {
         mvc.perform(get(URL.HOME_STUDENT).with(csrf()).contentType(contentType)).andExpect(status().isOk());
     }
-    
+
     @Test
-    @WithMockUser(authorities = {"TEACHER"})
+    @WithMockUser(authorities = { "TEACHER" })
     void showStudentPage_shouldReturn403Status_whenAccessTeacher() throws Exception {
         mvc.perform(get(URL.HOME_STUDENT).with(csrf()).contentType(contentType)).andExpect(status().isForbidden());
     }
-    
+
     @Test
     @WithMockUser
     void showStudentPage_shouldReturn403Status_whenAccessUser() throws Exception {
         mvc.perform(get(URL.HOME_STUDENT).with(csrf()).contentType(contentType)).andExpect(status().isForbidden());
     }
-    
+
     @Test
-    @WithMockUser(authorities = {"ADMIN"})
+    @WithMockUser(authorities = { "ADMIN" })
     void showTeacherPage_shouldReturn200Status_whenAccessAdmin() throws Exception {
         mvc.perform(get(URL.HOME_TEACHER).with(csrf()).contentType(contentType)).andExpect(status().isOk());
     }
-    
+
     @Test
-    @WithMockUser(authorities = {"TEACHER"})
+    @WithMockUser(authorities = { "TEACHER" })
     void showTeacherPage_shouldReturn200Status_whenAccessTeacher() throws Exception {
         mvc.perform(get(URL.HOME_TEACHER).with(csrf()).contentType(contentType)).andExpect(status().isOk());
     }
-    
+
     @Test
-    @WithMockUser(authorities = {"STUDENT"})
+    @WithMockUser(authorities = { "STUDENT" })
     void showTeacherPage_shouldReturn403Status_whenAccessStudent() throws Exception {
         mvc.perform(get(URL.HOME_TEACHER).with(csrf()).contentType(contentType)).andExpect(status().isForbidden());
     }
-    
+
     @Test
     @WithMockUser
     void showTeacherPage_shouldReturn403Status_whenAccessUser() throws Exception {

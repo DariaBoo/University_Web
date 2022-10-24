@@ -1,4 +1,4 @@
-package ua.foxminded.university.dao.exception;
+package ua.foxminded.university.dao.exceptions;
 
 public class UniqueConstraintViolationException extends RuntimeException {
     /**

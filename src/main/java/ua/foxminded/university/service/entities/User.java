@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@ToString
+@ToString(exclude = {"password"})
 @Getter
 @Setter
 @EqualsAndHashCode

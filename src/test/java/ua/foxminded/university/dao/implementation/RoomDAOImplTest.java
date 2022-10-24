@@ -11,23 +11,23 @@ import ua.foxminded.university.AppSpringBoot;
 import ua.foxminded.university.dao.RoomDAO;
 
 @SpringBootTest(classes = AppSpringBoot.class)
-@Sql({"/rooms.sql"})
+@Sql({ "/rooms.sql" })
 class RoomDAOImplTest {
-    
+
     @Autowired
     private RoomDAO roomDAO;
-    
-    @Test 
+
+    @Test
     void findSuitableRoom_shouldReturnCountOfSuitableRooms_whenInputCountOfStudents() {
         assertEquals(8, roomDAO.findSuitableRooms(20).get().size());
-    }   
-    
-    @Test 
+    }
+
+    @Test
     void findSuitableRoom_shouldReturnCountOfSuitableRooms_whenInputZero() {
         assertEquals(10, roomDAO.findSuitableRooms(0).get().size());
-    } 
-    
-    @Test 
+    }
+
+    @Test
     void findSuitableRoom_shouldReturnCountOfSuitableRooms_whenInputNegativeNumber() {
         assertEquals(10, roomDAO.findSuitableRooms(-1).get().size());
     }

@@ -13,19 +13,20 @@ import ua.foxminded.university.service.entities.Teacher;
 public interface TeacherService {
     
     /**
-     * The method adds Teacher to the timetable.teachers
+     * The method adds Teacher to the database
      * 
      * @param teacher
-     * @return true or false
+     * @return saved teacher
      */
-    boolean addTeacher(Teacher teacher);
+    Teacher addTeacher(Teacher teacher);
 
     /**
      * The method lets update teacher's first name and last name
      * 
      * @param teacher
+     * @return updated teacher
      */
-    void updateTeacher(Teacher teacher);
+    Teacher updateTeacher(Teacher teacher);
     
     /**
      * Deletes teacher from the timetable.teachers

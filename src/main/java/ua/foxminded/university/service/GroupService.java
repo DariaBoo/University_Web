@@ -23,8 +23,9 @@ public interface GroupService {
      * The method updated existed group
      * 
      * @param group
+     * @return 
      */
-    void updateGroup(Group group);
+    Group updateGroup(Group group);
 
     /**
      * The method deletes group from the database by group id

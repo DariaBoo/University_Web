@@ -4,11 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Predicate;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,13 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.LessonDAO;
 import ua.foxminded.university.dao.TeacherDAO;
-import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
+import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
+import ua.foxminded.university.service.RoleService;
 import ua.foxminded.university.service.TeacherService;
 import ua.foxminded.university.service.entities.Day;
 import ua.foxminded.university.service.entities.Lesson;
 import ua.foxminded.university.service.entities.Role;
 import ua.foxminded.university.service.entities.Teacher;
-import ua.foxminded.university.service.exception.ServiceException;
 import ua.foxminded.university.service.exception.UserNotFoundException;
 
 /**
@@ -46,6 +42,8 @@ public class TeacherServiceImpl implements TeacherService {
     @Autowired
     private LessonDAO lessonDAO;
     @Autowired
+    private RoleService roleService;
+    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
     /**
@@ -53,27 +51,24 @@ public class TeacherServiceImpl implements TeacherService {
      */
     @Override
     @Transactional
-    public boolean addTeacher(Teacher teacher) {
-        try {
-            roles.add(new Role(defaultRole));
-            teacher.getUser().setRoles(roles);
-            teacher.getUser().setPassword(passwordEncoder.encode(defaultPassword));
-            teacherDAO.save(teacher);
+    public Teacher addTeacher(Teacher teacher) {
+        Teacher savedTeacher = teacherDAO.findByUserUsername(teacher.getUser().getUsername());
+        if (savedTeacher == null) {
+            savedTeacher = teacherDAO.save(setDefaultData(teacher));
             log.info("Save teacher with id :: {}", teacher.getId());
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            log.error(e.getMessage(), e.getCause());
-            throw new UniqueConstraintViolationException("Teacher with first name [" + teacher.getUser().getFirstName()
-                    + "] and last name [" + teacher.getUser().getLastName() + "] already exists!");
-        } catch (ConstraintViolationException e) {
-            Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
-            for (ConstraintViolation<?> violation : violations) {
-                if (violation != null) {
-                    log.error(violation.getMessageTemplate());
-                    throw new ServiceException(violation.getMessageTemplate());
-                }
-            }
+        } else {
+            log.warn("Teacher already exist with id [{}]", savedTeacher.getId());
+            throw new UniqueConstraintViolationException(
+                    "Teacher with username - [" + teacher.getUser().getUsername() + "] already exists!");
         }
-        return teacherDAO.existsById(teacher.getId());
+        return savedTeacher;
+    }
+    
+    public Teacher setDefaultData(Teacher teacher) {
+        roles.add(roleService.findByName(defaultRole));
+        teacher.getUser().setRoles(roles);
+        teacher.getUser().setPassword(passwordEncoder.encode(defaultPassword));
+        return teacher;
     }
 
     /**
@@ -81,23 +76,17 @@ public class TeacherServiceImpl implements TeacherService {
      */
     @Override
     @Transactional
-    public void updateTeacher(Teacher teacher) {
-        try {
-            teacherDAO.save(teacher);
-            log.info("Update teacher with id :: {}", teacher.getId());
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            log.error(e.getMessage(), e.getCause());
-            throw new UniqueConstraintViolationException("Teacher with first name [" + teacher.getUser().getFirstName()
-                    + "] and last name [" + teacher.getUser().getLastName() + "] already exists!");
-        } catch (ConstraintViolationException e) {
-            Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
-            for (ConstraintViolation<?> violation : violations) {
-                if (violation != null) {
-                    log.error(violation.getMessageTemplate());
-                    throw new ServiceException(violation.getMessageTemplate());
-                }
-            }
+    public Teacher updateTeacher(Teacher teacher) {
+        Teacher updatedTeacher = teacherDAO.findByUserUsername(teacher.getUser().getUsername());
+        if (updatedTeacher == null) {
+            updatedTeacher = teacherDAO.save(teacher);
+            log.info("Updated teacher with id :: {}", teacher.getId());
+        } else {
+            log.warn("Teacher already exist with id [{}]", updatedTeacher.getId());
+            throw new UniqueConstraintViolationException(
+                    "Teacher with username - [" + teacher.getUser().getUsername() + "] already exists!");
         }
+        return updatedTeacher;
     }
 
     /**

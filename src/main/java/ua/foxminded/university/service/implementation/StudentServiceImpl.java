@@ -2,26 +2,20 @@ package ua.foxminded.university.service.implementation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.StudentDAO;
-import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
+import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.RoleService;
 import ua.foxminded.university.service.StudentService;
 import ua.foxminded.university.service.entities.Role;
 import ua.foxminded.university.service.entities.Student;
-import ua.foxminded.university.service.exception.EntityConstraintViolationException;
 import ua.foxminded.university.service.exception.UserNotFoundException;
 
 /**
@@ -50,29 +44,19 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public Student addStudent(Student student) {
-        Student savedStudent = new Student();
-        try {
-            log.info("Adding a new student...");
-            savedStudent =  studentDAO.save(setDefaultData(student));
+        Student savedStudent = studentDAO.findByUserUsername(student.getUser().getUsername());
+        if (savedStudent == null) {
+            savedStudent = studentDAO.save(setDefaultData(student));
             log.info("Added a new student with id::{}", student.getId());
-        } catch (DataIntegrityViolationException e) {
-            log.error(e.getLocalizedMessage(), e.getCause());
+        } else {
+            log.warn("Student already exist with id [{}]", savedStudent.getId());
             throw new UniqueConstraintViolationException(
-                    "Student with first name - [" + student.getUser().getFirstName() + "], last name - [" + student.getUser().getLastName()
-                            + "] and id card - [" + student.getIdCard() + "] already exists!");
-        } catch (ConstraintViolationException e) {
-            Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
-            for (ConstraintViolation<?> violation : violations) {
-                if (violation != null) {
-                    log.error(violation.getMessageTemplate());
-                    throw new EntityConstraintViolationException(violation.getMessageTemplate());
-                }
-            }
+                    "Student with username - [" + student.getUser().getUsername() + "] already exists!");
         }
         return savedStudent;
     }
 
-    private Student setDefaultData(Student student) {
+    public Student setDefaultData(Student student) {
         roles.add(roleService.findByName(defaultRole));
         student.getUser().setRoles(roles);
         student.getUser().setPassword(passwordEncoder.encode(defaultPassword));
@@ -84,25 +68,17 @@ public class StudentServiceImpl implements StudentService {
      */
     @Override
     @Transactional
-    public void updateStudent(Student student) {
-        try {
-            studentDAO.save(student);
+    public Student updateStudent(Student student) {
+        Student updatedStudent = studentDAO.findByUserUsername(student.getUser().getUsername());
+        if (updatedStudent == null) {
+            updatedStudent = studentDAO.save(student);
             log.info("Update student with id :: {}", student.getId());
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            log.error(e.getMessage(), e.getCause());
-            throw new UniqueConstraintViolationException("Student with first name - ["
-                    + student.getUser().getFirstName() + "], last name - [" + student.getUser().getLastName()
-                    + "] and id card - [" + student.getIdCard() + "] already exists!");
-        } catch (ConstraintViolationException e) {
-            Set<ConstraintViolation<?>> violations = ((ConstraintViolationException) e.getCause())
-                    .getConstraintViolations();
-            for (ConstraintViolation<?> violation : violations) {
-                if (violation != null) {
-                    log.error(violation.getMessageTemplate());
-                    throw new EntityConstraintViolationException(violation.getMessageTemplate());
-                }
-            }
+        } else {
+            log.warn("Student already exist with id [{}]", updatedStudent.getId());
+            throw new UniqueConstraintViolationException(
+                    "Student with username - [" + student.getUser().getUsername() + "] already exists!");
         }
+        return updatedStudent;
     }
 
     /**

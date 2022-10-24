@@ -17,15 +17,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     private UserDAO userDAO;
-    
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userDAO.findByUsername(username);
         if (user == null) {
-            log.error("[ON loadUserByUsername] User with username::[ {} ] not found", username);
+            log.warn("[ON loadUserByUsername]:: user with username::[ {} ] not found", username);
             throw new UsernameNotFoundException("User not found for username - " + username);
         }
-        log.info("[ON loadUserByUsername]:: loaded user with username [ {} ] and roles [ {} ]",user.getUsername(), user.getRoles());
+        log.info("[ON loadUserByUsername]:: loaded user with username [ {} ] and roles [ {} ]", user.getUsername(),
+                user.getRoles());
         return new AuthenticatedUser(user);
     }
 }

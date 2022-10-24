@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,12 +18,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.controller.urls.URL;
-import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
+import ua.foxminded.university.controller.validator.ValidationUtils;
+import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.StudentService;
 import ua.foxminded.university.service.entities.Student;
-import ua.foxminded.university.service.exception.EntityConstraintViolationException;
-import ua.foxminded.university.service.exception.ServiceException;
 
 @Slf4j
 @Controller
@@ -38,7 +38,7 @@ public class StudentsController {
 
     @GetMapping(URL.APP_STUDENTS)
     public String listAllStudents(Model model) {
-            model.addAttribute("students", studentService.findAllStudents());
+        model.addAttribute("students", studentService.findAllStudents());
         return "students/list";
     }
 
@@ -55,20 +55,25 @@ public class StudentsController {
     }
 
     @PostMapping(URL.APP_STUDENTS)
-    public String saveNewStudent(@ModelAttribute("student") Student student, RedirectAttributes redirectAtt) {
-        try {
-            studentService.addStudent(student);
-            redirectAtt.addFlashAttribute(message, "Student was created!");
-        } catch (UniqueConstraintViolationException | EntityConstraintViolationException e) {
-            log.error(e.getMessage());
-            redirectAtt.addFlashAttribute(message, e.getMessage());
+    public String saveNewStudent(@Valid @ModelAttribute("student") Student student, BindingResult bindingResult,
+            RedirectAttributes redirectAtt) {
+        if (bindingResult.hasErrors()) {
+            redirectAtt.addFlashAttribute(message, ValidationUtils.getErrorMessages(bindingResult));
+        } else {
+            try {
+                studentService.addStudent(student);
+                redirectAtt.addFlashAttribute(message, "Student was created!");
+            } catch (UniqueConstraintViolationException e) {
+                log.error(e.getMessage());
+                redirectAtt.addFlashAttribute(message, e.getMessage());
+            }
         }
         return students;
     }
 
     @RequestMapping(URL.APP_DELETE_STUDENT_BY_ID)
     public String deleteStudent(@PathVariable Integer id, RedirectAttributes redirectAtt) {
-        if(studentService.deleteStudent(id)) {
+        if (studentService.deleteStudent(id)) {
             redirectAtt.addFlashAttribute(message, "Student was deleted!");
         } else {
             redirectAtt.addFlashAttribute(message, "Error to delete!");
@@ -78,23 +83,23 @@ public class StudentsController {
 
     @GetMapping(URL.APP_EDIT_STUDENT_BY_ID)
     public String edit(Model model, @PathVariable("id") int id, RedirectAttributes redirectAtt) {
-            model.addAttribute("student", studentService.findById(id));
-            model.addAttribute("groups", groupService.findAllGroups());
+        model.addAttribute("student", studentService.findById(id));
+        model.addAttribute("groups", groupService.findAllGroups());
         return "students/edit";
     }
 
     @PostMapping(URL.APP_STUDENTS_VIEW_BY_ID)
-    public String update(@Valid @ModelAttribute("student") Student student, RedirectAttributes redirectAtt) {
-        try {
+    public String update(@Valid @ModelAttribute("student") Student student, BindingResult bindingResult,
+            RedirectAttributes redirectAtt) {
+        if (bindingResult.hasErrors()) {
+            redirectAtt.addFlashAttribute(message, ValidationUtils.getErrorMessages(bindingResult));
+        } else {
             studentService.updateStudent(student);
             redirectAtt.addFlashAttribute(message, "Student was updated!");
-        } catch (UniqueConstraintViolationException | ServiceException e) {
-            log.error(e.getMessage());
-            redirectAtt.addFlashAttribute(message, e.getMessage());
         }
         return students;
     }
-    
+
     @PostMapping(URL.STUDENT_CHANGE_PASSWORD)
     public ResponseEntity<String> changePassword(@PathVariable int id, @RequestParam String newPassword) {
         studentService.changePassword(id, newPassword);

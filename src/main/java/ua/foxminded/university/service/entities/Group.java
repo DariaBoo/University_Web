@@ -40,7 +40,7 @@ import lombok.ToString;
 public class Group {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "group_id")
     private int id;
 

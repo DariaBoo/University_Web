@@ -19,5 +19,12 @@ public interface GroupDAO extends JpaRepository<Group, Integer>{
      * @return optional list of groups
      */
     @Transactional(readOnly = true)
-    Optional<List<Group>> findByLessons_Teachers_Id(int teacherId);    
+    Optional<List<Group>> findByLessons_Teachers_Id(int teacherId);   
+    
+    /**
+     * The method returns group by group's name
+     * @param name
+     * @return group
+     */
+    Group findByName(String name);
 }

@@ -1,10 +1,6 @@
 package ua.foxminded.university.service.implementation;
 
 import java.util.List;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -13,10 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.LessonDAO;
-import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
+import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.LessonService;
 import ua.foxminded.university.service.entities.Lesson;
-import ua.foxminded.university.service.exception.ServiceException;
 
 /**
  * @version 1.0
@@ -35,23 +30,16 @@ public class LessonServiceImpl implements LessonService {
      */
     @Override
     @Transactional
-    public boolean addLesson(Lesson lesson) {
-        try {
-            lessonDAO.save(lesson);
-            log.info("Save lesson with id :: {}", lesson.getId());
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            log.error(e.getMessage(), e.getCause());
+    public Lesson addLesson(Lesson lesson) {
+        Lesson savedLesson = lessonDAO.findByName(lesson.getName());
+        if(savedLesson == null) {
+            savedLesson = lessonDAO.save(lesson);
+            log.info("Added a new lesson with id::{}", lesson.getId());
+        } else {
+            log.warn("Lesson with name [{}] already exists with id [{}]", savedLesson.getName(), savedLesson.getId());
             throw new UniqueConstraintViolationException("Lesson with name [" + lesson.getName() + "] already exists!");
-        } catch (ConstraintViolationException e) {
-            Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
-            for (ConstraintViolation<?> violation : violations) {
-                if (violation != null) {
-                    log.error(violation.getMessageTemplate());
-                    throw new ServiceException(violation.getMessageTemplate());
-                }
-            }
         }
-        return lessonDAO.existsById(lesson.getId());
+        return savedLesson;
     }
 
     /**
@@ -70,14 +58,16 @@ public class LessonServiceImpl implements LessonService {
      */
     @Override
     @Transactional
-    public void updateLesson(Lesson lesson) {
-        try {
-            log.info("Update lesson with id :: {}", lesson.getId());
-            lessonDAO.save(lesson);
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            log.error(e.getMessage(), e.getCause());
+    public Lesson updateLesson(Lesson lesson) {
+        Lesson updatedLesson = lessonDAO.findByName(lesson.getName());
+        if(updatedLesson == null) {
+            updatedLesson = lessonDAO.save(lesson);
+            log.info("Update lesson with id::{}", lesson.getId());
+        } else {
+            log.warn("Lesson with name [{}] already exists with id [{}]", updatedLesson.getName(), updatedLesson.getId());
             throw new UniqueConstraintViolationException("Lesson with name [" + lesson.getName() + "] already exists!");
         }
+        return updatedLesson;
     }
 
     /**

@@ -22,29 +22,29 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import ua.foxminded.university.dao.GroupDAO;
 import ua.foxminded.university.dao.LessonDAO;
+import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.entities.Group;
 
 @ExtendWith(SpringExtension.class)
 class GroupServiceImplUnitTest {
-    
+
     @Mock
     private GroupDAO groupDao;
     @Mock
     private LessonDAO lessonDao;
-    
+
     @InjectMocks
     private GroupServiceImpl groupService;
-    
+
     private Group group;
     private Group group2;
 
-    
     @BeforeEach
     void setup() {
         group = Group.builder().id(1).name("name").departmentId(1).build();
         group2 = Group.builder().id(2).name("name2").departmentId(1).build();
     }
-    
+
     @Test
     void addGroup_shouldReturnTrue_whenAddNewGroup() {
         given(groupDao.save(group)).willReturn(group);
@@ -52,34 +52,57 @@ class GroupServiceImplUnitTest {
         assertEquals(group, groupService.addGroup(group));
         verify(groupDao, times(1)).save(any(Group.class));
     }
-    
+
+    @Test
+    void addGroup_shouldThrowUniqueConstraintViolationException_whenInputNotUniqueName() {
+        given(groupDao.findByName(group.getName())).willReturn(group);
+        assertThrows(UniqueConstraintViolationException.class, () -> groupService.addGroup(group));
+        verify(groupDao, times(0)).save(any(Group.class));
+    }
+
     @Test
     void findAllGroups_shouldReturnCountOfGroups_whenCallTheMethod() {
         List<Group> groups = new ArrayList<Group>();
         groups.add(group);
         groups.add(group2);
         given(groupDao.findAll()).willReturn(groups);
-        
-        List<Group> groupsService = groupService.findAllGroups();
-        assertNotNull(groupsService);
-        assertEquals(2, groupsService.size());
+
+        List<Group> groupsList = groupService.findAllGroups();
+        assertNotNull(groupsList);
+        assertEquals(2, groupsList.size());
     }
 
     @Test
     void findAllGroups_shouldReturnEmptyList_whenCallTheMethod() {
-        given(groupDao.findAll()).willReturn(new ArrayList<Group>());      
+        given(groupDao.findAll()).willReturn(new ArrayList<Group>());
         List<Group> groupsService = groupService.findAllGroups();
         assertEquals(0, groupsService.size());
     }
-    
+
     @Test
-    void deleteGroup_shouldReturnTrue_whenInputGroupId() {
+    void updateGroup() {
+        String newName = "newName";
+        given(groupDao.save(group)).willReturn(group);
+        group.setName(newName);
+        Group updatedGroup = groupService.updateGroup(group);
+        assertEquals(updatedGroup.getName(), newName);
+    }
+
+    @Test
+    void updateGroup_shouldThrowUniqueConstraintViolationException_whenInputNotUniqueName() {
+        given(groupDao.findByName(group.getName())).willReturn(group);
+        assertThrows(UniqueConstraintViolationException.class, () -> groupService.updateGroup(group));
+        verify(groupDao, times(0)).save(any(Group.class));
+    }
+
+    @Test
+    void deleteGroup() {
         int groupId = 1;
         willDoNothing().given(groupDao).deleteById(groupId);
         groupService.deleteGroup(groupId);
         verify(groupDao, times(1)).deleteById(groupId);
     }
-    
+
     @Test
     void findById_shouldReturnGroup_whenInputExistedGroupId() {
         int groupId = 1;
@@ -88,7 +111,7 @@ class GroupServiceImplUnitTest {
         assertNotNull(savedGroup);
         assertEquals(group, savedGroup);
     }
-    
+
     @Test
     void findById_shouldReturnIllegalArgumentException_whenInputNotExistedGroupId() {
         int groupId = 100;

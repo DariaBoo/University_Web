@@ -10,7 +10,7 @@ import ua.foxminded.university.service.exception.InvalidUserException;
 public interface SecurityService {
 
     /**
-     * The method checks is user authenticated by username and password
+     * The method checks if user authenticated by username and password
      * @param username
      * @param password
      * @return true or false

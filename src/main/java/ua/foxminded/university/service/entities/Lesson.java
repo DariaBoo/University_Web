@@ -36,7 +36,7 @@ import lombok.ToString;
 public class Lesson {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "lesson_id")
     private int id;
 

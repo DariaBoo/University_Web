@@ -14,15 +14,16 @@ public interface LessonService {
      * The method adds lesson to the database
      * 
      * @param lesson
-     * @return true or false
+     * @return saved lesson
      */
-    boolean addLesson(Lesson lesson);
+    Lesson addLesson(Lesson lesson);
 
     /**
      * The method lets update lesson's name and description
      * @param lesson
+     * @return updated lesson
      */
-    void updateLesson(Lesson lesson) ;
+    Lesson updateLesson(Lesson lesson) ;
     
     /**
      * Deletes lesson from the database

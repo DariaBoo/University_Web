@@ -10,4 +10,10 @@ import ua.foxminded.university.service.entities.Lesson;
  */
 public interface LessonDAO extends JpaRepository<Lesson, Integer> {  
     
+    /**
+     * The method returns lesson by lesson name
+     * @param name
+     * @return lesson
+     */
+    Lesson findByName(String name);
 }

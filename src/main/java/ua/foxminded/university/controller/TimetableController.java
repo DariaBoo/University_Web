@@ -23,7 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.controller.urls.URL;
-import ua.foxminded.university.dao.exception.UniqueConstraintViolationException;
+import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.security.model.AuthenticatedUser;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.LessonService;

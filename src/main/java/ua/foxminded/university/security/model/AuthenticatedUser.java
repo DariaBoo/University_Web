@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import ua.foxminded.university.service.entities.User;
 
 /**
@@ -19,6 +21,8 @@ import ua.foxminded.university.service.entities.User;
  * @version 1.0
  *
  */
+@ToString
+@EqualsAndHashCode
 public class AuthenticatedUser implements UserDetails {
 
     private static final long serialVersionUID = 1L;

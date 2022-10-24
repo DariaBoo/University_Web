@@ -56,8 +56,9 @@ public interface StudentService {
      * The method updates student name and surname
      * 
      * @param student
+     * @return updated student
      */
-    void updateStudent(Student student);
+    Student updateStudent(Student student);
     
     /**
      * The method find student by username

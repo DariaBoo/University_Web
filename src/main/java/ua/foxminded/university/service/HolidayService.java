@@ -20,9 +20,9 @@ public interface HolidayService {
     /**
      * The method adds new holiday to the database, if holiday was added returns 1 otherwise 0
      * @param holiday
-     * @return is added true, otherwise - false
+     * @return Holiday
      */
-    boolean addHoliday(Holiday holiday);
+    Holiday addHoliday(Holiday holiday);
     
     /**
      * The method deletes existed holiday by id and returns count of deleted rows

@@ -45,7 +45,7 @@ public class SecurityServiceImpl implements SecurityService {
             log.info("[ON authenticate]:: authenticating by UsernamePasswordAuthenticationToken...");
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             log.info(
-                    "[ON authenticate]:: user with username [ {} ] is authenticated by UsernamePasswordAuthenticationToken successfully",
+                    "[ON authenticate]:: user with username [ {} ] is authenticated successfully",
                     username);
     }
 }
