@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.TimetableDAO;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.HolidayService;
 import ua.foxminded.university.service.TeacherService;
 import ua.foxminded.university.service.TimetableService;
@@ -18,6 +17,7 @@ import ua.foxminded.university.service.entities.Day;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.entities.Timetable;
+import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.validator.Notification;
 import ua.foxminded.university.service.validator.TimetableValidator;
 
@@ -50,22 +50,23 @@ public class TimetableServiceImpl implements TimetableService {
         log.info("Adding timetable...");
         validator = new TimetableValidator(holidayService, teacherService);
         Notification notification = new Notification();
-        try {
-            notification = validator.validateTimetable(timetable);
-            log.info("Validating timetable...");
-            if (!notification.hasErrors()) {
+        log.info("Validating timetable...");
+        notification = validator.validateTimetable(timetable);
+        if (notification.hasErrors()) {
+            String errors = notification.getErrors();
+            log.warn("Can't schedule timetable. Errors :: {}", errors);
+            return errors;
+        } else {
+            try {
                 timetableDAO.saveAndFlush(timetable);
                 log.debug("Timetable [date::{}, time::{}] is scheduled", timetable.getDate(),
                         timetable.getLessonTimePeriod());
-            } else {
+            } catch (DataIntegrityViolationException exception) {
+                notification = validator.validateUniqueConstraint(exception, timetable);
                 String errors = notification.getErrors();
-                log.warn("Can't schedule timetable. Errors :: {}", errors);
-                return errors;
+                log.error("[ON scheduleTimetable]:: catched DataIntegrityViolationException, error message - {}", errors);
+                throw new UniqueConstraintViolationException(errors, exception);
             }
-        } catch (DataIntegrityViolationException exception) {
-            notification = validator.validateUniqueConstraint(exception, timetable);
-            log.error("[ON scheduleTimetable]::DataIntegrityViolationException, error message - {}", notification.getErrors());
-            throw new UniqueConstraintViolationException(notification.getErrors(), exception);
         }
         return "Timetable was scheduled successfully!";
     }

@@ -1,4 +1,4 @@
-package ua.foxminded.university.dao.implementation;
+package ua.foxminded.university.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import ua.foxminded.university.AppSpringBoot;
-import ua.foxminded.university.dao.RoomDAO;
 
 @SpringBootTest(classes = AppSpringBoot.class)
 @Sql({ "/rooms.sql" })

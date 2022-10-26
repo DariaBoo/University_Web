@@ -5,6 +5,9 @@ import java.util.List;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class ValidationUtils {
     
     private ValidationUtils() {
@@ -13,10 +16,11 @@ public class ValidationUtils {
 
     public static String getErrorMessages(BindingResult bindingResult) {
         List<FieldError> errors = bindingResult.getFieldErrors();
-        StringBuilder allErrors = new StringBuilder();
+        StringBuilder resultErrors = new StringBuilder();
         for (FieldError error : errors ) {
-            allErrors.append(error.getDefaultMessage() + ", ");
+            resultErrors.append(error.getDefaultMessage() + ", ");
         }
-        return allErrors.toString();
+        log.info("[ON getErrorMessages]:: errors - {}", resultErrors.toString());
+        return resultErrors.toString();
       }
 }

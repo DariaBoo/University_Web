@@ -18,8 +18,8 @@ import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import lombok.extern.slf4j.Slf4j;
+import ua.foxminded.university.config.roles.Roles;
 import ua.foxminded.university.controller.urls.URL;
-import ua.foxminded.university.security.Roles;
 
 @Slf4j
 public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler {

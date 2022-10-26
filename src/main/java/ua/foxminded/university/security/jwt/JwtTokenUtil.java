@@ -15,6 +15,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
+import ua.foxminded.university.security.jwt.exception.InvalidTokenException;
 
 @Slf4j
 @Component

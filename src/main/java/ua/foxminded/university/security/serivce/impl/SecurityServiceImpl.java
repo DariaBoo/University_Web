@@ -1,16 +1,14 @@
-package ua.foxminded.university.service.implementation;
+package ua.foxminded.university.security.serivce.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
-import ua.foxminded.university.service.SecurityService;
-import ua.foxminded.university.service.exception.InvalidUserException;
-import ua.foxminded.university.service.exception.UserNotFoundException;
+import ua.foxminded.university.security.service.SecurityService;
 
 /**
  * @version 1.0
@@ -28,17 +26,14 @@ public class SecurityServiceImpl implements SecurityService {
      * {@inheritDoc}
      */
     @Override
-    public boolean isAuthenticated(String username, String password) throws InvalidUserException {
+    public boolean isAuthenticated(String username, String password) {
         try {
             doAuthenticate(username, password);
             return true;
-        } catch (UsernameNotFoundException e) {
-            log.error("[ON isAuthenticated]:: invalid username");
-            throw new UserNotFoundException(e.getMessage());
-        } catch(AuthenticationException e) {
-            log.error("[ON isAuthenticated]:: invalid credentials");
-            throw new InvalidUserException(e.getMessage());
-        }        
+        } catch (AuthenticationException e) {
+            log.error("[ON isAuthenticated]:: Exception :: {}.", e);
+            throw new BadCredentialsException(e.getMessage());
+        }
     }
     
     private void doAuthenticate(String username, String password) {

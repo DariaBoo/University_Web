@@ -25,10 +25,10 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import ua.foxminded.university.dao.StudentDAO;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.User;
+import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.exception.UserNotFoundException;
 
 @ExtendWith(SpringExtension.class)

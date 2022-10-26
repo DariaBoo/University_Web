@@ -15,13 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.LessonDAO;
 import ua.foxminded.university.dao.TeacherDAO;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.RoleService;
 import ua.foxminded.university.service.TeacherService;
 import ua.foxminded.university.service.entities.Day;
 import ua.foxminded.university.service.entities.Lesson;
 import ua.foxminded.university.service.entities.Role;
 import ua.foxminded.university.service.entities.Teacher;
+import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.exception.UserNotFoundException;
 
 /**
@@ -144,7 +144,7 @@ public class TeacherServiceImpl implements TeacherService {
         if (teacher.isPresent()) {
             teacher.get().getAbsentPeriod().add(day);
             teacherDAO.save(teacher.get());
-            log.info("Set absent period to teacher [id::{}]", teacherId);
+            log.info("Set absent period {} - {} to teacher [id::{}]", day.getDateOne(), day.getDateTwo(), teacherId);
             return true;
         }
         return false;

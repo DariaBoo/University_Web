@@ -1,4 +1,4 @@
-package ua.foxminded.university.security;
+package ua.foxminded.university.config.roles;
 
 public class Roles {
 

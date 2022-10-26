@@ -1,4 +1,4 @@
-package ua.foxminded.university.service.implementation.integration_tests;
+package ua.foxminded.university.security;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,16 +10,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.jdbc.Sql;
 
 import ua.foxminded.university.AppSpringBoot;
 import ua.foxminded.university.dao.UserDAO;
+import ua.foxminded.university.security.serivce.impl.SecurityServiceImpl;
 import ua.foxminded.university.service.entities.Role;
 import ua.foxminded.university.service.entities.User;
-import ua.foxminded.university.service.exception.InvalidUserException;
-import ua.foxminded.university.service.implementation.SecurityServiceImpl;
 
 @SpringBootTest(classes = AppSpringBoot.class)
 @Sql({ "/security.sql" })
@@ -47,13 +47,13 @@ class SecurityServiceImplTest {
     }
 
     @Test
-    void isAuthenticated_shouldReturnTrue_whenInputExistedData() throws InvalidUserException {
+    void isAuthenticated_shouldReturnTrue_whenInputExistedData() {
         assertTrue(securityService.isAuthenticated(username, password));
     }
 
     @Test
     void isAuthenticated_shouldThrowInvalidUserException_whenInputNotExistedData() {
         String notExistedUsername = "none";
-        assertThrows(InvalidUserException.class, () -> securityService.isAuthenticated(notExistedUsername, password));
+        assertThrows(BadCredentialsException.class, () -> securityService.isAuthenticated(notExistedUsername, password));
     }
 }

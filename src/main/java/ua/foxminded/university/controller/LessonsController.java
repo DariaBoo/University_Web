@@ -12,13 +12,12 @@ import ua.foxminded.university.service.LessonService;
 import ua.foxminded.university.service.entities.Lesson;
 
 @Controller
-@RequestMapping(URL.APP_LESSONS)
 public class LessonsController {
     
     @Autowired
     private LessonService lessonService;
 
-    @GetMapping()
+    @GetMapping(URL.APP_LESSONS)
     public String listAllLessons(Model model) {
         model.addAttribute("lessons", lessonService.findAllLessons());
         return "lessons/list";

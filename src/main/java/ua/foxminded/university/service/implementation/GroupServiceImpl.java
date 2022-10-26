@@ -11,10 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.GroupDAO;
 import ua.foxminded.university.dao.LessonDAO;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.entities.Lesson;
+import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
 
 /**
  * @version 1.0
@@ -133,7 +133,7 @@ public class GroupServiceImpl implements GroupService {
     @Transactional(readOnly = true)
     public Group findById(int groupId) {
         Group resultGroup = groupDAO.findById(groupId).orElseThrow(
-                () -> new IllegalArgumentException("Error occured while searching group by id: " + groupId));
+                () -> new IllegalArgumentException("No group with id: " + groupId));
         log.debug("Found group with id :: {}", groupId);
         return resultGroup;
     }
@@ -146,7 +146,7 @@ public class GroupServiceImpl implements GroupService {
     public List<Group> findGroupsByTeacherId(int teacherId) {
         List<Group> resultList = groupDAO.findByLessons_Teachers_Id(teacherId)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "Error occured while searching group by teacher id - {} " + teacherId));
+                        "No groups for teacher with id - {} " + teacherId));
         log.debug("Found groups (count - {}) by teacher id - {}", resultList.size(), teacherId);
         return resultList;
     }

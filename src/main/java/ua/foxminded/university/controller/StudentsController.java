@@ -19,10 +19,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.controller.urls.URL;
 import ua.foxminded.university.controller.validator.ValidationUtils;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.StudentService;
 import ua.foxminded.university.service.entities.Student;
+import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
 
 @Slf4j
 @Controller
@@ -33,7 +33,7 @@ public class StudentsController {
 
     @Autowired
     private StudentService studentService;
-    @Autowired
+    @Autowired 
     private GroupService groupService;
 
     @GetMapping(URL.APP_STUDENTS)
@@ -82,7 +82,7 @@ public class StudentsController {
     }
 
     @GetMapping(URL.APP_EDIT_STUDENT_BY_ID)
-    public String edit(Model model, @PathVariable("id") int id, RedirectAttributes redirectAtt) {
+    public String edit(@PathVariable("id") int id, Model model, RedirectAttributes redirectAtt) {
         model.addAttribute("student", studentService.findById(id));
         model.addAttribute("groups", groupService.findAllGroups());
         return "students/edit";

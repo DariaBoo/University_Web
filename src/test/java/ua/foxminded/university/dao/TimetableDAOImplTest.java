@@ -1,4 +1,4 @@
-package ua.foxminded.university.dao.implementation;
+package ua.foxminded.university.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,14 +13,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import ua.foxminded.university.AppSpringBoot;
-import ua.foxminded.university.dao.TimetableDAO;
 import ua.foxminded.university.service.entities.Day;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.entities.Timetable;
 
 @SpringBootTest(classes = AppSpringBoot.class)
-@Sql({ "/timetable.sql" })
+@Sql({ "/timetable.sql", "/timetableInsert.sql" })
 class TimetableDAOImplTest {
 
     @Autowired

@@ -22,8 +22,8 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import ua.foxminded.university.dao.HolidayDAO;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.entities.Holiday;
+import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
 
 @ExtendWith(SpringExtension.class)
 class HolidayServiceImplUnitTest {

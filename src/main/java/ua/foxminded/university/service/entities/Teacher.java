@@ -60,6 +60,7 @@ public class Teacher {
     @Column(name = "department_id")
     private int departmentId;
 
+    @ToString.Exclude
     @JsonIgnore
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
     private List<Day> absentPeriod;

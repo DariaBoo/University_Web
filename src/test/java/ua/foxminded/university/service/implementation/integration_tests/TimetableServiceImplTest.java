@@ -1,125 +1,128 @@
 package ua.foxminded.university.service.implementation.integration_tests;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.jdbc.Sql;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import ua.foxminded.university.AppSpringBoot;
-import ua.foxminded.university.dao.RoomDAO;
+import ua.foxminded.university.dao.TimetableDAO;
 import ua.foxminded.university.service.LessonTimePeriod;
+import ua.foxminded.university.service.entities.Day;
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.entities.Lesson;
 import ua.foxminded.university.service.entities.Room;
+import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.entities.Timetable;
-import ua.foxminded.university.service.implementation.GroupServiceImpl;
-import ua.foxminded.university.service.implementation.LessonServiceImpl;
-import ua.foxminded.university.service.implementation.TeacherServiceImpl;
+import ua.foxminded.university.service.entities.User;
 import ua.foxminded.university.service.implementation.TimetableServiceImpl;
 
-@SpringBootTest(classes = AppSpringBoot.class)
-@Sql({ "/timetable.sql" })
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+@ExtendWith(SpringExtension.class)
 class TimetableServiceImplTest {
 
-    @Autowired
+    @Mock
+    private TimetableDAO timetableDao;
+    @InjectMocks
     private TimetableServiceImpl timetableService;
-    @Autowired
-    private GroupServiceImpl groupService;
-    @Autowired
-    private LessonServiceImpl lessonService;
-    @Autowired
-    private TeacherServiceImpl teacherService;
-    @Autowired
-    private RoomDAO roomDao;
 
     private Timetable timetable;
-    private Group group;
-    private Lesson lesson;
-    private Teacher teacher;
-    private Room room;
-
+    private Timetable timetable2;
+    private String lessonTimePeriod;
+    private LocalDate date;
+    private Day day;
+    private Student student;
+    
     @BeforeEach
     void setup() {
-        group = groupService.findById(1);
-        lesson = lessonService.findById(1);
-        teacher = teacherService.findById(1);
-        room = roomDao.findById(101).get();
+        student = Student.builder().id(1).user(new User()).group(new Group()).idCard("AA-00").build();
+        lessonTimePeriod = LessonTimePeriod.lesson1.toString();
+        date = LocalDate.of(2022, 10, 21);
+        timetable = Timetable.builder().timetableId(1).date(date)
+                .lessonTimePeriod(lessonTimePeriod).group(new Group()).lesson(new Lesson()).teacher(new Teacher())
+                .room(new Room()).build();
+        timetable2 = Timetable.builder().timetableId(2).date(date)
+                .lessonTimePeriod(lessonTimePeriod).group(new Group()).lesson(new Lesson()).teacher(new Teacher())
+                .room(new Room()).build();
+        day = new Day();
+        day.setDateOne(date);
+        day.setDateTwo(date);
     }
 
     @Test
-    void scheduleTimetable_shouldReturnSuccessMessage_whenInputValidTimetable() {
-        timetable = Timetable.builder().timetableId(1).date(LocalDate.of(2022, 10, 21))
-                .lessonTimePeriod(LessonTimePeriod.lesson1.toString()).group(group).lesson(lesson).teacher(teacher)
-                .room(room).build();
-        String result = "Timetable was scheduled successfully!";
-        assertEquals(result, timetableService.scheduleTimetable(timetable));
-    }
-
-    @ParameterizedTest
-    @NullSource
-    void scheduleTimetable_shouldReturnErrorMessage_whenInputIncorrectGroup(Group group) {
-        timetable = Timetable.builder().timetableId(1).date(LocalDate.of(2022, 10, 21))
-                .lessonTimePeriod(LessonTimePeriod.lesson1.toString()).group(group).lesson(lesson).teacher(teacher)
-                .room(room).build();
-        String result = "Group is missing";
-        assertEquals(result, timetableService.scheduleTimetable(timetable));
-    }
-
-    @ParameterizedTest
-    @NullSource
-    void scheduleTimetable_shouldReturnErrorMessage_whenInputIncorrectLesson(Lesson lesson) {
-        timetable = Timetable.builder().timetableId(1).date(LocalDate.of(2022, 10, 21))
-                .lessonTimePeriod(LessonTimePeriod.lesson1.toString()).group(group).lesson(lesson).teacher(teacher)
-                .room(room).build();
-        String result = "Lesson is missing";
-        assertEquals(result, timetableService.scheduleTimetable(timetable));
-    }
-
-    @ParameterizedTest
-    @NullSource
-    void scheduleTimetable_shouldReturnErrorMessage_whenInputIncorrectRoom(Room room) {
-        timetable = Timetable.builder().timetableId(1).date(LocalDate.of(2022, 10, 21))
-                .lessonTimePeriod(LessonTimePeriod.lesson1.toString()).group(group).lesson(lesson).teacher(teacher)
-                .room(room).build();
-        String result = "Room is missing";
-        assertEquals(result, timetableService.scheduleTimetable(timetable));
-    }
-
-    @ParameterizedTest
-    @NullSource
-    void scheduleTimetable_shouldReturnErrorMessage_whenInputIncorrectDate(LocalDate date) {
-        timetable = Timetable.builder().timetableId(1).date(date).lessonTimePeriod(LessonTimePeriod.lesson1.toString())
-                .group(group).lesson(lesson).teacher(teacher).room(room).build();
-        String result = "Date is missing";
-        assertEquals(result, timetableService.scheduleTimetable(timetable));
+    void deleteTimetable() {
+        int timetableId = 1;
+        willDoNothing().given(timetableDao).deleteById(timetableId);
+        given(timetableDao.existsById(1)).willReturn(false);
+        timetableService.deleteTimetable(timetableId);
+        verify(timetableDao, times(1)).deleteById(timetableId);
     }
 
     @Test
-    void scheduleTimetable_shouldReturnErrorMessage_whenInputWeekendDate() {
-        timetable = Timetable.builder().timetableId(1).date(LocalDate.of(2022, 10, 23))
-                .lessonTimePeriod(LessonTimePeriod.lesson1.toString()).group(group).lesson(lesson).teacher(teacher)
-                .room(room).build();
-        String result = "2022-10-23 is a weekend. Can't schedule timetable!";
-        assertEquals(result, timetableService.scheduleTimetable(timetable));
+    void getTeacherTimetable_shouldReturnNotEmptyList_whenInputExistedData() {
+        List<Timetable> timetables = new ArrayList<>();
+        timetables.add(timetable);
+        timetables.add(timetable2);
+        given(timetableDao.findByDateAndTeacher(date, date, new Teacher())).willReturn(Optional.of(timetables));
+        
+        List<Timetable> timetableList = timetableService.getTeacherTimetable(day, new Teacher());
+        assertNotNull(timetableList);
+        assertEquals(2, timetableList.size());
     }
-
+    
     @Test
-    void scheduleTimetable_shouldReturnErrorMessage_whenInputHolidayDate() {
-        timetable = Timetable.builder().timetableId(1).date(LocalDate.of(2022, 10, 23))
-                .lessonTimePeriod(LessonTimePeriod.lesson1.toString()).group(group).lesson(lesson).teacher(teacher)
-                .room(room).build();
-        String result = "2022-10-23 is a weekend. Can't schedule timetable!";
-        assertEquals(result, timetableService.scheduleTimetable(timetable));
+    void getTeacherTimetable_shouldThrowIllegalArgumentException_whenInputNotExistedData() {
+        given(timetableDao.findByDateAndTeacher(date, date, new Teacher())).willReturn(Optional.empty());
+        assertThrows(IllegalArgumentException.class, () -> timetableService.getTeacherTimetable(day, new Teacher()));
+    }
+    
+    @Test
+    void getStudentTimetable_shouldReturnNotEmptyList_whenInputExistedData() {
+        List<Timetable> timetables = new ArrayList<>();
+        timetables.add(timetable);
+        timetables.add(timetable2);
+        given(timetableDao.findByDateAndGroup(date, date, new Group())).willReturn(Optional.of(timetables));
+        
+        List<Timetable> timetableList = timetableService.getStudentTimetable(day, student);
+        assertNotNull(timetableList);
+        assertEquals(2, timetableList.size());
+    }
+    
+    @Test
+    void getStudentTimetable_shouldThrowIllegalArgumentException_whenInputNotExistedData() {
+        given(timetableDao.findByDateAndGroup(date, date, new Group())).willReturn(Optional.empty());
+        assertThrows(IllegalArgumentException.class, () -> timetableService.getStudentTimetable(day, new Student()));
+    }
+    
+    @Test
+    void showTimetable_shouldReturnNotEmptyList_whenInputExistedData() {
+        List<Timetable> timetables = new ArrayList<>();
+        timetables.add(timetable);
+        timetables.add(timetable2);
+        given(timetableDao.findByDate(date, date)).willReturn(Optional.of(timetables));
+        
+        List<Timetable> timetableList = timetableService.showTimetable(day);
+        assertNotNull(timetableList);
+        assertEquals(2, timetableList.size());
+    }
+    
+    @Test
+    void showTimetable_shouldThrowIllegalArgumentException_whenInputNotExistedData() {
+        given(timetableDao.findByDate(date, date)).willReturn(Optional.empty());
+        assertThrows(IllegalArgumentException.class, () -> timetableService.showTimetable(day));
     }
 }

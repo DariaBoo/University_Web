@@ -1,4 +1,4 @@
-package ua.foxminded.university.security;
+package ua.foxminded.university.security.serivce.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +11,11 @@ import ua.foxminded.university.dao.UserDAO;
 import ua.foxminded.university.security.model.AuthenticatedUser;
 import ua.foxminded.university.service.entities.User;
 
+/**
+ * @version 1.0
+ * @author Bogush Daria
+ *
+ */
 @Slf4j
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {

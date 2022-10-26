@@ -16,16 +16,16 @@ public class URL {
 
     // GroupsController
     public static final String APP_GROUPS = "/app/groups";
-    public static final String APP_GROUPS_VIEW_BY_ID = APP_GROUPS + "/{id}";
+    public static final String APP_GROUPS_VIEW_BY_ID = "/app/groups/{id}";
 
     // HolidaysController
     public static final String APP_HOLIDAYS = "/app/holidays";
-    public static final String APP_DELETE_HOLIDAY_BY_ID = "/holiday/delete/{id}";
-    public static final String APP_NEW_HOLIDAY = "/new";
+    public static final String APP_DELETE_HOLIDAY_BY_ID = "/app/holidays/holiday/delete/{id}";
+    public static final String APP_NEW_HOLIDAY = "/app/holidays/new";
 
     // LessonsController
     public static final String APP_LESSONS = "/app/lessons";
-    public static final String APP_LESSONS_VIEW_BY_ID = "/{id}";
+    public static final String APP_LESSONS_VIEW_BY_ID = "/app/lessons/{id}";
 
     // RoomsController
     public static final String APP_ROOMS = "/app/audiences";

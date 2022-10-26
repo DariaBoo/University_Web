@@ -11,11 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.StudentDAO;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.RoleService;
 import ua.foxminded.university.service.StudentService;
 import ua.foxminded.university.service.entities.Role;
 import ua.foxminded.university.service.entities.Student;
+import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
 import ua.foxminded.university.service.exception.UserNotFoundException;
 
 /**
@@ -53,10 +53,10 @@ public class StudentServiceImpl implements StudentService {
             throw new UniqueConstraintViolationException(
                     "Student with username - [" + student.getUser().getUsername() + "] already exists!");
         }
-        return savedStudent;
+        return savedStudent; 
     }
 
-    public Student setDefaultData(Student student) {
+    private Student setDefaultData(Student student) {
         roles.add(roleService.findByName(defaultRole));
         student.getUser().setRoles(roles);
         student.getUser().setPassword(passwordEncoder.encode(defaultPassword));

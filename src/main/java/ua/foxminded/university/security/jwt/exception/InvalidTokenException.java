@@ -1,9 +1,14 @@
-package ua.foxminded.university.security.jwt;
+package ua.foxminded.university.security.jwt.exception;
 
 import io.jsonwebtoken.JwtException;
 
 public class InvalidTokenException extends JwtException {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6225772747415632463L;
+
     /**
      * Constructs a new exception with the specified detail message.
      * 

@@ -15,12 +15,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ua.foxminded.university.controller.urls.URL;
 import ua.foxminded.university.controller.validator.ValidationUtils;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.HolidayService;
 import ua.foxminded.university.service.entities.Holiday;
+import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
 
 @Controller
-@RequestMapping(URL.APP_HOLIDAYS)
 public class HolidaysController {
 
     private String message = "message";
@@ -28,7 +27,7 @@ public class HolidaysController {
     @Autowired
     private HolidayService holidayService;
 
-    @GetMapping()
+    @GetMapping(URL.APP_HOLIDAYS)
     public String listAllHolidays(Model model) {
         model.addAttribute("holidays", holidayService.findAllHolidays());
         return "holidays/list";
@@ -49,7 +48,7 @@ public class HolidaysController {
         return "holidays/new";
     }
 
-    @PostMapping()
+    @PostMapping(URL.APP_HOLIDAYS)
     public String saveHoliday(@Valid @ModelAttribute("holiday") Holiday holiday, BindingResult bindingResult, RedirectAttributes redirectAtt) {
         if(bindingResult.hasErrors()) {
             String errors = ValidationUtils.getErrorMessages(bindingResult);          

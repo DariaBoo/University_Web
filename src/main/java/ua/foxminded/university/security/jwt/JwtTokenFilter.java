@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import lombok.extern.slf4j.Slf4j;
+import ua.foxminded.university.security.jwt.exception.InvalidTokenException;
 
 @Slf4j
 @Component

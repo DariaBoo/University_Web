@@ -12,10 +12,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import ua.foxminded.university.security.Roles;
-import ua.foxminded.university.security.UserDetailsServiceImpl;
+import ua.foxminded.university.config.roles.Roles;
 import ua.foxminded.university.security.jwt.JwtAuthenticationEntryPoint;
 import ua.foxminded.university.security.jwt.JwtTokenFilter;
+import ua.foxminded.university.security.serivce.impl.UserDetailsServiceImpl;
 import ua.foxminded.university.security.success_handler.UrlAuthenticationSuccessHandler;
 
 @Configuration

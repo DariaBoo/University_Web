@@ -53,7 +53,7 @@ public class Student {
     @Column(name = "id_card", unique = true)
     private String idCard;
 
-    @ManyToOne(targetEntity = Group.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Group.class)
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 }

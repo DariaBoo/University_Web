@@ -1,6 +1,7 @@
 package ua.foxminded.university.service.implementation.integration_tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -59,6 +60,12 @@ class GroupServiceImplTest {
         lessonService.addLesson(lesson);
         assertTrue(groupService.assignLessonToGroup(group.getId(), lesson.getId()));
     }
+    
+    @Test
+    void assignLessonToGroup_shouldReturnFalse_whenInputExistedGroupIdAndLessonId() {
+        groupService.addGroup(group);
+        assertFalse(groupService.assignLessonToGroup(group.getId(), 1));
+    }
 
     @Test
     void deleteLessonFromGroup_shouldReturnTrue() {
@@ -67,5 +74,11 @@ class GroupServiceImplTest {
         group.setLessons(Collections.singletonList(lesson));
         groupService.addGroup(group);
         assertTrue(groupService.deleteLessonFromGroup(group.getId(), lesson.getId()));
+    }
+    
+    @Test
+    void deleteLessonFromGroup_shouldReturnFalse() {
+        groupService.addGroup(group);
+        assertFalse(groupService.deleteLessonFromGroup(group.getId(), 1));
     }
 }

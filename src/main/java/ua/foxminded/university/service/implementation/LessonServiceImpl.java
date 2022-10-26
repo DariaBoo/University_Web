@@ -9,9 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.LessonDAO;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.LessonService;
 import ua.foxminded.university.service.entities.Lesson;
+import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
 
 /**
  * @version 1.0

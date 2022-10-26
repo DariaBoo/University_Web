@@ -22,8 +22,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import ua.foxminded.university.dao.GroupDAO;
 import ua.foxminded.university.dao.LessonDAO;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.entities.Group;
+import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
 
 @ExtendWith(SpringExtension.class)
 class GroupServiceImplUnitTest {

@@ -17,12 +17,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
-@Entity
+@ToString
 @Getter 
 @Setter 
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = { "timetable" })
+@Entity
 @Table(name = "rooms")
 public class Room {
 
@@ -36,6 +38,7 @@ public class Room {
     @Column(name = "capacity")
     private int capacity;
     
+    @ToString.Exclude
     @JsonIgnore
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, targetEntity = Timetable.class)
     private List<Timetable> timetable;

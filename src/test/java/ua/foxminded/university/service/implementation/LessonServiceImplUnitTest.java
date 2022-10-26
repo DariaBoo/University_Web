@@ -21,8 +21,8 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import ua.foxminded.university.dao.LessonDAO;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.entities.Lesson;
+import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
 
 @ExtendWith(SpringExtension.class)
 class LessonServiceImplUnitTest {

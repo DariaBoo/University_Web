@@ -1,14 +1,19 @@
 package ua.foxminded.university.service.exception;
 
-public class ServiceException extends RuntimeException {
+public class UniqueConstraintViolationException extends RuntimeException {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6777545321714572308L;
+
     /**
      * Constructs a new exception with the specified detail message.
      * 
      * @author Bogush Daria
      * 
      */
-    public ServiceException(String message) {
+    public UniqueConstraintViolationException(String message) {
         super(message);
     }
 
@@ -17,7 +22,7 @@ public class ServiceException extends RuntimeException {
      * 
      * @author Bogush Daria
      */
-    public ServiceException(String message, Throwable cause) {
+    public UniqueConstraintViolationException(String message, Throwable cause) {
         super(message, cause);
     }
 }

@@ -36,6 +36,16 @@ CREATE TABLE teachers
      department_id INT,
      CONSTRAINT teachers_pkey PRIMARY KEY (id)
 );
+DROP TABLE IF EXISTS teacherAbsent CASCADE;
+CREATE TABLE teacherAbsent
+(
+    id SERIAL,
+    teacher_id INT REFERENCES teachers (id) ON UPDATE CASCADE,
+    date_start DATE NOT NULL,
+    date_end DATE NOT NULL,
+    reason VARCHAR(30) ,
+    CONSTRAINT teacherAbsent_pkey PRIMARY KEY (id)
+);
 DROP TABLE IF EXISTS rooms CASCADE;
 CREATE TABLE rooms
 (
@@ -53,14 +63,21 @@ CREATE TABLE timetable
     group_id INT REFERENCES groups (group_id),
     teacher_id INT REFERENCES teachers (id),
     room_id INT REFERENCES rooms (room_id),
-    CONSTRAINT timetable_pkey PRIMARY KEY (id)
+    CONSTRAINT timetable_pkey PRIMARY KEY (id),
+    CONSTRAINT unique_group_date_time UNIQUE (date, time_period, group_id),
+    CONSTRAINT unique_teacher_date_time UNIQUE (date, time_period, teacher_id),
+    CONSTRAINT unique_room_date_time UNIQUE (date, time_period, room_id)
 );
 INSERT INTO groups VALUES (1, 'group', 1, 'true');
+INSERT INTO groups VALUES (2, 'grou2', 1, 'true');
 INSERT INTO lessons VALUES (1, 'lesson', 'description','true');
+INSERT INTO lessons VALUES (2, 'lesson2', 'description','true');
 INSERT INTO users VALUES (1, 'username', 'name', 'surname', 'password', 'true');
+INSERT INTO users VALUES (2, 'username2', 'name', 'surname', 'password', 'true');
 INSERT INTO teachers VALUES (1, 1, 'position', 1);
+INSERT INTO teachers VALUES (2, 2, 'position', 1);
+INSERT INTO teacherAbsent VALUES (1, 1, '2022-10-24', '2022-10-21', 'reason');
+INSERT INTO teacherAbsent VALUES (2, 2, '2022-10-24', '2022-10-21', 'reason');
 INSERT INTO rooms VALUES (101, 20);
-INSERT INTO timetable VALUES (1, '2023-04-01', '08:00 - 09:20', 1, 1, 1, 101);
-INSERT INTO timetable VALUES (2, '2023-04-02', '08:00 - 09:20', 1, 1, 1, 101);
-INSERT INTO timetable VALUES (3, '2023-04-03', '08:00 - 09:20', 1, 1, 1, 101);
+INSERT INTO rooms VALUES (102, 20);
 
