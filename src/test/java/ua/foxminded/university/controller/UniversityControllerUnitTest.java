@@ -22,7 +22,7 @@ import ua.foxminded.university.controller.urls.URL;
 
 @SpringBootTest(classes = { AppSpringBoot.class })
 @TestInstance(Lifecycle.PER_CLASS)
-class UniversityControllerTest {
+class UniversityControllerUnitTest {
 
     @Autowired
     private WebApplicationContext context;

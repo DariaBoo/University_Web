@@ -1,6 +1,6 @@
 package ua.foxminded.university.service.implementation.integration_tests;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -23,7 +23,7 @@ import ua.foxminded.university.service.entities.Lesson;
 import ua.foxminded.university.service.entities.Room;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.entities.Timetable;
-import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
+import ua.foxminded.university.service.exception.EntityConstraintViolationException;
 import ua.foxminded.university.service.implementation.GroupServiceImpl;
 import ua.foxminded.university.service.implementation.HolidayServiceImpl;
 import ua.foxminded.university.service.implementation.LessonServiceImpl;
@@ -31,7 +31,7 @@ import ua.foxminded.university.service.implementation.TeacherServiceImpl;
 import ua.foxminded.university.service.implementation.TimetableServiceImpl;
 
 @SpringBootTest(classes = AppSpringBoot.class)
-@Sql({ "/timetable.sql" })
+@Sql({ "/timetable.sql", "/timetableInsert.sql" })
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 class TimetableValidatorTest {
 
@@ -91,31 +91,34 @@ class TimetableValidatorTest {
         timetable = Timetable.builder().timetableId(2).date(scheduledTimetable.getDate())
                 .lessonTimePeriod(scheduledTimetable.getLessonTimePeriod()).group(scheduledTimetable.getGroup())
                 .lesson(lesson).teacher(teacher).room(room).build();
-        Exception ex = assertThrows(UniqueConstraintViolationException.class, () -> timetableService.scheduleTimetable(timetable)); 
+        Exception ex = assertThrows(EntityConstraintViolationException.class,
+                () -> timetableService.scheduleTimetable(timetable));
         String errorMessage = "Group with id: " + timetable.getGroup().getId() + " is already scheduled (date:"
                 + timetable.getDate() + ", time:" + timetable.getLessonTimePeriod() + ")!";
         assertTrue(ex.getLocalizedMessage().contains(errorMessage));
     }
-    
+
     @Test
     void scheduleTimetable_shouldThrowUniqueConstraintViolationException_whenInputScheduledRoom() {
         timetableService.scheduleTimetable(scheduledTimetable);
         timetable = Timetable.builder().timetableId(2).date(scheduledTimetable.getDate())
-                .lessonTimePeriod(scheduledTimetable.getLessonTimePeriod()).group(group)
-                .lesson(lesson).teacher(teacher).room(scheduledTimetable.getRoom()).build();
-        Exception ex =  assertThrows(UniqueConstraintViolationException.class, () -> timetableService.scheduleTimetable(timetable));
-        String errorMessage = "Room number: " + timetable.getRoom().getNumber() + " is already scheduled (" + timetable.getDate()
-        + ", " + timetable.getLessonTimePeriod() + ")!";
+                .lessonTimePeriod(scheduledTimetable.getLessonTimePeriod()).group(group).lesson(lesson).teacher(teacher)
+                .room(scheduledTimetable.getRoom()).build();
+        Exception ex = assertThrows(EntityConstraintViolationException.class,
+                () -> timetableService.scheduleTimetable(timetable));
+        String errorMessage = "Room number: " + timetable.getRoom().getNumber() + " is already scheduled ("
+                + timetable.getDate() + ", " + timetable.getLessonTimePeriod() + ")!";
         assertTrue(ex.getLocalizedMessage().contains(errorMessage));
     }
-    
+
     @Test
     void scheduleTimetable_shouldThrowUniqueConstraintViolationException_whenInputScheduledTeacher() {
         timetableService.scheduleTimetable(scheduledTimetable);
         timetable = Timetable.builder().timetableId(2).date(scheduledTimetable.getDate())
-                .lessonTimePeriod(scheduledTimetable.getLessonTimePeriod()).group(group)
-                .lesson(lesson).teacher(scheduledTimetable.getTeacher()).room(room).build();
-        Exception ex = assertThrows(UniqueConstraintViolationException.class, () -> timetableService.scheduleTimetable(timetable));
+                .lessonTimePeriod(scheduledTimetable.getLessonTimePeriod()).group(group).lesson(lesson)
+                .teacher(scheduledTimetable.getTeacher()).room(room).build();
+        Exception ex = assertThrows(EntityConstraintViolationException.class,
+                () -> timetableService.scheduleTimetable(timetable));
         String errorMessage = "Teacher with id: " + timetable.getTeacher().getId() + " is already scheduled ("
                 + timetable.getDate() + ", " + timetable.getLessonTimePeriod() + ")!";
         assertTrue(ex.getLocalizedMessage().contains(errorMessage));

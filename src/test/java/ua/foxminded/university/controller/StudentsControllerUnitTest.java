@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,12 +37,12 @@ import ua.foxminded.university.service.StudentService;
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.User;
-import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
+import ua.foxminded.university.service.exception.EntityConstraintViolationException;
 
 @SpringBootTest(classes = { AppSpringBoot.class })
 @TestInstance(Lifecycle.PER_CLASS)
-class StudentsControllerTest {
-    
+class StudentsControllerUnitTest {
+
     @Autowired
     private WebApplicationContext context;
     @Autowired
@@ -58,14 +59,15 @@ class StudentsControllerTest {
     @Mock
     private RedirectAttributes redirectAtt;
     private Student student;
-    
+
     @BeforeAll
     void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-        User user = User.builder().id(1).firstName("name").lastName("surname").username("username").password("password").build();
+        User user = User.builder().id(1).firstName("name").lastName("surname").username("username").password("password")
+                .build();
         student = Student.builder().id(1).user(user).group(new Group()).build();
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void listAllStudents_shouldReturnStatus200() throws Exception {
@@ -78,90 +80,102 @@ class StudentsControllerTest {
     @WithMockUser(authorities = { "ADMIN" })
     void viewStudentById_shouldReturnStatus200() throws Exception {
         given(studentService.findById(any(Integer.class))).willReturn(student);
-        mockMvc.perform(get(URL.APP_STUDENTS_VIEW_BY_ID, 1).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        mockMvc.perform(get(URL.APP_STUDENTS_VIEW_BY_ID, 1).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
         assertEquals("students/view", studentsController.viewStudentById(any(Integer.class), model));
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
-    void createNewStudent_shouldReturnStatus200() throws Exception {        
+    void createNewStudent_shouldReturnStatus200() throws Exception {
         mockMvc.perform(get(URL.APP_NEW_STUDENT, 1).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
         assertEquals("students/new", studentsController.createNewStudent(student, model));
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
-    void saveNewStudent_shouldReturnStatus302_whenEntityIsCorrect() throws Exception {  
+    void saveNewStudent_shouldReturnStatus302_whenEntityIsCorrect() throws Exception {
         given(bindingResult.hasErrors()).willReturn(false);
         when(studentService.addStudent(student)).thenReturn(student);
         mockMvc.perform(post(URL.APP_STUDENTS, student)).andExpect(status().is3xxRedirection());
-        assertEquals("redirect:/app/students", studentsController.saveNewStudent(new Student(), bindingResult, redirectAtt));
+        assertEquals("redirect:/app/students",
+                studentsController.saveNewStudent(new Student(), bindingResult, redirectAtt));
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
-    void saveNewStudent_shouldReturnStatus302_whenThrowUniqueConstraintViolationException() throws Exception {  
+    void saveNewStudent_shouldReturnStatus302_whenThrowUniqueConstraintViolationException() throws Exception {
         given(bindingResult.hasErrors()).willReturn(false);
-        when(studentService.addStudent(student)).thenThrow(UniqueConstraintViolationException.class);
+        when(studentService.addStudent(student)).thenThrow(EntityConstraintViolationException.class);
         mockMvc.perform(post(URL.APP_STUDENTS, student)).andExpect(status().is3xxRedirection());
-        assertEquals("redirect:/app/students", studentsController.saveNewStudent(new Student(), bindingResult, redirectAtt));
+        assertEquals("redirect:/app/students",
+                studentsController.saveNewStudent(new Student(), bindingResult, redirectAtt));
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
-    void saveNewStudent_shouldReturnStatus302_whenEntityHasErrors() throws Exception {  
+    void saveNewStudent_shouldReturnStatus302_whenEntityHasErrors() throws Exception {
         given(bindingResult.hasErrors()).willReturn(true);
         mockMvc.perform(post(URL.APP_STUDENTS, student)).andExpect(status().is3xxRedirection());
-        assertEquals("redirect:/app/students", studentsController.saveNewStudent(new Student(), bindingResult, redirectAtt));
+        assertEquals("redirect:/app/students",
+                studentsController.saveNewStudent(new Student(), bindingResult, redirectAtt));
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void deleteStudent_shouldReturn302() throws Exception {
-        given(studentService.deleteStudent(1)).willReturn(true);
-        mockMvc.perform(delete(URL.APP_DELETE_STUDENT_BY_ID, 1).contentType(MediaType.APPLICATION_JSON).content("{redirectAtt}")).andExpect(status().is3xxRedirection());
+        doNothing().when(studentService).deleteStudent(1);
+        mockMvc.perform(delete(URL.APP_DELETE_STUDENT_BY_ID, 1).contentType(MediaType.APPLICATION_JSON)
+                .content("{redirectAtt}")).andExpect(status().is3xxRedirection());
         assertEquals("redirect:/app/students", studentsController.deleteStudent(1, redirectAtt));
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void deleteStudent_shouldReturnStatus302_whenDeleteStudentReturnFalse() throws Exception {
-        given(studentService.deleteStudent(1)).willReturn(false);
-        mockMvc.perform(delete(URL.APP_DELETE_STUDENT_BY_ID, 1).contentType(MediaType.APPLICATION_JSON).content("{redirectAtt}")).andExpect(status().is3xxRedirection());
+        doNothing().when(studentService).deleteStudent(1);
+        mockMvc.perform(delete(URL.APP_DELETE_STUDENT_BY_ID, 1).contentType(MediaType.APPLICATION_JSON)
+                .content("{redirectAtt}")).andExpect(status().is3xxRedirection());
         assertEquals("redirect:/app/students", studentsController.deleteStudent(1, redirectAtt));
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void edit() throws Exception {
         given(studentService.findById(any(Integer.class))).willReturn(student);
         given(groupService.findAllGroups()).willReturn(new ArrayList<Group>());
-        mockMvc.perform(get(URL.APP_EDIT_STUDENT_BY_ID, 1).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        mockMvc.perform(get(URL.APP_EDIT_STUDENT_BY_ID, 1).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
         assertEquals("students/edit", studentsController.edit(1, model, redirectAtt));
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void update_shouldReturnStatus302_whenStudentIsValid() throws Exception {
         given(bindingResult.hasErrors()).willReturn(true);
-        mockMvc.perform(post(URL.APP_STUDENTS_VIEW_BY_ID, 1).contentType(MediaType.APPLICATION_JSON).content("{redirectAtt}")).andExpect(status().is3xxRedirection());
+        mockMvc.perform(
+                post(URL.APP_STUDENTS_VIEW_BY_ID, 1).contentType(MediaType.APPLICATION_JSON).content("{redirectAtt}"))
+                .andExpect(status().is3xxRedirection());
         assertEquals("redirect:/app/students", studentsController.update(student, bindingResult, redirectAtt));
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void update_shouldReturnStatus302_whenStudentIsNotValid() throws Exception {
         given(bindingResult.hasErrors()).willReturn(false);
         given(studentService.updateStudent(any(Student.class))).willReturn(student);
-        mockMvc.perform(post(URL.APP_STUDENTS_VIEW_BY_ID, 1).contentType(MediaType.APPLICATION_JSON).content("{redirectAtt}")).andExpect(status().is3xxRedirection());
+        mockMvc.perform(
+                post(URL.APP_STUDENTS_VIEW_BY_ID, 1).contentType(MediaType.APPLICATION_JSON).content("{redirectAtt}"))
+                .andExpect(status().is3xxRedirection());
         assertEquals("redirect:/app/students", studentsController.update(student, bindingResult, redirectAtt));
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void changePassword() throws Exception {
         String newPassword = "newPassword";
         willDoNothing().given(studentService).changePassword(any(Integer.class), any(String.class));
-        mockMvc.perform(post(URL.STUDENT_CHANGE_PASSWORD, 1).contentType(MediaType.APPLICATION_JSON).param("newPassword", newPassword)).andExpect(status().isOk());
+        mockMvc.perform(post(URL.STUDENT_CHANGE_PASSWORD, 1).contentType(MediaType.APPLICATION_JSON)
+                .param("newPassword", newPassword)).andExpect(status().isOk());
     }
 }

@@ -8,8 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Range;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -20,8 +20,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 @ToString
-@Getter 
-@Setter 
+@Getter
+@Setter
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = { "timetable" })
 @Entity
@@ -29,15 +29,14 @@ import lombok.ToString;
 public class Room {
 
     @Id
-    @NotBlank(message = "Room number may not be blank")
+    @Range(min = 1, message = "Room number may not be zero")
     @Column(name = "room_id")
     private int number;
-    
-    @NotBlank(message = "Room capacity may not be blank")
-    @Size(min = 10, max = 30)
+
+    @Range(min = 10, max = 30, message = "Room capacity must be between 10 and 30 ")
     @Column(name = "capacity")
     private int capacity;
-    
+
     @ToString.Exclude
     @JsonIgnore
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, targetEntity = Timetable.class)

@@ -3,6 +3,7 @@ package ua.foxminded.university.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -48,11 +49,11 @@ import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.entities.Timetable;
 import ua.foxminded.university.service.entities.User;
-import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
+import ua.foxminded.university.service.exception.EntityConstraintViolationException;
 
 @SpringBootTest(classes = { AppSpringBoot.class })
 @TestInstance(Lifecycle.PER_CLASS)
-class TimetableControllerTest {
+class TimetableControllerUnitTest {
 
     @Autowired
     private WebApplicationContext context;
@@ -92,18 +93,20 @@ class TimetableControllerTest {
     @BeforeAll
     void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-        group = Group.builder().id(1).name("group").departmentId(1).lessons(new ArrayList<>()).students(new ArrayList<>()).build();
+        group = Group.builder().id(1).name("group").departmentId(1).lessons(new ArrayList<>())
+                .students(new ArrayList<>()).build();
         lesson = Lesson.builder().id(1).name("lesson").description("description").teachers(new ArrayList<>()).build();
         room = new Room();
         room.setNumber(101);
         room.setCapacity(25);
-        User user = User.builder().id(1).firstName("name").lastName("surname").username("username").password("password").build();
+        User user = User.builder().id(1).firstName("name").lastName("surname").username("username").password("password")
+                .build();
         teacher = Teacher.builder().id(1).user(user).position("position").departmentId(1).build();
-        timetable = Timetable.builder().timetableId(1).date(date).lessonTimePeriod("8:00 - 9:20")
-                .group(group).lesson(lesson).teacher(teacher).room(room).build();
+        timetable = Timetable.builder().timetableId(1).date(date).lessonTimePeriod("8:00 - 9:20").group(group)
+                .lesson(lesson).teacher(teacher).room(room).build();
         authenticatedUser = new AuthenticatedUser(user);
         student = Student.builder().id(1).user(user).group(group).idCard("AA-00").build();
-        
+
     }
 
     @Test
@@ -138,23 +141,25 @@ class TimetableControllerTest {
         given(bindingResult.hasErrors()).willReturn(true);
         mockMvc.perform(post(URL.APP_TIMETABLE_SCHEDULE, timetable)).andExpect(status().isBadRequest());
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void saveTimetable_shouldReturnStatusOk() throws Exception {
         given(bindingResult.hasErrors()).willReturn(false);
         given(timetableService.scheduleTimetable(timetable)).willReturn("Timetable was scheduled successfully!");
-        mockMvc.perform(post(URL.APP_TIMETABLE_SCHEDULE).contentType(MediaType.APPLICATION_JSON).flashAttr("timetable", timetable)).andExpect(status().isCreated());
+        mockMvc.perform(post(URL.APP_TIMETABLE_SCHEDULE).contentType(MediaType.APPLICATION_JSON).flashAttr("timetable",
+                timetable)).andExpect(status().isCreated());
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void saveTimetable_shouldReturnStatusBAD_REQUEST() throws Exception {
         given(bindingResult.hasErrors()).willReturn(false);
-        given(timetableService.scheduleTimetable(timetable)).willThrow(UniqueConstraintViolationException.class);
-        mockMvc.perform(post(URL.APP_TIMETABLE_SCHEDULE).contentType(MediaType.APPLICATION_JSON).flashAttr("timetable", timetable)).andExpect(status().isBadRequest());
+        given(timetableService.scheduleTimetable(timetable)).willThrow(EntityConstraintViolationException.class);
+        mockMvc.perform(post(URL.APP_TIMETABLE_SCHEDULE).contentType(MediaType.APPLICATION_JSON).flashAttr("timetable",
+                timetable)).andExpect(status().isBadRequest());
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void scheduleTimetableForLesson_shouldReturnStatusOk() throws Exception {
@@ -162,83 +167,84 @@ class TimetableControllerTest {
         given(lessonService.findById(any(Integer.class))).willReturn(lesson);
         given(groupService.findAllGroups()).willReturn(new ArrayList<>());
         given(roomService.findSuitableRooms(any(Integer.class))).willReturn(new ArrayList<>());
-        mockMvc.perform(get(URL.APP_TIMETABLE_SCHEDULE_GROUP_LESSON, 1, 1).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        mockMvc.perform(get(URL.APP_TIMETABLE_SCHEDULE_GROUP_LESSON, 1, 1).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
         assertEquals("timetable/new", timetableController.scheduleTimetableForLesson(1, 1, model));
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void deleteTimetable_shouldReturnStatusOk() throws Exception {
-        given(timetableService.deleteTimetable(any(Integer.class))).willReturn(true);
-        mockMvc.perform(delete(URL.APP_TIMETABLE_DELETE, 1).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        doNothing().when(timetableService).deleteTimetable(any(Integer.class));
+        mockMvc.perform(delete(URL.APP_TIMETABLE_DELETE, 1).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
-    
-    @Test
-    @WithMockUser(authorities = { "ADMIN" })
-    void deleteTimetable_shouldReturnStatusBadRequest() throws Exception {
-        given(timetableService.deleteTimetable(any(Integer.class))).willReturn(false);
-        mockMvc.perform(delete(URL.APP_TIMETABLE_DELETE, 1).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
-    }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void showTimetable_shouldReturnStatusFound() throws Exception {
         given(timetableService.showTimetable(any(Day.class))).willReturn(new ArrayList<Timetable>());
-        mockMvc.perform(get(URL.APP_TIMETABLE_SHOW).contentType(MediaType.APPLICATION_JSON).param("from", "2022-10-01").param("to", "2022-10-26")).andExpect(status().isFound());
+        mockMvc.perform(get(URL.APP_TIMETABLE_SHOW).contentType(MediaType.APPLICATION_JSON).param("from", "2022-10-01")
+                .param("to", "2022-10-26")).andExpect(status().isFound());
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void showTimetable_shouldReturnStatusNotFound() throws Exception {
         given(timetableService.showTimetable(any(Day.class))).willThrow(IllegalArgumentException.class);
-        mockMvc.perform(get(URL.APP_TIMETABLE_SHOW).contentType(MediaType.APPLICATION_JSON).param("from", "2022-10-01").param("to", "2022-10-26")).andExpect(status().isNotFound());
+        mockMvc.perform(get(URL.APP_TIMETABLE_SHOW).contentType(MediaType.APPLICATION_JSON).param("from", "2022-10-01")
+                .param("to", "2022-10-26")).andExpect(status().isNotFound());
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void showStudentTimetable_shouldReturnStatus200() throws Exception {
         Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
         SecurityContextHolder.setContext(securityContext);
-        given(SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal()).willReturn(authenticatedUser);
+        given(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).willReturn(authenticatedUser);
         given(studentService.findByUsername(authenticatedUser.getUsername())).willReturn(student);
-        given(timetableService.getStudentTimetable(any(Day.class), any(Student.class))).willReturn(new ArrayList<Timetable>());
-        mockMvc.perform(get(URL.STUDENT_TIMETABLE).contentType(MediaType.APPLICATION_JSON).param("from", "2022-10-01").param("to", "2022-10-26")).andExpect(status().isOk());
+        given(timetableService.getStudentTimetable(any(Day.class), any(Student.class)))
+                .willReturn(new ArrayList<Timetable>());
+        mockMvc.perform(get(URL.STUDENT_TIMETABLE).contentType(MediaType.APPLICATION_JSON).param("from", "2022-10-01")
+                .param("to", "2022-10-26")).andExpect(status().isOk());
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void showStudentTimetable_shouldReturnStatusNotFound() throws Exception {
         Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
         SecurityContextHolder.setContext(securityContext);
-        given(SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal()).willReturn(authenticatedUser);
+        given(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).willReturn(authenticatedUser);
         given(studentService.findByUsername(authenticatedUser.getUsername())).willReturn(student);
-        given(timetableService.getStudentTimetable(any(Day.class), any(Student.class))).willThrow(IllegalArgumentException.class);
-        mockMvc.perform(get(URL.STUDENT_TIMETABLE).contentType(MediaType.APPLICATION_JSON).param("from", "2022-10-01").param("to", "2022-10-26")).andExpect(status().isNotFound());
+        given(timetableService.getStudentTimetable(any(Day.class), any(Student.class)))
+                .willThrow(IllegalArgumentException.class);
+        mockMvc.perform(get(URL.STUDENT_TIMETABLE).contentType(MediaType.APPLICATION_JSON).param("from", "2022-10-01")
+                .param("to", "2022-10-26")).andExpect(status().isNotFound());
     }
-   
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void showTeacherTimetable_shouldReturnStatus200() throws Exception {
         Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
         SecurityContextHolder.setContext(securityContext);
-        given(SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal()).willReturn(authenticatedUser);
+        given(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).willReturn(authenticatedUser);
         given(teacherService.findByUsername(authenticatedUser.getUsername())).willReturn(teacher);
-        given(timetableService.getTeacherTimetable(any(Day.class), any(Teacher.class))).willReturn(new ArrayList<Timetable>());
-        mockMvc.perform(get(URL.TEACHER_TIMETABLE).contentType(MediaType.APPLICATION_JSON).param("from", "2022-10-01").param("to", "2022-10-26")).andExpect(status().isOk());
+        given(timetableService.getTeacherTimetable(any(Day.class), any(Teacher.class)))
+                .willReturn(new ArrayList<Timetable>());
+        mockMvc.perform(get(URL.TEACHER_TIMETABLE).contentType(MediaType.APPLICATION_JSON).param("from", "2022-10-01")
+                .param("to", "2022-10-26")).andExpect(status().isOk());
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void showTeacherTimetable_shouldReturnStatusNotFound() throws Exception {
         Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
         SecurityContextHolder.setContext(securityContext);
-        given(SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal()).willReturn(authenticatedUser);
+        given(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).willReturn(authenticatedUser);
         given(teacherService.findByUsername(authenticatedUser.getUsername())).willReturn(teacher);
-        given(timetableService.getTeacherTimetable(any(Day.class), any(Teacher.class))).willThrow(IllegalArgumentException.class);
-        mockMvc.perform(get(URL.TEACHER_TIMETABLE).contentType(MediaType.APPLICATION_JSON).param("from", "2022-10-01").param("to", "2022-10-26")).andExpect(status().isNotFound());
+        given(timetableService.getTeacherTimetable(any(Day.class), any(Teacher.class)))
+                .willThrow(IllegalArgumentException.class);
+        mockMvc.perform(get(URL.TEACHER_TIMETABLE).contentType(MediaType.APPLICATION_JSON).param("from", "2022-10-01")
+                .param("to", "2022-10-26")).andExpect(status().isNotFound());
     }
 }

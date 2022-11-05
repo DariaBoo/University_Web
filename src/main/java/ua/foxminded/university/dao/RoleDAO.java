@@ -10,10 +10,11 @@ import ua.foxminded.university.service.entities.Role;
  * @version 1.0
  * @author Bogush Daria
  */
-public interface RoleDAO extends JpaRepository<Role, Integer>{        
-    
+public interface RoleDAO extends JpaRepository<Role, Integer> {
+
     /**
      * Finds role by name
+     * 
      * @param name
      * @return optional role
      */

@@ -31,7 +31,7 @@ import ua.foxminded.university.service.entities.Group;
 
 @SpringBootTest(classes = { AppSpringBoot.class })
 @TestInstance(Lifecycle.PER_CLASS)
-class GroupsControllerTest {
+class GroupsControllerUnitTest {
 
     @Autowired
     private WebApplicationContext context;
@@ -42,12 +42,12 @@ class GroupsControllerTest {
     private GroupService groupService;
     @Mock
     private Model model;
-    
+
     @BeforeAll
     void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void listAllGroups_shouldReturnStatus200() throws Exception {
@@ -60,7 +60,8 @@ class GroupsControllerTest {
     @WithMockUser(authorities = { "ADMIN" })
     void viewGroupById_shouldReturnStatus200() throws Exception {
         given(groupService.findById(any(Integer.class))).willReturn(new Group());
-        mockMvc.perform(get(URL.APP_GROUPS_VIEW_BY_ID, 1).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        mockMvc.perform(get(URL.APP_GROUPS_VIEW_BY_ID, 1).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
         assertEquals("groups/view", groupsController.viewGroupById(any(Integer.class), model));
     }
 }

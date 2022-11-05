@@ -35,12 +35,10 @@ public class SecurityServiceImpl implements SecurityService {
             throw new BadCredentialsException(e.getMessage());
         }
     }
-    
+
     private void doAuthenticate(String username, String password) {
-            log.info("[ON authenticate]:: authenticating by UsernamePasswordAuthenticationToken...");
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            log.info(
-                    "[ON authenticate]:: user with username [ {} ] is authenticated successfully",
-                    username);
+        log.info("[ON authenticate]:: authenticating by UsernamePasswordAuthenticationToken...");
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        log.info("[ON authenticate]:: user with username [ {} ] is authenticated successfully", username);
     }
 }

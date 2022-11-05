@@ -27,7 +27,9 @@ CREATE TABLE students
     user_id INT references users(id),
     group_id INT references groups(group_id),
     id_card VARCHAR(5) NOT NULL,
-    CONSTRAINT students_pkey PRIMARY KEY (id)
+    CONSTRAINT students_pkey PRIMARY KEY (id),
+    CONSTRAINT unique_user_idCard UNIQUE (user_id, id_card),
+    CONSTRAINT unique_user_group UNIQUE (user_id, id_card, group_id)
 );
 
 DROP TABLE IF EXISTS roles CASCADE;

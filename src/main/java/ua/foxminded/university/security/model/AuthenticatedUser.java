@@ -27,11 +27,11 @@ public class AuthenticatedUser implements UserDetails {
 
     private static final long serialVersionUID = 1L;
     private User user;
-    
+
     public AuthenticatedUser(User user) {
         this.user = user;
     }
-    
+
     public AuthenticatedUser() {
     }
 

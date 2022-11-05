@@ -22,8 +22,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Getter 
-@Setter 
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -40,7 +40,7 @@ public class Holiday {
     @Column(name = "date", unique = true)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
-    
+
     @NotBlank(message = "Holiday name may not be blank.")
     @Size(max = 20, message = "Holiday name must be equals or less then 20 characters long")
     @Column(name = "holiday")

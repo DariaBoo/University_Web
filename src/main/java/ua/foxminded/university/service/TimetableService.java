@@ -18,7 +18,7 @@ public interface TimetableService {
      * The method schedules lesson, group, teacher and room for the day and lesson
      * time period
      * 
-     * @param timetable 
+     * @param timetable
      * @return result
      */
     String scheduleTimetable(Timetable timetable);
@@ -30,14 +30,14 @@ public interface TimetableService {
      * @return list of dayTimetables
      */
     List<Timetable> showTimetable(Day day);
-    
+
     /**
      * Deletes scheduled timetable by timetable id
      * 
      * @param timetableId
      * @return true or false
      */
-    boolean deleteTimetable(int timetableId);
+    void deleteTimetable(int timetableId);
 
     /**
      * Returns list of Optional DayTimetable by date and teacher

@@ -41,8 +41,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             jwtToken = header.substring(7);
             log.info("[ON doFilterInternal]:: jwtToken [ {} ]", jwtToken);
             try {
-            username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-            log.info("[ON doFilterInternal]:: username [ {} ]", username);
+                username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+                log.info("[ON doFilterInternal]:: username [ {} ]", username);
             } catch (InvalidTokenException e) {
                 request.setAttribute("exception", e.getLocalizedMessage());
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

@@ -15,13 +15,15 @@ public interface StudentDAO extends JpaRepository<Student, Integer> {
 
     /**
      * Finds by username
+     * 
      * @param username
      * @return student
      */
     Student findByUserUsername(String username);
-    
+
     /**
      * Finds by user
+     * 
      * @param user
      * @return optional student
      */

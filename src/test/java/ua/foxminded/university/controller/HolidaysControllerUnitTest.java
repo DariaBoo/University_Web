@@ -2,6 +2,7 @@ package ua.foxminded.university.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -32,11 +33,11 @@ import ua.foxminded.university.AppSpringBoot;
 import ua.foxminded.university.controller.urls.URL;
 import ua.foxminded.university.service.HolidayService;
 import ua.foxminded.university.service.entities.Holiday;
-import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
+import ua.foxminded.university.service.exception.EntityConstraintViolationException;
 
 @SpringBootTest(classes = { AppSpringBoot.class })
 @TestInstance(Lifecycle.PER_CLASS)
-class HolidaysControllerTest {
+class HolidaysControllerUnitTest {
 
     @Autowired
     private WebApplicationContext context;
@@ -52,13 +53,13 @@ class HolidaysControllerTest {
     @Mock
     private RedirectAttributes redirectAtt;
     private Holiday holiday;
-    
+
     @BeforeAll
     void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
         holiday = Holiday.builder().id(1).name("holiday").date(LocalDate.now()).build();
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void listAllHolidays_shouldReturnStatus200() throws Exception {
@@ -66,44 +67,48 @@ class HolidaysControllerTest {
         mockMvc.perform(get(URL.APP_HOLIDAYS).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
         assertEquals("holidays/list", holidaysController.listAllHolidays(model));
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void deleteHolidayById_shouldReturnStatus200_whenDeleteHolidayReturnTrue() throws Exception {
-        given(holidayService.deleteHoliday(1)).willReturn(true);
-        mockMvc.perform(delete(URL.APP_DELETE_HOLIDAY_BY_ID, 1).contentType(MediaType.APPLICATION_JSON).content("{redirectAtt}")).andExpect(status().is3xxRedirection());
+        doNothing().when(holidayService).deleteHoliday(1);
+        mockMvc.perform(delete(URL.APP_DELETE_HOLIDAY_BY_ID, 1).contentType(MediaType.APPLICATION_JSON)
+                .content("{redirectAtt}")).andExpect(status().is3xxRedirection());
         assertEquals("redirect:/app/holidays", holidaysController.deleteHolidayById(1, redirectAtt));
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void deleteHolidayById_shouldReturnStatus200_whenDeleteHolidayReturnFalse() throws Exception {
-        given(holidayService.deleteHoliday(1)).willReturn(false);
-        mockMvc.perform(delete(URL.APP_DELETE_HOLIDAY_BY_ID, 1).contentType(MediaType.APPLICATION_JSON).content("{redirectAtt}")).andExpect(status().is3xxRedirection());
+        doNothing().when(holidayService).deleteHoliday(1);
+        mockMvc.perform(delete(URL.APP_DELETE_HOLIDAY_BY_ID, 1).contentType(MediaType.APPLICATION_JSON)
+                .content("{redirectAtt}")).andExpect(status().is3xxRedirection());
         assertEquals("redirect:/app/holidays", holidaysController.deleteHolidayById(1, redirectAtt));
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void createNewHoliday() {
         assertEquals("holidays/new", holidaysController.createNewHoliday(new Holiday()));
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void saveHoliday() throws Exception {
         given(bindingResult.hasErrors()).willReturn(false);
         when(holidayService.addHoliday(holiday)).thenReturn(holiday);
         mockMvc.perform(post(URL.APP_HOLIDAYS, holiday)).andExpect(status().is3xxRedirection());
-        assertEquals("redirect:/app/holidays", holidaysController.saveHoliday(new Holiday(), bindingResult, redirectAtt));
+        assertEquals("redirect:/app/holidays",
+                holidaysController.saveHoliday(new Holiday(), bindingResult, redirectAtt));
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
     void saveHoliday_whenEntityIsNotUnique() throws Exception {
         given(bindingResult.hasErrors()).willReturn(false);
-        when(holidayService.addHoliday(holiday)).thenThrow(UniqueConstraintViolationException.class);
+        when(holidayService.addHoliday(holiday)).thenThrow(EntityConstraintViolationException.class);
         mockMvc.perform(post(URL.APP_HOLIDAYS, holiday)).andExpect(status().is3xxRedirection());
-        assertEquals("redirect:/app/holidays", holidaysController.saveHoliday(new Holiday(), bindingResult, redirectAtt));
+        assertEquals("redirect:/app/holidays",
+                holidaysController.saveHoliday(new Holiday(), bindingResult, redirectAtt));
     }
 }

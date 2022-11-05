@@ -1,7 +1,7 @@
 package ua.foxminded.university.service.exception;
 
-public class UniqueConstraintViolationException extends RuntimeException {
-    
+public class EntityConstraintViolationException extends RuntimeException {
+
     /**
      * 
      */
@@ -13,7 +13,7 @@ public class UniqueConstraintViolationException extends RuntimeException {
      * @author Bogush Daria
      * 
      */
-    public UniqueConstraintViolationException(String message) {
+    public EntityConstraintViolationException(String message) {
         super(message);
     }
 
@@ -22,7 +22,7 @@ public class UniqueConstraintViolationException extends RuntimeException {
      * 
      * @author Bogush Daria
      */
-    public UniqueConstraintViolationException(String message, Throwable cause) {
+    public EntityConstraintViolationException(String message, Throwable cause) {
         super(message, cause);
     }
 }

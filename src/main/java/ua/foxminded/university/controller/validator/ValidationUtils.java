@@ -9,18 +9,18 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ValidationUtils {
-    
+
     private ValidationUtils() {
-        
+
     }
 
     public static String getErrorMessages(BindingResult bindingResult) {
         List<FieldError> errors = bindingResult.getFieldErrors();
         StringBuilder resultErrors = new StringBuilder();
-        for (FieldError error : errors ) {
+        for (FieldError error : errors) {
             resultErrors.append(error.getDefaultMessage() + ", ");
         }
         log.info("[ON getErrorMessages]:: errors - {}", resultErrors.toString());
         return resultErrors.toString();
-      }
+    }
 }

@@ -9,6 +9,7 @@ public interface SecurityService {
 
     /**
      * The method checks if user authenticated by username and password
+     * 
      * @param username
      * @param password
      * @return true or false

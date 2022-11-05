@@ -4,10 +4,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +39,7 @@ import ua.foxminded.university.service.entities.Room;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.entities.Timetable;
-import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
+import ua.foxminded.university.service.exception.EntityConstraintViolationException;
 
 @Slf4j
 @Controller
@@ -66,18 +66,17 @@ public class TimetableController {
     }
 
     @RequestMapping(URL.APP_TIMETABLE_SHOW)
-    public ResponseEntity<List<Timetable>> showTimetable(@RequestParam("from") String dateOne, @RequestParam("to") String dateTwo, Model model) {
+    public ResponseEntity<List<Timetable>> showTimetable(@RequestParam("from") String dateOne,
+            @RequestParam("to") String dateTwo, Model model) {
         LocalDate setDateOne = LocalDate.parse(dateOne);
         LocalDate setDateTwo = LocalDate.parse(dateTwo);
         Day day = new Day();
         day.setDateOne(setDateOne);
         day.setDateTwo(setDateTwo);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("show_timetable", "test");
         List<Timetable> timetable = new ArrayList<>();
         try {
             timetable = timetableService.showTimetable(day);
-            return new ResponseEntity<>(timetable, headers, HttpStatus.FOUND);
+            return new ResponseEntity<>(timetable, HttpStatus.FOUND);
         } catch (IllegalArgumentException e) {
             log.error("[ON showTimetable]:: IllegalArgumentException {}", e.getLocalizedMessage());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -102,9 +101,15 @@ public class TimetableController {
     @GetMapping(URL.APP_TIMETABLE_SCHEDULE_GROUP_LESSON)
     public String scheduleTimetableForLesson(@PathVariable("lessonId") int lessonId,
             @PathVariable("groupId") int groupId, Model model) {
-        Group group = groupService.findById(groupId);
+        Group group = new Group();
+        Lesson lesson = new Lesson();
+        try {
+            group = groupService.findById(groupId);
+            lesson = lessonService.findById(lessonId);
+        } catch (IllegalArgumentException ex) {
+            model.addAttribute("message", ex.getLocalizedMessage());
+        }
         int countOfStudents = group.getStudents().size();
-        Lesson lesson = lessonService.findById(lessonId);
         model.addAttribute("timetable", new Timetable());
         model.addAttribute("lesson", lesson);
         model.addAttribute("group", group);
@@ -129,9 +134,9 @@ public class TimetableController {
             try {
                 body = timetableService.scheduleTimetable(timetable);
                 return new ResponseEntity<>(body, HttpStatus.CREATED);
-            } catch (UniqueConstraintViolationException e) {
-                log.error("[ON saveTimetable]:: UniqueConstraintViolationException {}", e.getLocalizedMessage());
-                body = e.getMessage();
+            } catch (EntityConstraintViolationException e) {
+                log.error("[ON saveTimetable]:: EntityConstraintViolationException {}", e.getLocalizedMessage());
+                body = e.getLocalizedMessage();
                 return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
             }
         }
@@ -139,17 +144,18 @@ public class TimetableController {
 
     @RequestMapping(URL.APP_TIMETABLE_DELETE)
     public ResponseEntity<String> deleteTimetable(@PathVariable Integer id) {
-        boolean isDeleted = timetableService.deleteTimetable(id);
-        if (isDeleted) {
+        try {
+            timetableService.deleteTimetable(id);
             return new ResponseEntity<>("Timetable was deleted!", HttpStatus.OK);
-        } else {
+        } catch (EntityNotFoundException ex) {
             log.error("[ON deleteTimetable]:: bad request");
-            return new ResponseEntity<>("Can't delete past timetable!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
     @RequestMapping(URL.STUDENT_TIMETABLE)
-    public ResponseEntity<List<Timetable>> showStudentTimetable(@RequestParam("from") String dateOne, @RequestParam("to") String dateTwo, Model model) {
+    public ResponseEntity<List<Timetable>> showStudentTimetable(@RequestParam("from") String dateOne,
+            @RequestParam("to") String dateTwo, Model model) {
         LocalDate setDateOne = LocalDate.parse(dateOne);
         LocalDate setDateTwo = LocalDate.parse(dateTwo);
         AuthenticatedUser user = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication()
@@ -168,7 +174,8 @@ public class TimetableController {
     }
 
     @RequestMapping(URL.TEACHER_TIMETABLE)
-    public ResponseEntity<List<Timetable>> showTeacherTimetable(@RequestParam("from") String dateOne, @RequestParam("to") String dateTwo, Model model) {
+    public ResponseEntity<List<Timetable>> showTeacherTimetable(@RequestParam("from") String dateOne,
+            @RequestParam("to") String dateTwo, Model model) {
         LocalDate setDateOne = LocalDate.parse(dateOne);
         LocalDate setDateTwo = LocalDate.parse(dateTwo);
         AuthenticatedUser user = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication()

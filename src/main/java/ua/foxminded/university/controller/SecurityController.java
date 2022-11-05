@@ -2,7 +2,6 @@ package ua.foxminded.university.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -13,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +20,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.controller.urls.URL;
-import ua.foxminded.university.controller.validator.ValidationUtils;
 import ua.foxminded.university.security.jwt.JwtTokenUtil;
 import ua.foxminded.university.security.service.SecurityService;
 import ua.foxminded.university.service.dto.AuthenticationRequestDto;
@@ -42,27 +39,20 @@ public class SecurityController {
     }
 
     @PostMapping(URL.LOGIN)
-    public ResponseEntity<String> login(@Valid @RequestBody AuthenticationRequestDto userDto,
-            BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            String errors = ValidationUtils.getErrorMessages(bindingResult);
-            log.info("[ON login]:: valid errors - {}", errors);
-            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-        } else {
-            String username = userDto.getUsername();
-            try {
-                String token = null;
-                boolean isAuthenticated = securityService.isAuthenticated(username, userDto.getPassword());
-                if (isAuthenticated) {
-                    token = jwtTokenUtil.generateToken(username);
-                }
-                log.info("[ON login]:: setting header and token to ResponseEntity");
-                return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, token)
-                        .body("Welcome to Hogwarts, " + username);
-            } catch (BadCredentialsException e) {
-                log.error("[ON login]:: {}", e.getLocalizedMessage());
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    public ResponseEntity<String> login(@RequestBody AuthenticationRequestDto userDto) {
+        String username = userDto.getUsername();
+        try {
+            String token = null;
+            boolean isAuthenticated = securityService.isAuthenticated(username, userDto.getPassword());
+            if (isAuthenticated) {
+                token = jwtTokenUtil.generateToken(username);
             }
+            log.info("[ON login]:: setting header and token to ResponseEntity");
+            return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, token)
+                    .body("Welcome to Hogwarts, " + username);
+        } catch (BadCredentialsException e) {
+            log.error("[ON login]:: {}", e.getLocalizedMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 

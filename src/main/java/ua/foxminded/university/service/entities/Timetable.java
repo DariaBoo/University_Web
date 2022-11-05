@@ -49,7 +49,7 @@ public class Timetable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
-    @NotBlank(message = "Lesson time period may not be null")
+    @NotBlank(message = "Lesson time period may not be null or empty")
     @Column(name = "time_period", length = 13)
     private String lessonTimePeriod;
 

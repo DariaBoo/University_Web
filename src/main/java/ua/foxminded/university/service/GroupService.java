@@ -10,7 +10,7 @@ import ua.foxminded.university.service.entities.Group;
  *
  */
 public interface GroupService {
-    
+
     /**
      * The method returns count of added rows or -1 if nothing was added.
      * 
@@ -23,7 +23,7 @@ public interface GroupService {
      * The method updated existed group
      * 
      * @param group
-     * @return 
+     * @return
      */
     Group updateGroup(Group group);
 
@@ -31,9 +31,8 @@ public interface GroupService {
      * The method deletes group from the database by group id
      * 
      * @param groupId
-     * @return is deleted true, otherwise - false
      */
-    boolean deleteGroup(int groupId);
+    void deleteGroup(int groupId);
 
     /**
      * The method assigns lesson to group to the database

@@ -35,7 +35,7 @@ import lombok.ToString;
 @EqualsAndHashCode(exclude = { "group" })
 @Table(name = "students", uniqueConstraints = {
         @UniqueConstraint(name = "unique_user_idCard", columnNames = { "user_id", "id_card" }),
-        @UniqueConstraint(name = "unique_group", columnNames = { "user_id", "id_card", "group_id" }) })
+        @UniqueConstraint(name = "unique_user_group", columnNames = { "user_id", "id_card", "group_id" }) })
 @DynamicUpdate
 public class Student {
 
@@ -43,11 +43,11 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private int id;
-    
+
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
-    
+
     @NotBlank(message = "Id card may not be blank")
     @Size(min = 2, max = 5, message = "Id card must be between 2 and 5 characters long")
     @Column(name = "id_card", unique = true)

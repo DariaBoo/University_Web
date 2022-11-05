@@ -9,6 +9,27 @@ CREATE TABLE users
     isActive BOOLEAN,
     CONSTRAINT users_pkey PRIMARY KEY (id)
 );
+
+DROP TABLE IF EXISTS groups CASCADE;
+CREATE TABLE groups
+(
+    group_id SERIAL,
+    group_name VARCHAR(5) UNIQUE NOT NULL,
+    department_id INT,
+    isActive BOOLEAN,
+    PRIMARY KEY(group_id)
+);
+
+DROP TABLE IF EXISTS students CASCADE;
+CREATE TABLE students
+(
+    id SERIAL,    
+    user_id INT references users(id),
+    group_id INT references groups(group_id),
+    id_card VARCHAR(5) NOT NULL,
+    CONSTRAINT students_pkey PRIMARY KEY (id)
+);
+
 DROP TABLE IF EXISTS roles CASCADE;
 CREATE TABLE roles
 (
@@ -16,6 +37,7 @@ CREATE TABLE roles
      name VARCHAR(10) UNIQUE NOT NULL,
      CONSTRAINT roles_pkey PRIMARY KEY (id)
 );
+
 DROP TABLE IF EXISTS users_roles CASCADE;
 CREATE TABLE users_roles
 (
@@ -24,7 +46,3 @@ CREATE TABLE users_roles
      role_id INT references roles(id),
      CONSTRAINT users_roles_pkey PRIMARY KEY (id)
 );
-
-INSERT INTO roles VALUES (1, 'ADMIN');
-INSERT INTO users VALUES (1, 'admin', 'name', 'surname', '$2a$12$RDtcv0Yz8uGCl2vZHlbkV.3vHyxP2XK9Rx.kFPM2kF5/i3QYPLZEO', true);
-INSERT INTO users_roles VALUES (1, 1, 1);

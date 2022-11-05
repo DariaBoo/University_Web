@@ -2,6 +2,9 @@ package ua.foxminded.university.service.implementation;
 
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -17,7 +20,7 @@ import ua.foxminded.university.service.entities.Day;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.Teacher;
 import ua.foxminded.university.service.entities.Timetable;
-import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
+import ua.foxminded.university.service.exception.EntityConstraintViolationException;
 import ua.foxminded.university.service.validator.Notification;
 import ua.foxminded.university.service.validator.TimetableValidator;
 
@@ -59,13 +62,18 @@ public class TimetableServiceImpl implements TimetableService {
         } else {
             try {
                 timetableDAO.saveAndFlush(timetable);
-                log.debug("Timetable [date::{}, time::{}] is scheduled", timetable.getDate(),
+                log.info("Timetable [date::{}, time::{}] is scheduled successfully.", timetable.getDate(),
                         timetable.getLessonTimePeriod());
             } catch (DataIntegrityViolationException exception) {
                 notification = validator.validateUniqueConstraint(exception, timetable);
                 String errors = notification.getErrors();
-                log.error("[ON scheduleTimetable]:: catched DataIntegrityViolationException, error message - {}", errors);
-                throw new UniqueConstraintViolationException(errors, exception);
+                log.error("[ON scheduleTimetable]:: catched DataIntegrityViolationException, error message - {}",
+                        errors);
+                throw new EntityConstraintViolationException(errors, exception);
+            } catch (ConstraintViolationException exception) {
+                log.error("[ON scheduleTimetable]:: catched ConstraintViolationException, error message - {}",
+                        exception.getLocalizedMessage());
+                throw new EntityConstraintViolationException(exception.getLocalizedMessage(), exception);
             }
         }
         return "Timetable was scheduled successfully!";
@@ -76,10 +84,15 @@ public class TimetableServiceImpl implements TimetableService {
      */
     @Override
     @Transactional
-    public boolean deleteTimetable(int timetableId) {
-        timetableDAO.deleteById(timetableId);
-        log.info("Delete timetable by id :: {}", timetableId);
-        return timetableDAO.existsById(timetableId);
+    public void deleteTimetable(int timetableId) {
+        if (timetableDAO.existsById(timetableId)) {
+            timetableDAO.deleteById(timetableId);
+            log.info("Delete timetable by id :: {}", timetableId);
+        } else {
+            log.warn("Timetable with id {} doesn't exist. Nothing to delete", timetableId);
+            throw new EntityNotFoundException(
+                    "Timetable with id " + timetableId + " doesn't exist. Nothing to delete.");
+        }
     }
 
     /**
@@ -118,7 +131,7 @@ public class TimetableServiceImpl implements TimetableService {
         List<Timetable> resultList = timetableDAO.findByDate(day.getDateOne(), day.getDateTwo())
                 .orElseThrow(() -> new IllegalArgumentException(
                         illegalArgumentExceptionMessage + day.getDateOne() + " - " + day.getDateTwo()));
-        log.debug("Found timetable [count::{}]", resultList.size());
+        log.info("Found timetable [count::{}]", resultList.size());
         return resultList;
     }
 }

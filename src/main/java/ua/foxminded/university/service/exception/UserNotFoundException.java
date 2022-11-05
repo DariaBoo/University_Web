@@ -3,7 +3,7 @@ package ua.foxminded.university.service.exception;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public class UserNotFoundException extends UsernameNotFoundException {
-    
+
     /**
      * 
      */

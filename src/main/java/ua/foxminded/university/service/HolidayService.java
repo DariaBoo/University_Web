@@ -10,24 +10,27 @@ import ua.foxminded.university.service.entities.Holiday;
  *
  */
 public interface HolidayService {
-    
+
     /**
      * The method finds all holidays from the database
+     * 
      * @return list of holidays
      */
     List<Holiday> findAllHolidays();
-    
+
     /**
-     * The method adds new holiday to the database, if holiday was added returns 1 otherwise 0
+     * The method adds new holiday to the database, if holiday was added returns 1
+     * otherwise 0
+     * 
      * @param holiday
      * @return Holiday
      */
     Holiday addHoliday(Holiday holiday);
-    
+
     /**
      * The method deletes existed holiday by id and returns count of deleted rows
+     * 
      * @param holidayId
-     * @return is deleted true, otherwise - false
      */
-    boolean deleteHoliday(int holidayId);
+    void deleteHoliday(int holidayId);
 }

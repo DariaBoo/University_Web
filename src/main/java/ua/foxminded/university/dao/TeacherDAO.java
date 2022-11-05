@@ -10,10 +10,11 @@ import ua.foxminded.university.service.entities.Teacher;
  *
  *
  */
-public interface TeacherDAO  extends JpaRepository<Teacher, Integer> {
+public interface TeacherDAO extends JpaRepository<Teacher, Integer> {
 
     /**
      * Finds teacher by username
+     * 
      * @param username
      * @return teacher
      */

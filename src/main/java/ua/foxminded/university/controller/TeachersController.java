@@ -14,7 +14,7 @@ import ua.foxminded.university.service.entities.Teacher;
 
 @Controller
 public class TeachersController {
-    
+
     @Autowired
     private TeacherService teacherService;
     @Autowired

@@ -54,6 +54,7 @@ class SecurityServiceImplTest {
     @Test
     void isAuthenticated_shouldThrowInvalidUserException_whenInputNotExistedData() {
         String notExistedUsername = "none";
-        assertThrows(BadCredentialsException.class, () -> securityService.isAuthenticated(notExistedUsername, password));
+        assertThrows(BadCredentialsException.class,
+                () -> securityService.isAuthenticated(notExistedUsername, password));
     }
 }

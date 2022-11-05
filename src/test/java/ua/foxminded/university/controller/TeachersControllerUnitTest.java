@@ -26,41 +26,47 @@ import org.springframework.web.context.WebApplicationContext;
 
 import ua.foxminded.university.AppSpringBoot;
 import ua.foxminded.university.controller.urls.URL;
-import ua.foxminded.university.service.LessonService;
-import ua.foxminded.university.service.entities.Lesson;
+import ua.foxminded.university.service.TeacherService;
+import ua.foxminded.university.service.entities.Teacher;
+import ua.foxminded.university.service.entities.User;
 
 @SpringBootTest(classes = { AppSpringBoot.class })
 @TestInstance(Lifecycle.PER_CLASS)
-class LessonsControllerTest {
+class TeachersControllerUnitTest {
 
     @Autowired
     private WebApplicationContext context;
     @Autowired
-    private LessonsController lessonsController;
+    private TeachersController teachersController;
     private MockMvc mockMvc;
+    private Teacher teacher;
     @MockBean
-    private LessonService lessonService;
+    private TeacherService teacherService;
     @Mock
     private Model model;
-    
+
     @BeforeAll
     void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-    }
-    
-    @Test
-    @WithMockUser(authorities = { "ADMIN" })
-    void listAllLessons_shouldReturnStatus200() throws Exception {
-        when(lessonService.findAllLessons()).thenReturn(new ArrayList<>());
-        mockMvc.perform(get(URL.APP_LESSONS).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
-        assertEquals("lessons/list", lessonsController.listAllLessons(model));
+        User user = User.builder().id(1).firstName("name").lastName("surname").username("username").password("password")
+                .build();
+        teacher = Teacher.builder().id(1).user(user).build();
     }
 
     @Test
     @WithMockUser(authorities = { "ADMIN" })
-    void viewLessonById_shouldReturnStatus200() throws Exception {
-        given(lessonService.findById(any(Integer.class))).willReturn(new Lesson());
-        mockMvc.perform(get(URL.APP_LESSONS_VIEW_BY_ID, 1).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
-        assertEquals("lessons/view", lessonsController.viewLessonById(any(Integer.class), model));
+    void listAllTeachers_shouldReturnStatus200() throws Exception {
+        when(teacherService.findAllTeachers()).thenReturn(new ArrayList<>());
+        mockMvc.perform(get(URL.APP_TEACHERS).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        assertEquals("teachers/list", teachersController.listAllTeachers(model));
+    }
+
+    @Test
+    @WithMockUser(authorities = { "ADMIN" })
+    void viewTeacherById_shouldReturnStatus200() throws Exception {
+        given(teacherService.findById(any(Integer.class))).willReturn(teacher);
+        mockMvc.perform(get(URL.APP_TEACHERS_VIEW_BY_ID, 1).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        assertEquals("teachers/view", teachersController.viewTeacherById(any(Integer.class), model));
     }
 }

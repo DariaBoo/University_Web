@@ -13,7 +13,7 @@ import ua.foxminded.university.service.entities.Lesson;
 
 @Controller
 public class LessonsController {
-    
+
     @Autowired
     private LessonService lessonService;
 

@@ -38,7 +38,7 @@ import ua.foxminded.university.service.dto.AuthenticationRequestDto;
 
 @SpringBootTest(classes = { AppSpringBoot.class })
 @TestInstance(Lifecycle.PER_CLASS)
-class SecurityControllerTest {
+class SecurityControllerUnitTest {
 
     @MockBean
     private SecurityService securityService;
@@ -63,7 +63,7 @@ class SecurityControllerTest {
     private JwtTokenUtil jwtTokenUtil;
     private AuthenticationRequestDto notValidUserDto;
     private AuthenticationRequestDto validUserDto;
-    
+
     @BeforeAll
     void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
@@ -74,47 +74,44 @@ class SecurityControllerTest {
         validUserDto.setUsername("username");
         validUserDto.setPassword("password");
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
-    void showLoginPage_shouldReturnStatus200() throws Exception {        
+    void showLoginPage_shouldReturnStatus200() throws Exception {
         mockMvc.perform(get(URL.WELCOME).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
         assertEquals("login", securityController.showLoginPage());
     }
 
     @Test
     @WithMockUser(authorities = { "ADMIN" })
-    void login_shouldReturnStatusBAD_REQUEST_whenEntityHasErrors() throws Exception {  
-        given(bindingResult.hasErrors()).willReturn(true);
-        mockMvc.perform(post(URL.LOGIN).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(notValidUserDto))).andExpect(status().isBadRequest());
-    }
-    
-    @Test
-    @WithMockUser(authorities = { "ADMIN" })
-    void login_shouldReturnStatus200_whenEntityHasNoErrors() throws Exception { 
+    void login_shouldReturnStatus200_whenEntityHasNoErrors() throws Exception {
         given(bindingResult.hasErrors()).willReturn(false);
         given(securityService.isAuthenticated(any(String.class), any(String.class))).willReturn(true);
         given(jwtTokenUtil.generateToken(any(String.class))).willReturn(new String());
-        mockMvc.perform(post(URL.LOGIN).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(validUserDto))).andExpect(status().isOk());
+        mockMvc.perform(post(URL.LOGIN).contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(validUserDto))).andExpect(status().isOk());
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
-    void login_shouldReturnStatus401() throws Exception { 
+    void login_shouldReturnStatus401() throws Exception {
         given(bindingResult.hasErrors()).willReturn(false);
-        given(securityService.isAuthenticated(any(String.class), any(String.class))).willThrow(BadCredentialsException.class);
-        mockMvc.perform(post(URL.LOGIN).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(validUserDto))).andExpect(status().isUnauthorized());
+        given(securityService.isAuthenticated(any(String.class), any(String.class)))
+                .willThrow(BadCredentialsException.class);
+        mockMvc.perform(post(URL.LOGIN).contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(validUserDto))).andExpect(status().isUnauthorized());
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
-    void errorLogin_shouldReturnStatus401() throws Exception {  
-        mockMvc.perform(get(URL.LOGIN_ERROR).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnauthorized());
+    void errorLogin_shouldReturnStatus401() throws Exception {
+        mockMvc.perform(get(URL.LOGIN_ERROR).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
     }
-    
+
     @Test
     @WithMockUser(authorities = { "ADMIN" })
-    void logoutPage_shouldReturnStatus302() throws Exception {  
+    void logoutPage_shouldReturnStatus302() throws Exception {
         mockMvc.perform(get(URL.LOGOUT).contentType(MediaType.APPLICATION_JSON)).andExpect(status().is3xxRedirection());
         assertEquals("redirect:/", securityController.logoutPage(request, response));
     }

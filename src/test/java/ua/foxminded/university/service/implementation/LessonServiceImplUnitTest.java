@@ -22,7 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import ua.foxminded.university.dao.LessonDAO;
 import ua.foxminded.university.service.entities.Lesson;
-import ua.foxminded.university.service.exception.UniqueConstraintViolationException;
+import ua.foxminded.university.service.exception.EntityConstraintViolationException;
 
 @ExtendWith(SpringExtension.class)
 class LessonServiceImplUnitTest {
@@ -53,7 +53,7 @@ class LessonServiceImplUnitTest {
     @Test
     void addLesson_shouldThrowUniqueConstraintViolationException_whenInputNotUniqueName() {
         given(lessonDao.findByName(lesson.getName())).willReturn(lesson);
-        assertThrows(UniqueConstraintViolationException.class, () -> lessonService.addLesson(lesson));
+        assertThrows(EntityConstraintViolationException.class, () -> lessonService.addLesson(lesson));
         verify(lessonDao, times(0)).save(any(Lesson.class));
     }
 
@@ -73,13 +73,14 @@ class LessonServiceImplUnitTest {
     @Test
     void updateLesson_shouldThrowUniqueConstraintViolationException_whenInputNotUniqueName() {
         given(lessonDao.findByName(lesson.getName())).willReturn(lesson);
-        assertThrows(UniqueConstraintViolationException.class, () -> lessonService.updateLesson(lesson));
+        assertThrows(EntityConstraintViolationException.class, () -> lessonService.updateLesson(lesson));
         verify(lessonDao, times(0)).save(any(Lesson.class));
     }
 
     @Test
     void deleteLesson() {
         int lessonId = 1;
+        given(lessonDao.existsById(lesson.getId())).willReturn(true);
         willDoNothing().given(lessonDao).deleteById(lessonId);
         lessonService.deleteLesson(lessonId);
         verify(lessonDao, times(1)).deleteById(lessonId);

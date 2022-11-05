@@ -15,6 +15,7 @@ public interface HolidayDAO extends JpaRepository<Holiday, Integer> {
 
     /**
      * The method finds holiday by date
+     * 
      * @param date
      * @return optional of holiday
      */

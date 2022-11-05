@@ -1,3 +1,15 @@
+INSERT INTO groups VALUES (1, 'group', 1, 'true');
+INSERT INTO groups VALUES (2, 'grou2', 1, 'true');
+INSERT INTO lessons VALUES (1, 'lesson', 'description','true');
+INSERT INTO lessons VALUES (2, 'lesson2', 'description','true');
+INSERT INTO users VALUES (1, 'username', 'name', 'surname', 'password', 'true');
+INSERT INTO users VALUES (2, 'username2', 'name', 'surname', 'password', 'true');
+INSERT INTO teachers VALUES (1, 1, 'position', 1);
+INSERT INTO teachers VALUES (2, 2, 'position', 1);
+INSERT INTO teacherAbsent VALUES (1, 1, '2022-10-24', '2022-10-21', 'reason');
+INSERT INTO teacherAbsent VALUES (2, 2, '2022-10-24', '2022-10-21', 'reason');
+INSERT INTO rooms VALUES (101, 20);
+INSERT INTO rooms VALUES (102, 20);
 INSERT INTO timetable VALUES (1, '2023-04-01', '8:00 - 9:20', 1, 1, 1, 101);
 INSERT INTO timetable VALUES (2, '2023-04-02', '8:00 - 9:20', 1, 1, 1, 101);
 INSERT INTO timetable VALUES (3, '2023-04-03', '8:00 - 9:20', 1, 1, 1, 101);

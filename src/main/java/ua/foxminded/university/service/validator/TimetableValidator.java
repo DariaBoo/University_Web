@@ -24,13 +24,15 @@ public class TimetableValidator {
     private static final String uniqueTeacherDateTime = "unique_teacher_date_time";
     private static final String uniqueRoomDateTime = "unique_room_date_time";
     private HolidayService holidayService;
-    private TeacherService teacherService;    
-    
+    private TeacherService teacherService;
+
     /**
-    * Constructs a new instance with the specified holidayService and teacherService.
-    * @param holidayService
-    * @param teacherService
-    */
+     * Constructs a new instance with the specified holidayService and
+     * teacherService.
+     * 
+     * @param holidayService
+     * @param teacherService
+     */
     public TimetableValidator(HolidayService holidayService, TeacherService teacherService) {
         this.holidayService = holidayService;
         this.teacherService = teacherService;
@@ -38,6 +40,7 @@ public class TimetableValidator {
 
     /**
      * The method validates a timetable entity
+     * 
      * @param timetable
      * @return notification with errors
      */
@@ -50,6 +53,7 @@ public class TimetableValidator {
 
     /**
      * The method validates timetable unique constraint
+     * 
      * @param exception
      * @param timetable
      * @return notification with errors
@@ -103,10 +107,10 @@ public class TimetableValidator {
         DayOfWeek dayOfWeek = DayOfWeek.of(date.get(ChronoField.DAY_OF_WEEK));
         switch (dayOfWeek) {
         case SATURDAY:
-            log.info("Inputed date [{}] is saturday", date);
+            log.info("Inputed date [{}] is a saturday", date);
             return true;
         case SUNDAY:
-            log.info("Inputed date [{}] is sunday", date);
+            log.info("Inputed date [{}] is a sunday", date);
             return true;
         default:
             log.info("Inputed date [{}] is a week day", date);
@@ -119,7 +123,7 @@ public class TimetableValidator {
         if (!holidayService.findAllHolidays().isEmpty()) {
             result = holidayService.findAllHolidays().stream().anyMatch(holiday -> holiday.getDate().isEqual(day));
         }
-        log.info("Inputed day [{}] is holiday :: {}", day, result);
+        log.info("Inputed day [{}] is a holiday :: {}", day, result);
         return result;
     }
 }
