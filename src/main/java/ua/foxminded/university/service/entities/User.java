@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@ToString(exclude = {"password"})
+@ToString(exclude = { "password" })
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -34,33 +34,34 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "users",  uniqueConstraints = { @UniqueConstraint(name = "unique_name_surname_username", columnNames = {"user_name", "first_name", "last_name"})})
+@Table(name = "users", uniqueConstraints = { @UniqueConstraint(name = "unique_name_surname_username", columnNames = {
+        "user_name", "first_name", "last_name" }) })
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private int id;
-    
+
     @NotBlank(message = "Username may not be blank")
     @Size(max = 30)
     @Column(name = "user_name", unique = true)
     private String username;
-    
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles;
-    
+
     @NotBlank(message = "First name may not be blank")
     @Size(max = 30)
     @Column(name = "first_name")
     private String firstName;
-    
+
     @NotBlank(message = "Last name may not be blank")
     @Size(max = 30)
     @Column(name = "last_name")
     private String lastName;
-    
+
     @JsonIgnore
     @Column(name = "password", length = 255)
     private String password;

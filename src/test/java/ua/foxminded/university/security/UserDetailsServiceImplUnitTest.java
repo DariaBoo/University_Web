@@ -20,6 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import ua.foxminded.university.dao.UserDAO;
 import ua.foxminded.university.security.model.AuthenticatedUser;
+import ua.foxminded.university.security.serivce.impl.UserDetailsServiceImpl;
 import ua.foxminded.university.service.entities.Role;
 import ua.foxminded.university.service.entities.User;
 

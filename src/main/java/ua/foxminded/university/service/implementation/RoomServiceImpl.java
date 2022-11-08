@@ -35,14 +35,15 @@ public class RoomServiceImpl implements RoomService {
         log.debug("Found all rooms, list size :: {}", resultList.size());
         return resultList;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     @Transactional(readOnly = true)
     public List<Room> findSuitableRooms(int capacity) {
-        List<Room> resultList = roomDAO.findSuitableRooms(capacity).orElseThrow(() -> new IllegalArgumentException("Error occured searching suitable groups"));
+        List<Room> resultList = roomDAO.findSuitableRooms(capacity)
+                .orElseThrow(() -> new IllegalArgumentException("Error occured searching suitable groups"));
         log.debug("Found list of suitable rooms (count - {}) by capacity :: {}", resultList.size(), capacity);
         return resultList;
     }

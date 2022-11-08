@@ -15,31 +15,32 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
+import ua.foxminded.university.security.jwt.exception.InvalidTokenException;
 
 @Slf4j
 @Component
 public class JwtTokenUtil implements Serializable {
-    
+
     private static final long serialVersionUID = 1l;
-    
+
     @Value("${jwt.secret}")
     private String secret;
     @Value("${jwt.token.validity}")
     private long tokenValiditi;
-    
+
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
-    }    
-    
+    }
+
     public Date getExpirationDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
     }
-    
+
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
-    
+
     private Claims getAllClaimsFromToken(String token) {
         log.info("[ON getAllClaimsFromToken]:: getting all claims from token using Jwts parser");
         Claims claims = null;
@@ -58,23 +59,23 @@ public class JwtTokenUtil implements Serializable {
         log.info("[ON generateToken]:: token has generated successfully");
         return token;
     }
-    
+
     private String doGenerateToken(Map<String, Object> claims, String subject) {
         log.info("[ON doGenerateToken]:: token generating...");
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-               .setExpiration(new Date(System.currentTimeMillis() + tokenValiditi)) 
-               .signWith(SignatureAlgorithm.HS512, secret).compact();
+                .setExpiration(new Date(System.currentTimeMillis() + tokenValiditi))
+                .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
-    public boolean validateToken(String token, UserDetails userDetails) { 
+    public boolean validateToken(String token, UserDetails userDetails) {
         log.info("[ON validateToken]:: token validation...");
         final String username = getUsernameFromToken(token);
         boolean isValid = (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
         log.info("[ON validateToken]:: is token valid - {}", isValid);
         return isValid;
-    }    
-    
-    private boolean isTokenExpired(String token) { 
+    }
+
+    private boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
         boolean isExpired = expiration.before(new Date());
         log.info("[ON isTokenExpired]:: is token expired - {}", isExpired);

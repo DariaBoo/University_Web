@@ -3,7 +3,6 @@ package ua.foxminded.university.service.implementation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -25,10 +24,10 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import ua.foxminded.university.dao.StudentDAO;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.User;
+import ua.foxminded.university.service.exception.EntityConstraintViolationException;
 import ua.foxminded.university.service.exception.UserNotFoundException;
 
 @ExtendWith(SpringExtension.class)
@@ -53,44 +52,30 @@ class StudentServiceImplUnitTest {
     @Test
     void addStudent_shouldThrowUniqueConstraintViolationException_whenInputNotUniqueName() {
         given(studentDao.findByUserUsername(student.getUser().getUsername())).willReturn(student);
-        assertThrows(UniqueConstraintViolationException.class, () -> studentService.addStudent(student));
+        assertThrows(EntityConstraintViolationException.class, () -> studentService.addStudent(student));
         verify(studentDao, times(0)).save(any(Student.class));
     }
 
     @Test
     void updateStudent() {
+        given(studentDao.existsById(student.getId())).willReturn(true);
         String newUsername = "newUsername";
         String newFirstName = "newFirstName";
         given(studentDao.save(student)).willReturn(student);
         student.getUser().setUsername(newUsername);
         student.getUser().setFirstName(newFirstName);
         Student updatedStudent = studentService.updateStudent(student);
-
         assertEquals(updatedStudent.getUser().getUsername(), newUsername);
         assertEquals(updatedStudent.getUser().getFirstName(), newFirstName);
     }
 
     @Test
-    void updateStudent_shouldThrowUniqueConstraintViolationException_whenInputNotUniqueName() {
-        given(studentDao.findByUserUsername(student.getUser().getUsername())).willReturn(student);
-        assertThrows(UniqueConstraintViolationException.class, () -> studentService.updateStudent(student));
-        verify(studentDao, times(0)).save(any(Student.class));
-    }
-
-    @Test
-    void deleteStudent_whenDeleteStudent() {
+    void deleteStudent() {
         int studentId = 1;
+        given(studentDao.existsById(studentId)).willReturn(true);
         willDoNothing().given(studentDao).deleteById(studentId);
         studentService.deleteStudent(studentId);
         verify(studentDao, times(1)).deleteById(studentId);
-    }
-
-    @Test
-    void deleteStudent_shouldReturnTrue_whenDeleteStudent() {
-        int studentId = 1;
-        willDoNothing().given(studentDao).deleteById(studentId);
-        given(studentDao.existsById(studentId)).willReturn(false);
-        assertTrue(studentService.deleteStudent(studentId));
     }
 
     @Test
@@ -99,7 +84,6 @@ class StudentServiceImplUnitTest {
         Student student2 = Student.builder().id(2).user(user2).group(group).idCard("AA-2").build();
         List<Student> students = Stream.of(student, student2).collect(Collectors.toList());
         given(studentDao.findAll()).willReturn(students);
-
         List<Student> studentList = studentService.findAllStudents();
         assertNotNull(studentList);
         assertEquals(studentList.size(), students.size());

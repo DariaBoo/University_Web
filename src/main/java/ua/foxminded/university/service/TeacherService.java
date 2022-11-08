@@ -11,7 +11,7 @@ import ua.foxminded.university.service.entities.Teacher;
  * @author Bogush Daria
  */
 public interface TeacherService {
-    
+
     /**
      * The method adds Teacher to the database
      * 
@@ -27,7 +27,7 @@ public interface TeacherService {
      * @return updated teacher
      */
     Teacher updateTeacher(Teacher teacher);
-    
+
     /**
      * Deletes teacher from the timetable.teachers
      * 
@@ -94,17 +94,19 @@ public interface TeacherService {
      * @param newPassword
      */
     void changePassword(int teacherId, String newPassword);
-    
+
     /**
-     * The method checks is teacher absent 
+     * The method checks is teacher absent
+     * 
      * @param date
      * @param teacher
      * @return true or false
      */
     boolean checkIsAbsent(LocalDate date, int teacherId);
-    
+
     /**
      * The method finds teacher by username
+     * 
      * @param username
      * @return teacher
      */

@@ -25,9 +25,8 @@ public interface StudentService {
      * returns 1 otherwise returns 0
      * 
      * @param studentId
-     * @return is deleted true, otherwise - false
      */
-    boolean deleteStudent(int studentId);
+    void deleteStudent(int studentId);
 
     /**
      * The method finds a student by student id
@@ -59,9 +58,10 @@ public interface StudentService {
      * @return updated student
      */
     Student updateStudent(Student student);
-    
+
     /**
      * The method find student by username
+     * 
      * @param username
      * @return student
      */

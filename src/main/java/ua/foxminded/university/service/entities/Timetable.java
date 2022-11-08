@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -11,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -42,27 +44,31 @@ public class Timetable {
     @Column(name = "id")
     private int timetableId;
 
-    @NotNull
+    @NotNull(message = "Date may not be null")
     @Column(name = "date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
-    @NotNull
+    @NotBlank(message = "Lesson time period may not be null or empty")
     @Column(name = "time_period", length = 13)
     private String lessonTimePeriod;
 
-    @ManyToOne
+    @NotNull(message = "Group may not be null")
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "group_id")
     private Group group;
 
+    @NotNull(message = "Room may not be null")
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
 
-    @ManyToOne
+    @NotNull(message = "Teacher may not be null")
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "teacher_id", referencedColumnName = "id")
     private Teacher teacher;
 
+    @NotNull(message = "Lesson may not be null")
     @ManyToOne
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;

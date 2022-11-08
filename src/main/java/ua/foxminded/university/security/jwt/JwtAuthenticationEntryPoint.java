@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable {
-    
+
     private static final long serialVersionUID = 1l;
 
     @Override
@@ -24,5 +24,5 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
             AuthenticationException authException) throws IOException, ServletException {
         log.info("[ON commence]:: unauthorized 401");
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-    }    
+    }
 }

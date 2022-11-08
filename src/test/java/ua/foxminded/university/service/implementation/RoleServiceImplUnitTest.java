@@ -49,6 +49,7 @@ class RoleServiceImplUnitTest {
     void deleteRole() {
         int roleId = 1;
         willDoNothing().given(roleDao).deleteById(roleId);
+        given(roleDao.existsById(roleId)).willReturn(true);
         roleService.deleteRole(roleId);
         verify(roleDao, times(1)).deleteById(roleId);
     }

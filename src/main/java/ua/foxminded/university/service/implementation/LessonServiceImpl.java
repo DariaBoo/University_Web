@@ -2,6 +2,8 @@ package ua.foxminded.university.service.implementation;
 
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -9,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.LessonDAO;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.LessonService;
 import ua.foxminded.university.service.entities.Lesson;
+import ua.foxminded.university.service.exception.EntityConstraintViolationException;
 
 /**
  * @version 1.0
@@ -32,12 +34,12 @@ public class LessonServiceImpl implements LessonService {
     @Transactional
     public Lesson addLesson(Lesson lesson) {
         Lesson savedLesson = lessonDAO.findByName(lesson.getName());
-        if(savedLesson == null) {
+        if (savedLesson == null) {
             savedLesson = lessonDAO.save(lesson);
             log.info("Added a new lesson with id::{}", lesson.getId());
         } else {
             log.warn("Lesson with name [{}] already exists with id [{}]", savedLesson.getName(), savedLesson.getId());
-            throw new UniqueConstraintViolationException("Lesson with name [" + lesson.getName() + "] already exists!");
+            throw new EntityConstraintViolationException("Lesson with name [" + lesson.getName() + "] already exists!");
         }
         return savedLesson;
     }
@@ -47,10 +49,14 @@ public class LessonServiceImpl implements LessonService {
      */
     @Override
     @Transactional
-    public boolean deleteLesson(int lessonId) {
-        lessonDAO.deleteById(lessonId);
-        log.info("Delete lesson with id :: {}", lessonId);
-        return !lessonDAO.existsById(lessonId);
+    public void deleteLesson(int lessonId) {
+        if (lessonDAO.existsById(lessonId)) {
+            lessonDAO.deleteById(lessonId);
+            log.info("Delete lesson with id :: {}", lessonId);
+        } else {
+            log.warn("Lesson with id {} doesn't exist. Nothing to delete.", lessonId);
+            throw new EntityNotFoundException("Lesson with id " + lessonId + " doesn't exist. Nothing to delete.");
+        }
     }
 
     /**
@@ -60,12 +66,13 @@ public class LessonServiceImpl implements LessonService {
     @Transactional
     public Lesson updateLesson(Lesson lesson) {
         Lesson updatedLesson = lessonDAO.findByName(lesson.getName());
-        if(updatedLesson == null) {
+        if (updatedLesson == null) {
             updatedLesson = lessonDAO.save(lesson);
             log.info("Update lesson with id::{}", lesson.getId());
         } else {
-            log.warn("Lesson with name [{}] already exists with id [{}]", updatedLesson.getName(), updatedLesson.getId());
-            throw new UniqueConstraintViolationException("Lesson with name [" + lesson.getName() + "] already exists!");
+            log.warn("Lesson with name [{}] already exists with id [{}]", updatedLesson.getName(),
+                    updatedLesson.getId());
+            throw new EntityConstraintViolationException("Lesson with name [" + lesson.getName() + "] already exists!");
         }
         return updatedLesson;
     }

@@ -1,5 +1,6 @@
 package ua.foxminded.university.service.implementation;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import ua.foxminded.university.service.entities.Role;
 @Service
 @Transactional
 public class RoleServiceImpl implements RoleService {
-    
+
     @Autowired
     private RoleDAO roleDAO;
 
@@ -28,7 +29,8 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public Role findByName(String name) {
-        Role role = roleDAO.findByName(name).orElseThrow(() -> new IllegalArgumentException("Error occured"));
+        Role role = roleDAO.findByName(name)
+                .orElseThrow(() -> new IllegalArgumentException("No role with name " + name));
         log.info("Found role {}", role);
         return role;
     }
@@ -47,7 +49,12 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public void deleteRole(int roleId) {
-        log.info("Deleting role with id {}", roleId);
-        roleDAO.deleteById(roleId);
+        if (roleDAO.existsById(roleId)) {
+            log.info("Deleting role with id {}", roleId);
+            roleDAO.deleteById(roleId);
+        } else {
+            log.warn("Role with id {} doesn't exist. Nothing to delete.", roleId);
+            throw new EntityNotFoundException("Role with id " + roleId + " doesn't exist. Nothing to delete.");
+        }
     }
 }

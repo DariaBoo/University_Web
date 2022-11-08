@@ -22,8 +22,8 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import ua.foxminded.university.dao.HolidayDAO;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.entities.Holiday;
+import ua.foxminded.university.service.exception.EntityConstraintViolationException;
 
 @ExtendWith(SpringExtension.class)
 class HolidayServiceImplUnitTest {
@@ -54,13 +54,14 @@ class HolidayServiceImplUnitTest {
     @Test
     void addHoliday_shouldThrowUniqueConstraintViolationException_whenInputNotUniqueDate() {
         given(holidayDao.findByDate(holiday.getDate())).willReturn(Optional.of(holiday));
-        assertThrows(UniqueConstraintViolationException.class, () -> holidayService.addHoliday(holiday));
+        assertThrows(EntityConstraintViolationException.class, () -> holidayService.addHoliday(holiday));
         verify(holidayDao, times(0)).save(any(Holiday.class));
     }
 
     @Test
     void deleteHoliday() {
         int holidayId = 1;
+        given(holidayDao.existsById(holidayId)).willReturn(true);
         willDoNothing().given(holidayDao).deleteById(holidayId);
         holidayService.deleteHoliday(holidayId);
         verify(holidayDao, times(1)).deleteById(holidayId);

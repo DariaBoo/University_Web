@@ -3,7 +3,12 @@ package ua.foxminded.university.service.exception;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public class UserNotFoundException extends UsernameNotFoundException {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2641205415627864621L;
+
     /**
      * Constructs a new exception with the specified detail message.
      * 

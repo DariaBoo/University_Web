@@ -13,16 +13,16 @@ import ua.foxminded.university.service.entities.Group;
 
 @Controller
 public class GroupsController {
-    
+
     @Autowired
     private GroupService groupService;
-    
+
     @GetMapping(URL.APP_GROUPS)
     public String listAllGroups(Model model) {
         model.addAttribute("groups", groupService.findAllGroups());
         return "groups/list";
     }
-    
+
     @RequestMapping(URL.APP_GROUPS_VIEW_BY_ID)
     public String viewGroupById(@PathVariable Integer id, Model model) {
         Group group = groupService.findById(id);

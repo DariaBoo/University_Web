@@ -3,6 +3,8 @@ package ua.foxminded.university.service.implementation;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -10,9 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.HolidayDAO;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.HolidayService;
 import ua.foxminded.university.service.entities.Holiday;
+import ua.foxminded.university.service.exception.EntityConstraintViolationException;
 
 /**
  * @version 1.0
@@ -45,9 +47,10 @@ public class HolidayServiceImpl implements HolidayService {
     @Transactional
     public Holiday addHoliday(Holiday holiday) {
         Optional<Holiday> savedHoliday = holidayDAO.findByDate(holiday.getDate());
-        if(savedHoliday.isPresent()) {
+        if (savedHoliday.isPresent()) {
             log.warn("Holiday with date :: {} already exists!", holiday.getDate());
-            throw new UniqueConstraintViolationException("Holiday with date :: " + holiday.getDate() + " already exists!");
+            throw new EntityConstraintViolationException(
+                    "Holiday with date :: " + holiday.getDate() + " already exists!");
         }
         return holidayDAO.save(holiday);
     }
@@ -57,8 +60,12 @@ public class HolidayServiceImpl implements HolidayService {
      */
     @Override
     @Transactional
-    public boolean deleteHoliday(int holidayId) {
-        holidayDAO.deleteById(holidayId);
-        return !holidayDAO.existsById(holidayId);
+    public void deleteHoliday(int holidayId) {
+        if (holidayDAO.existsById(holidayId)) {
+            holidayDAO.deleteById(holidayId);
+        } else {
+            log.warn("Holiday with id {} doesn't exist. Nothing to delete.", holidayId);
+            throw new EntityNotFoundException("Holiday with id " + holidayId + " doesn't exist. Nothing to delete");
+        }
     }
 }

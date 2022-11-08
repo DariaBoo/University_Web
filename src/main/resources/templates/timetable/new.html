@@ -159,7 +159,7 @@ div.hidden {
 					<div class="form_r">
 						<label for="groupId">Selected Group: </label> <select
 							th:field="*{group.id}" th:value="${group.id}">
-							<option th:value="${group.getId()}" th:text="${group.getName()}">Group</option>
+							<option th:value="${group.getId()}" th:text="${group.getName()}" >Group</option>
 						</select>
 					</div>
 					<br>
@@ -200,7 +200,7 @@ div.hidden {
 							<option value="" th:value="0">Teacher</option>
 							<option th:each="teacher : ${teachers}"
 								th:value="${teacher.getId()}"
-								th:text="${teacher.getFirstName() + ' ' + teacher.getLastName()}">Teachers</option>
+								th:text="${teacher.getUser().getFirstName() + ' ' + teacher.getUser().getLastName()}">Teachers</option>
 						</select>
 					</div>
 					<br>

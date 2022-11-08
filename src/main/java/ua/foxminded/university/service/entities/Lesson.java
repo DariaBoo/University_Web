@@ -26,12 +26,12 @@ import lombok.ToString;
 
 @ToString
 @Entity
-@Getter 
-@Setter 
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(exclude = {"teachers", "groups", "timetable" })
+@EqualsAndHashCode(exclude = { "teachers", "groups", "timetable" })
 @Table(name = "lessons")
 public class Lesson {
 
@@ -44,20 +44,20 @@ public class Lesson {
     @Size(max = 20, message = "Lesson name must be equals or less than 20 characters long")
     @Column(name = "lesson_name", unique = true)
     private String name;
-    
+
     @Column(name = "description", length = 100)
     private String description;
-    
+
     @JsonIgnore
     @ToString.Exclude
     @ManyToMany(mappedBy = "lessons")
     private List<Teacher> teachers;
-    
+
     @JsonIgnore
     @ToString.Exclude
     @ManyToMany(mappedBy = "lessons")
     private List<Group> groups;
-    
+
     @JsonIgnore
     @ToString.Exclude
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, targetEntity = Timetable.class)

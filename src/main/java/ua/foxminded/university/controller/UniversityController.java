@@ -7,17 +7,17 @@ import ua.foxminded.university.controller.urls.URL;
 
 @Controller
 public class UniversityController {
-    
+
     @GetMapping(URL.APP_HOME)
     public String showHomePage() {
         return "/home";
-    }    
-    
+    }
+
     @GetMapping(URL.HOME_STUDENT)
     public String showStudentPage() {
         return "students/studentPage";
     }
-    
+
     @GetMapping(URL.HOME_TEACHER)
     public String showTeacherPage() {
         return "teachers/teacherPage";

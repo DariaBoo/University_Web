@@ -1,5 +1,6 @@
 package ua.foxminded.university.controller;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +20,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.controller.urls.URL;
 import ua.foxminded.university.controller.validator.ValidationUtils;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.StudentService;
 import ua.foxminded.university.service.entities.Student;
+import ua.foxminded.university.service.exception.EntityConstraintViolationException;
 
 @Slf4j
 @Controller
@@ -63,7 +64,7 @@ public class StudentsController {
             try {
                 studentService.addStudent(student);
                 redirectAtt.addFlashAttribute(message, "Student was created!");
-            } catch (UniqueConstraintViolationException e) {
+            } catch (EntityConstraintViolationException e) {
                 log.error(e.getMessage());
                 redirectAtt.addFlashAttribute(message, e.getMessage());
             }
@@ -73,17 +74,22 @@ public class StudentsController {
 
     @RequestMapping(URL.APP_DELETE_STUDENT_BY_ID)
     public String deleteStudent(@PathVariable Integer id, RedirectAttributes redirectAtt) {
-        if (studentService.deleteStudent(id)) {
+        try {
+            studentService.deleteStudent(id);
             redirectAtt.addFlashAttribute(message, "Student was deleted!");
-        } else {
-            redirectAtt.addFlashAttribute(message, "Error to delete!");
+        } catch (EntityNotFoundException ex) {
+            redirectAtt.addFlashAttribute(message, ex.getLocalizedMessage());
         }
         return students;
     }
 
     @GetMapping(URL.APP_EDIT_STUDENT_BY_ID)
-    public String edit(Model model, @PathVariable("id") int id, RedirectAttributes redirectAtt) {
-        model.addAttribute("student", studentService.findById(id));
+    public String edit(@PathVariable("id") int id, Model model, RedirectAttributes redirectAtt) {
+        try {
+            model.addAttribute("student", studentService.findById(id));
+        } catch (IllegalArgumentException ex) {
+            redirectAtt.addFlashAttribute(message, ex.getLocalizedMessage());
+        }
         model.addAttribute("groups", groupService.findAllGroups());
         return "students/edit";
     }

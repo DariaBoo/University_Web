@@ -11,14 +11,16 @@ public interface StaffService {
 
     /**
      * The method add new staff
+     * 
      * @param staff
      * @return added staff
      */
     Staff addStaff(Staff staff);
-    
+
     /**
      * Deletes staff by id
+     * 
      * @param staffId
      */
-    void deleteStaff(int staffId);    
+    void deleteStaff(int staffId);
 }

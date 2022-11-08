@@ -11,9 +11,11 @@ import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-@ToString(exclude = {"users"})
+@ToString(exclude = { "users" })
+@EqualsAndHashCode(exclude = { "users" })
 @Entity
 @Table(name = "roles")
 public class Role implements GrantedAuthority {
@@ -24,13 +26,13 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
-    
+
     public Role(String name) {
         this.name = name;
     }
-    
+
     public Role() {
-        
+
     }
 
     @ManyToMany(mappedBy = "roles")

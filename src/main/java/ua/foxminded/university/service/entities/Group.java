@@ -2,6 +2,7 @@ package ua.foxminded.university.service.entities;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -68,6 +69,6 @@ public class Group {
 
     @JsonIgnore
     @ToString.Exclude
-    @OneToMany(mappedBy = "group", targetEntity = Timetable.class)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, targetEntity = Timetable.class)
     private List<Timetable> timetable;
 }

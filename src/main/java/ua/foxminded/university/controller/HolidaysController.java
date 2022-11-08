@@ -1,5 +1,6 @@
 package ua.foxminded.university.controller;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ua.foxminded.university.controller.urls.URL;
 import ua.foxminded.university.controller.validator.ValidationUtils;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.HolidayService;
 import ua.foxminded.university.service.entities.Holiday;
+import ua.foxminded.university.service.exception.EntityConstraintViolationException;
 
 @Controller
-@RequestMapping(URL.APP_HOLIDAYS)
 public class HolidaysController {
 
     private String message = "message";
@@ -28,7 +28,7 @@ public class HolidaysController {
     @Autowired
     private HolidayService holidayService;
 
-    @GetMapping()
+    @GetMapping(URL.APP_HOLIDAYS)
     public String listAllHolidays(Model model) {
         model.addAttribute("holidays", holidayService.findAllHolidays());
         return "holidays/list";
@@ -36,10 +36,11 @@ public class HolidaysController {
 
     @RequestMapping(URL.APP_DELETE_HOLIDAY_BY_ID)
     public String deleteHolidayById(@PathVariable Integer id, RedirectAttributes redirectAtt) {
-        if (holidayService.deleteHoliday(id)) {
+        try {
+            holidayService.deleteHoliday(id);
             redirectAtt.addFlashAttribute(message, "Holiday was deleted!");
-        } else {
-            redirectAtt.addFlashAttribute(message, "Can't delete past holiday!");
+        } catch (EntityNotFoundException ex) {
+            redirectAtt.addFlashAttribute(message, ex.getLocalizedMessage());
         }
         return "redirect:/app/holidays";
     }
@@ -49,16 +50,17 @@ public class HolidaysController {
         return "holidays/new";
     }
 
-    @PostMapping()
-    public String saveHoliday(@Valid @ModelAttribute("holiday") Holiday holiday, BindingResult bindingResult, RedirectAttributes redirectAtt) {
-        if(bindingResult.hasErrors()) {
-            String errors = ValidationUtils.getErrorMessages(bindingResult);          
+    @PostMapping(URL.APP_HOLIDAYS)
+    public String saveHoliday(@Valid @ModelAttribute("holiday") Holiday holiday, BindingResult bindingResult,
+            RedirectAttributes redirectAtt) {
+        if (bindingResult.hasErrors()) {
+            String errors = ValidationUtils.getErrorMessages(bindingResult);
             redirectAtt.addFlashAttribute("message", errors);
         } else {
             try {
-            holidayService.addHoliday(holiday);
-            redirectAtt.addFlashAttribute(message, "Holiday was added successfully!");
-            } catch(UniqueConstraintViolationException e) {
+                holidayService.addHoliday(holiday);
+                redirectAtt.addFlashAttribute(message, "Holiday was added successfully!");
+            } catch (EntityConstraintViolationException e) {
                 redirectAtt.addFlashAttribute(message, e.getMessage());
             }
         }

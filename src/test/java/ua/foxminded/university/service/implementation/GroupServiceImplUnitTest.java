@@ -22,8 +22,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import ua.foxminded.university.dao.GroupDAO;
 import ua.foxminded.university.dao.LessonDAO;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.entities.Group;
+import ua.foxminded.university.service.exception.EntityConstraintViolationException;
 
 @ExtendWith(SpringExtension.class)
 class GroupServiceImplUnitTest {
@@ -56,7 +56,7 @@ class GroupServiceImplUnitTest {
     @Test
     void addGroup_shouldThrowUniqueConstraintViolationException_whenInputNotUniqueName() {
         given(groupDao.findByName(group.getName())).willReturn(group);
-        assertThrows(UniqueConstraintViolationException.class, () -> groupService.addGroup(group));
+        assertThrows(EntityConstraintViolationException.class, () -> groupService.addGroup(group));
         verify(groupDao, times(0)).save(any(Group.class));
     }
 
@@ -91,13 +91,14 @@ class GroupServiceImplUnitTest {
     @Test
     void updateGroup_shouldThrowUniqueConstraintViolationException_whenInputNotUniqueName() {
         given(groupDao.findByName(group.getName())).willReturn(group);
-        assertThrows(UniqueConstraintViolationException.class, () -> groupService.updateGroup(group));
+        assertThrows(EntityConstraintViolationException.class, () -> groupService.updateGroup(group));
         verify(groupDao, times(0)).save(any(Group.class));
     }
 
     @Test
     void deleteGroup() {
         int groupId = 1;
+        given(groupDao.existsById(groupId)).willReturn(true);
         willDoNothing().given(groupDao).deleteById(groupId);
         groupService.deleteGroup(groupId);
         verify(groupDao, times(1)).deleteById(groupId);

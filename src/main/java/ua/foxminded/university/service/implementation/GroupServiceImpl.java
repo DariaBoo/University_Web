@@ -3,6 +3,8 @@ package ua.foxminded.university.service.implementation;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -11,10 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.dao.GroupDAO;
 import ua.foxminded.university.dao.LessonDAO;
-import ua.foxminded.university.dao.exceptions.UniqueConstraintViolationException;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.entities.Lesson;
+import ua.foxminded.university.service.exception.EntityConstraintViolationException;
 
 /**
  * @version 1.0
@@ -39,12 +41,12 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public Group addGroup(Group group) {
         Group savedGroup = groupDAO.findByName(group.getName());
-        if(savedGroup == null) {
+        if (savedGroup == null) {
             savedGroup = groupDAO.save(group);
             log.info("Saved a new group with id [{}]", savedGroup.getId());
         } else {
             log.warn("Group with name [{}] already exists with id ::{}", savedGroup.getName(), savedGroup.getId());
-            throw new UniqueConstraintViolationException("Group with name - [" + group.getName() + "] already exists");
+            throw new EntityConstraintViolationException("Group with name - [" + group.getName() + "] already exists");
         }
         return savedGroup;
     }
@@ -56,12 +58,12 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public Group updateGroup(Group group) {
         Group updatedGroup = groupDAO.findByName(group.getName());
-        if(updatedGroup == null) {
+        if (updatedGroup == null) {
             updatedGroup = groupDAO.save(group);
             log.info("Update group with id :: {}", group.getId());
         } else {
             log.warn("Group with name [{}] already exists with id ::{}", updatedGroup.getName(), updatedGroup.getId());
-            throw new UniqueConstraintViolationException("Group with name - [" + group.getName() + "] already exists");
+            throw new EntityConstraintViolationException("Group with name - [" + group.getName() + "] already exists");
         }
         return updatedGroup;
     }
@@ -71,9 +73,13 @@ public class GroupServiceImpl implements GroupService {
      */
     @Override
     @Transactional
-    public boolean deleteGroup(int groupId) {
-        groupDAO.deleteById(groupId);
-        return !groupDAO.existsById(groupId);
+    public void deleteGroup(int groupId) {
+        if (groupDAO.existsById(groupId)) {
+            groupDAO.deleteById(groupId);
+        } else {
+            log.warn("Group with id {} doesn't exist. Nothing to delete", groupId);
+            throw new EntityNotFoundException("Group with id " + groupId + " doesn't exist. Nothing to delete.");
+        }
     }
 
     /**
@@ -132,8 +138,8 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional(readOnly = true)
     public Group findById(int groupId) {
-        Group resultGroup = groupDAO.findById(groupId).orElseThrow(
-                () -> new IllegalArgumentException("Error occured while searching group by id: " + groupId));
+        Group resultGroup = groupDAO.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("No group with id: " + groupId));
         log.debug("Found group with id :: {}", groupId);
         return resultGroup;
     }
@@ -145,8 +151,7 @@ public class GroupServiceImpl implements GroupService {
     @Transactional(readOnly = true)
     public List<Group> findGroupsByTeacherId(int teacherId) {
         List<Group> resultList = groupDAO.findByLessons_Teachers_Id(teacherId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Error occured while searching group by teacher id - {} " + teacherId));
+                .orElseThrow(() -> new IllegalArgumentException("No groups for teacher with id - {} " + teacherId));
         log.debug("Found groups (count - {}) by teacher id - {}", resultList.size(), teacherId);
         return resultList;
     }
