@@ -194,7 +194,7 @@ th {
 								<td th:text="${timetable.getLesson().getName()}" />
 								<td th:text="${timetable.getGroup().getName()}" />
 								<td
-									th:text="${timetable.getTeacher().getFirstName()} + ' ' + ${timetable.getTeacher().getLastName()}" />
+									th:text="${timetable.getTeacher().getUser().getFirstName()} + ' ' + ${timetable.getTeacher().getUser().getLastName()}" />
 								<td th:text="${timetable.getRoom().getNumber()}" />
 								<td><a href="#"
 									th:href="@{/app/timetable/delete/} + ${timetable.getTimetableId()}"><button

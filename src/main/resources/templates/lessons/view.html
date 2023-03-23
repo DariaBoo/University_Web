@@ -156,7 +156,7 @@ td {
 						</summary>
 						<ul th:each="teacher : ${teachers}">
 							<li><a th:href="@{/app/teachers/} + ${teacher.getId()}"
-								th:text="${teacher.getFirstName()} + ' ' + ${teacher.getLastName()}"></a></li>
+								th:text="${teacher.getUser().getFirstName()} + ' ' + ${teacher.getUser().getLastName()}"></a></li>
 						</ul>
 					</details>
 					<br>

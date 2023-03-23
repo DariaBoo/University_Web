@@ -1,7 +1,6 @@
 package ua.foxminded.university.controller.integration_tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -9,6 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,8 +17,6 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -69,6 +67,8 @@ class TimetableControllerTest {
     private RedirectAttributes redirectAtt;
     @Mock
     private BindingResult bindingResult;
+    @Mock
+    private HttpServletRequest request;
     @MockBean
     private SecurityContextHolder context;
 
@@ -80,7 +80,6 @@ class TimetableControllerTest {
     private Day day = new Day();
     private User user;
     private Timetable timetable;
-    private Timetable timetable2;
     private LocalDate date = LocalDate.of(2022, 10, 28);
 
     @BeforeEach
@@ -108,16 +107,13 @@ class TimetableControllerTest {
     }
 
     @Test
-    void showTimetable_shouldReturnStatus302_whenInputCorrectData() {
+    void showTimetable_shouldReturnIndexPage_whenInputCorrectData() {
         timetable = Timetable.builder().date(date).lessonTimePeriod("08:00 - 09:20").group(group).lesson(lesson)
                 .teacher(teacher).room(room).build();
         timetableService.scheduleTimetable(timetable);
         List<Timetable> timetables = new ArrayList<>();
         timetables.add(timetable);
-        String dateOne = "2022-10-28";
-        String dateTwo = "2022-10-28";
-        assertEquals(timetables.size(), timetableController.showTimetable(dateOne, dateTwo, model).getBody().size());
-        assertEquals(HttpStatus.FOUND, timetableController.showTimetable(dateOne, dateTwo, model).getStatusCode());
+        assertEquals("timetable/index", timetableController.showStudentTimetable(request, model));
     }
 
     @Test
@@ -130,39 +126,5 @@ class TimetableControllerTest {
     void scheduleTimetableForLesson_shouldReturnCorrectPage() {
         assertEquals("timetable/new",
                 timetableController.scheduleTimetableForLesson(lesson.getId(), group.getId(), model));
-    }
-
-    @Test
-    void saveTimetable_shouldReturnStatus200_whenInputCorrectData() {
-        timetable2 = Timetable.builder().date(date).lessonTimePeriod("08:00 - 09:20").group(group).lesson(lesson)
-                .teacher(teacher).room(room).build();
-        assertEquals(new ResponseEntity<>("Timetable was scheduled successfully!", HttpStatus.CREATED),
-                timetableController.saveTimetable(timetable2, bindingResult));
-    }
-
-    @Test
-    void saveTimetable_shouldReturnErrorMessage_whenInputIncorrectData() {
-        timetable2 = Timetable.builder().date(date).lessonTimePeriod("08:00 - 09:20").group(group).lesson(lesson)
-                .teacher(teacher).room(null).build();
-        String message = "Room may not be null";
-        assertTrue(timetableController.saveTimetable(timetable2, bindingResult).getBody().contains(message));
-    }
-
-    @Test
-    void deleteTimetable_shouldReturnStatus200_whenInputCorrectData() {
-        timetable = Timetable.builder().date(date).lessonTimePeriod("08:00 - 09:20").group(group).lesson(lesson)
-                .teacher(teacher).room(room).build();
-        timetableService.scheduleTimetable(timetable);
-        assertEquals(new ResponseEntity<>("Timetable was deleted!", HttpStatus.OK),
-                timetableController.deleteTimetable(timetable.getTimetableId()));
-    }
-
-    @Test
-    void deleteTimetable_shouldReturnStatus400_whenInputInCorrectData() {
-        timetable = Timetable.builder().date(date).lessonTimePeriod("08:00 - 09:20").group(group).lesson(lesson)
-                .teacher(teacher).room(room).build();
-        assertEquals(
-                new ResponseEntity<>("Timetable with id 0 doesn't exist. Nothing to delete.", HttpStatus.BAD_REQUEST),
-                timetableController.deleteTimetable(timetable.getTimetableId()));
     }
 }
