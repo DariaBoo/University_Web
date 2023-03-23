@@ -50,6 +50,7 @@ public class URL {
     public static final String APP_TIMETABLE_SCHEDULE_GROUP = "/app/timetable/schedule/{groupId}";
     public static final String APP_TIMETABLE_SCHEDULE_GROUP_LESSON = "/app/timetable/schedule/{groupId}/{lessonId}";
     public static final String APP_TIMETABLE_DELETE = "/app/timetable/delete/{id}";
+    
 
     public static final String STUDENT_TIMETABLE = "/student/timetable";
     public static final String TEACHER_TIMETABLE = "/teacher/timetable";

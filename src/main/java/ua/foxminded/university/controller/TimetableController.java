@@ -1,16 +1,12 @@
 package ua.foxminded.university.controller;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.foxminded.university.controller.urls.URL;
@@ -60,27 +56,27 @@ public class TimetableController {
     @Autowired
     private TeacherService teacherService;
 
+    private static String message = "message";
+
     @RequestMapping(URL.APP_TIMETABLE)
     public String chooseDatePeriod(Model model) {
         return "timetable/index";
     }
 
     @RequestMapping(URL.APP_TIMETABLE_SHOW)
-    public ResponseEntity<List<Timetable>> showTimetable(@RequestParam("from") String dateOne,
-            @RequestParam("to") String dateTwo, Model model) {
-        LocalDate setDateOne = LocalDate.parse(dateOne);
-        LocalDate setDateTwo = LocalDate.parse(dateTwo);
+    public String showTimetable(HttpServletRequest request, Model model) {
+        LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
+        LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
         Day day = new Day();
         day.setDateOne(setDateOne);
         day.setDateTwo(setDateTwo);
-        List<Timetable> timetable = new ArrayList<>();
         try {
-            timetable = timetableService.showTimetable(day);
-            return new ResponseEntity<>(timetable, HttpStatus.FOUND);
+            model.addAttribute("timetables", timetableService.showTimetable(day));
         } catch (IllegalArgumentException e) {
             log.error("[ON showTimetable]:: IllegalArgumentException {}", e.getLocalizedMessage());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            model.addAttribute(message, e.getMessage());
         }
+        return "timetable/index";
     }
 
     @GetMapping(URL.APP_TIMETABLE_SCHEDULE)
@@ -123,73 +119,78 @@ public class TimetableController {
     }
 
     @PostMapping(value = URL.APP_TIMETABLE_SCHEDULE)
-    public ResponseEntity<String> saveTimetable(@Valid @ModelAttribute("timetable") Timetable timetable,
-            BindingResult bindingResult) {
-        String body = "";
+    public String saveTimetable(@Valid @ModelAttribute("timetable") Timetable timetable, BindingResult bindingResult,
+            RedirectAttributes redirectAtt, Model model) {
+        Day day = new Day();
+        String result = "";
         if (bindingResult.hasErrors()) {
-            body = ValidationUtils.getErrorMessages(bindingResult);
-            log.warn("[ON saveTimetable]:: validation errors - {}", body);
-            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            result = ValidationUtils.getErrorMessages(bindingResult);
+            log.warn("[ON saveTimetable]:: validation errors - {}", result);
         } else {
             try {
-                body = timetableService.scheduleTimetable(timetable);
-                return new ResponseEntity<>(body, HttpStatus.CREATED);
+                result = timetableService.scheduleTimetable(timetable);
             } catch (EntityConstraintViolationException e) {
                 log.error("[ON saveTimetable]:: EntityConstraintViolationException {}", e.getLocalizedMessage());
-                body = e.getLocalizedMessage();
-                return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+                result = e.getLocalizedMessage();
             }
         }
+        day.setDateOne(timetable.getDate());
+        day.setDateTwo(timetable.getDate());
+        redirectAtt.addFlashAttribute(message, result);
+        System.out.println("PRINT MESSAGE: " + result);
+        redirectAtt.addFlashAttribute("day", day.getDateOne());
+        redirectAtt.addFlashAttribute("timetables", timetableService.showTimetable(day));
+        return "redirect:/app/timetable/schedule";
+
     }
 
     @RequestMapping(URL.APP_TIMETABLE_DELETE)
-    public ResponseEntity<String> deleteTimetable(@PathVariable Integer id) {
+    public String deleteTimetable(@PathVariable Integer id, RedirectAttributes redirectAtt) {
         try {
             timetableService.deleteTimetable(id);
-            return new ResponseEntity<>("Timetable was deleted!", HttpStatus.OK);
+            redirectAtt.addFlashAttribute(message, "Timetable was deleted!");
         } catch (EntityNotFoundException ex) {
             log.error("[ON deleteTimetable]:: bad request");
-            return new ResponseEntity<>(ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
+            redirectAtt.addFlashAttribute(message, "Can't delete past timetable!");
         }
+        return "redirect:/app/timetable";
     }
 
     @RequestMapping(URL.STUDENT_TIMETABLE)
-    public ResponseEntity<List<Timetable>> showStudentTimetable(@RequestParam("from") String dateOne,
-            @RequestParam("to") String dateTwo, Model model) {
-        LocalDate setDateOne = LocalDate.parse(dateOne);
-        LocalDate setDateTwo = LocalDate.parse(dateTwo);
-        AuthenticatedUser user = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal();
-        Student student = studentService.findByUsername(user.getUsername());
-        Day day = new Day();
-        day.setDateOne(setDateOne);
-        day.setDateTwo(setDateTwo);
+    public String showStudentTimetable(HttpServletRequest request, Model model) {
         try {
-            List<Timetable> body = timetableService.getStudentTimetable(day, student);
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(body);
+            LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
+            LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
+            Day day = new Day();
+            day.setDateOne(setDateOne);
+            day.setDateTwo(setDateTwo);
+            AuthenticatedUser user = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication()
+                    .getPrincipal();
+            Student student = studentService.findByUsername(user.getUsername());
+            model.addAttribute("timetables", timetableService.getStudentTimetable(day, student));
         } catch (IllegalArgumentException e) {
-            log.error("[ON showStudentTimetable]:: IllegalArgumentException {}", e.getLocalizedMessage());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            log.error("[ON showStudentTimetableho]:: IllegalArgumentException {}", e.getLocalizedMessage());
+            model.addAttribute(message, e.getMessage());
         }
+        return "students/studentPage";
     }
 
     @RequestMapping(URL.TEACHER_TIMETABLE)
-    public ResponseEntity<List<Timetable>> showTeacherTimetable(@RequestParam("from") String dateOne,
-            @RequestParam("to") String dateTwo, Model model) {
-        LocalDate setDateOne = LocalDate.parse(dateOne);
-        LocalDate setDateTwo = LocalDate.parse(dateTwo);
-        AuthenticatedUser user = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal();
-        Teacher teacher = teacherService.findByUsername(user.getUsername());
-        Day day = new Day();
-        day.setDateOne(setDateOne);
-        day.setDateTwo(setDateTwo);
+    public String showTeacherTimetable(HttpServletRequest request, Model model) {
         try {
-            List<Timetable> body = timetableService.getTeacherTimetable(day, teacher);
-            return new ResponseEntity<>(body, HttpStatus.OK);
+            LocalDate setDateOne = LocalDate.parse(request.getParameter("from"));
+            LocalDate setDateTwo = LocalDate.parse(request.getParameter("to"));
+            AuthenticatedUser user = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication()
+                    .getPrincipal();
+            Teacher teacher = teacherService.findByUsername(user.getUsername());
+            Day day = new Day();
+            day.setDateOne(setDateOne);
+            day.setDateTwo(setDateTwo);
+            model.addAttribute("timetables", timetableService.getTeacherTimetable(day, teacher));
         } catch (IllegalArgumentException e) {
             log.error("[ON showTeacherTimetable]:: IllegalArgumentException {}", e.getLocalizedMessage());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            model.addAttribute(message, e.getMessage());
         }
+        return "teachers/teacherPage";
     }
 }

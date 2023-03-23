@@ -113,7 +113,7 @@ div.container {
 							<td th:text="${timetable.getLessonTimePeriod()}" />
 							<td th:text="${timetable.getLesson().getName()}" />
 							<td
-								th:text="${timetable.getTeacher().getUser().getFirstName()} + ' ' + ${timetable.getUser().getTeacher().getLastName()}" />
+								th:text="${timetable.getTeacher().getUser().getFirstName()} + ' ' + ${timetable.getTeacher().getUser().getLastName()}" />
 							<td th:text="${timetable.getRoom().getNumber()}" />
 					</table>
 				</div>
