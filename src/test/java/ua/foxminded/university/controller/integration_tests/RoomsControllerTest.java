@@ -2,6 +2,8 @@ package ua.foxminded.university.controller.integration_tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,6 +14,7 @@ import ua.foxminded.university.AppSpringBoot;
 import ua.foxminded.university.controller.RoomsController;
 
 @SpringBootTest(classes = AppSpringBoot.class)
+@Transactional
 class RoomsControllerTest {
 
     @Autowired

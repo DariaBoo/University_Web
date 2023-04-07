@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,7 @@ import ua.foxminded.university.controller.HolidaysController;
 import ua.foxminded.university.service.entities.Holiday;
 
 @SpringBootTest(classes = AppSpringBoot.class)
+@Transactional
 class HolidaysControllerTest {
 
     @Autowired
