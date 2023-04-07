@@ -29,14 +29,12 @@ import ua.foxminded.university.dao.UserDAO;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.LessonService;
 import ua.foxminded.university.service.TeacherService;
-import ua.foxminded.university.service.TimetableService;
 import ua.foxminded.university.service.entities.Day;
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.entities.Lesson;
 import ua.foxminded.university.service.entities.Room;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.Teacher;
-import ua.foxminded.university.service.entities.Timetable;
 import ua.foxminded.university.service.entities.User;
 
 @SpringBootTest(classes = AppSpringBoot.class)
