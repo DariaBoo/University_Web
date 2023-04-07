@@ -47,8 +47,6 @@ class TimetableControllerTest {
     @Autowired
     private TimetableController timetableController;
     @Autowired
-    private TimetableService timetableService;
-    @Autowired
     private LessonService lessonService;
     @Autowired
     private GroupService groupService;
@@ -75,7 +73,6 @@ class TimetableControllerTest {
     private Room room;
     private Day day = new Day();
     private User user;
-    private Timetable timetable;
     private LocalDate date = LocalDate.of(2022, 10, 28);
 
     @BeforeEach
