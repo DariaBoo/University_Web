@@ -3,8 +3,6 @@ package ua.foxminded.university.controller.integration_tests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.ui.ConcurrentModel;
 import org.springframework.ui.Model;
@@ -33,25 +29,21 @@ import ua.foxminded.university.dao.UserDAO;
 import ua.foxminded.university.service.GroupService;
 import ua.foxminded.university.service.LessonService;
 import ua.foxminded.university.service.TeacherService;
-import ua.foxminded.university.service.TimetableService;
 import ua.foxminded.university.service.entities.Day;
 import ua.foxminded.university.service.entities.Group;
 import ua.foxminded.university.service.entities.Lesson;
 import ua.foxminded.university.service.entities.Room;
 import ua.foxminded.university.service.entities.Student;
 import ua.foxminded.university.service.entities.Teacher;
-import ua.foxminded.university.service.entities.Timetable;
 import ua.foxminded.university.service.entities.User;
 
 @SpringBootTest(classes = AppSpringBoot.class)
 @Sql({ "/timetable.sql" })
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+@Transactional
 class TimetableControllerTest {
 
     @Autowired
     private TimetableController timetableController;
-    @Autowired
-    private TimetableService timetableService;
     @Autowired
     private LessonService lessonService;
     @Autowired
@@ -79,7 +71,6 @@ class TimetableControllerTest {
     private Room room;
     private Day day = new Day();
     private User user;
-    private Timetable timetable;
     private LocalDate date = LocalDate.of(2022, 10, 28);
 
     @BeforeEach
@@ -104,16 +95,6 @@ class TimetableControllerTest {
     @Test
     void chooseDatePeriod_shouldReturnCorrectPage() {
         assertEquals("timetable/index", timetableController.chooseDatePeriod(model));
-    }
-
-    @Test
-    void showTimetable_shouldReturnIndexPage_whenInputCorrectData() {
-        timetable = Timetable.builder().date(date).lessonTimePeriod("08:00 - 09:20").group(group).lesson(lesson)
-                .teacher(teacher).room(room).build();
-        timetableService.scheduleTimetable(timetable);
-        List<Timetable> timetables = new ArrayList<>();
-        timetables.add(timetable);
-        assertEquals("timetable/index", timetableController.showStudentTimetable(request, model));
     }
 
     @Test

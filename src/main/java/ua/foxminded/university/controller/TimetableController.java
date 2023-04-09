@@ -137,11 +137,9 @@ public class TimetableController {
         day.setDateOne(timetable.getDate());
         day.setDateTwo(timetable.getDate());
         redirectAtt.addFlashAttribute(message, result);
-        System.out.println("PRINT MESSAGE: " + result);
         redirectAtt.addFlashAttribute("day", day.getDateOne());
         redirectAtt.addFlashAttribute("timetables", timetableService.showTimetable(day));
         return "redirect:/app/timetable/schedule";
-
     }
 
     @RequestMapping(URL.APP_TIMETABLE_DELETE)

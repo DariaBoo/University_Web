@@ -2,6 +2,8 @@ package ua.foxminded.university.controller.integration_tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -18,6 +20,7 @@ import ua.foxminded.university.service.entities.Lesson;
 
 @SpringBootTest(classes = AppSpringBoot.class)
 @TestInstance(Lifecycle.PER_CLASS)
+@Transactional
 class LessonsControllerTest {
 
     @Autowired
